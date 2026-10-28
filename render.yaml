@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: starfall
+    env: static
+    rootDir: .
+    buildCommand: ""
+    staticPublishPath: .
