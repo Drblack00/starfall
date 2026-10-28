@@ -2,7 +2,7 @@
 
 STARFALL is an original space shooter by Drblack Ventures: five skies, five bosses, one ship — pilot through Deep Space, the Ember Nebula, the Void Rift, the Cryo Abyss and the Event Horizon, and take down every boss to win.
 
-**Play:** _Render URL to be added after deploy._
+**Play:** https://starfall-xr9e.onrender.com
 
 ## Controls
 
