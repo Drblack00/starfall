@@ -1131,6 +1131,366 @@
       }
       @keyframes homePlanetDrift { from { transform: translateY(0); } to { transform: translateY(-6px); } }
       @media (prefers-reduced-motion: reduce) { #home-planet-cv { animation: none; } }
+
+      /* ============================================================
+         TEST RUN 04 — COCKPIT META UI (Sample 04, premium)
+         Replaces the meta layer only: hub / hangar / quests /
+         campaign / results presentation. Gameplay, the Minimal
+         Edge HUD, bosses, tilt and customization logic untouched.
+         Canopy framing, cyan holographics, tactile consoles, glass.
+         ============================================================ */
+      .screen.on { animation: ckScreenIn .38s cubic-bezier(.22,1,.36,1) both; }
+      @keyframes ckScreenIn { from { opacity: 0; transform: translateY(10px) scale(.992); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+      /* ---------- HUB — the cockpit ---------- */
+      #stage #scr-start {
+        background:
+          radial-gradient(1.5px 1.5px at 14% 18%, rgba(255,255,255,.65), rgba(255,255,255,0) 60%),
+          radial-gradient(1px 1px at 84% 10%, rgba(255,255,255,.5), rgba(255,255,255,0) 60%),
+          radial-gradient(1.5px 1.5px at 68% 30%, rgba(190,235,255,.55), rgba(255,255,255,0) 60%),
+          radial-gradient(1px 1px at 30% 44%, rgba(255,255,255,.4), rgba(255,255,255,0) 60%),
+          radial-gradient(ellipse 120% 55% at 50% -6%, rgba(28, 90, 140, .5), rgba(0,0,0,0) 60%),
+          radial-gradient(ellipse 90% 40% at 50% 112%, rgba(90, 40, 120, .22), rgba(0,0,0,0) 62%),
+          linear-gradient(180deg, #030711 0%, #050b1a 55%, #02040a 100%);
+        padding: 0; overflow: hidden;
+      }
+      /* bolted canopy frame — struts + glass reflection over everything */
+      #scr-start::before {
+        content: ""; position: absolute; inset: 0; z-index: 40; pointer-events: none;
+        border: 3px solid rgba(96, 140, 175, .38);
+        box-shadow: inset 0 0 0 2px rgba(0,0,0,.65), inset 0 0 46px rgba(0,0,0,.55);
+        background:
+          radial-gradient(circle 4px at 14px 14px, #9fc6e2 1.6px, rgba(20,40,60,.9) 2.6px, rgba(0,0,0,0) 4px),
+          radial-gradient(circle 4px at calc(100% - 14px) 14px, #9fc6e2 1.6px, rgba(20,40,60,.9) 2.6px, rgba(0,0,0,0) 4px),
+          radial-gradient(circle 4px at 14px calc(100% - 14px), #9fc6e2 1.6px, rgba(20,40,60,.9) 2.6px, rgba(0,0,0,0) 4px),
+          radial-gradient(circle 4px at calc(100% - 14px) calc(100% - 14px), #9fc6e2 1.6px, rgba(20,40,60,.9) 2.6px, rgba(0,0,0,0) 4px),
+          linear-gradient(115deg, rgba(255,255,255,.075) 0%, rgba(255,255,255,0) 26%),
+          linear-gradient(0deg, rgba(70,110,150,.20), rgba(70,110,150,0) 34px),
+          linear-gradient(180deg, rgba(70,110,150,.20), rgba(70,110,150,0) 34px);
+      }
+      #scr-start::after {
+        content: ""; position: absolute; z-index: 40; pointer-events: none;
+        left: 0; right: 0; top: 0; height: 30px;
+        background: linear-gradient(180deg, rgba(10,22,38,.92), rgba(10,22,38,0));
+        border-bottom: 1px solid rgba(63,214,255,.16);
+      }
+      .ck-scroll {
+        position: relative; z-index: 5; flex: 1 1 auto; width: 100%; overflow-y: auto; touch-action: pan-y;
+        display: flex; flex-direction: column; align-items: center;
+        padding: calc(40px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom));
+        scrollbar-width: none;
+      }
+      .ck-scroll::-webkit-scrollbar { display: none; }
+      .ck-scroll > * { animation: homeRise .55s cubic-bezier(.22,1,.36,1) backwards; }
+      .ck-scroll > *:nth-child(2) { animation-delay: .05s; } .ck-scroll > *:nth-child(3) { animation-delay: .1s; }
+      .ck-scroll > *:nth-child(4) { animation-delay: .15s; } .ck-scroll > *:nth-child(5) { animation-delay: .2s; }
+      .ck-scroll > *:nth-child(n+6) { animation-delay: .25s; }
+
+      /* top strip — audio / tilt keys + the real wallet */
+      .ck-topbar { width: 100%; max-width: 400px; display: flex; align-items: center; gap: 8px; }
+      .ck-topbar .icon-btn, .ck-topbar .hub-seg {
+        background: linear-gradient(180deg, rgba(24,44,68,.9), rgba(8,18,32,.92));
+        border: 1px solid rgba(120,205,255,.4); border-radius: 10px; color: var(--ink);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 4px 12px rgba(0,0,0,.45);
+        min-height: 38px;
+      }
+      .ck-topbar .hub-seg { padding: 7px 12px; }
+      .ck-topbar .hub-seg.armed { color: #ffd23d; border-color: rgba(255,210,61,.75); box-shadow: 0 0 14px rgba(255,210,61,.28), inset 0 1px 0 rgba(255,255,255,.16); }
+      .ck-wallet { margin-left: auto; display: flex; gap: 7px; }
+      .ck-wal {
+        display: flex; align-items: center; gap: 6px; padding: 8px 11px; border-radius: 999px;
+        background: rgba(4,12,24,.82); border: 1px solid rgba(63,214,255,.4);
+        font-family: "Orbitron", monospace; font-size: 12.5px; font-weight: 700; color: var(--ink);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 0 12px rgba(63,214,255,.12);
+      }
+      .ck-wal small { font-size: 8.5px; letter-spacing: .16em; color: var(--dim); font-weight: 700; }
+      .ck-wal .coin { width: 13px; height: 13px; border-radius: 50%; background: radial-gradient(circle at 35% 32%, #fff3cf, #f7b733 55%, #b97a08); box-shadow: 0 0 7px rgba(247,183,51,.8); flex: 0 0 auto; }
+      .ck-wal .core { width: 11px; height: 11px; flex: 0 0 auto; transform: rotate(45deg); background: linear-gradient(135deg, #c9f4ff, #3fd6ff 60%, #0d7fc4); box-shadow: 0 0 8px rgba(63,214,255,.85); border-radius: 2px; }
+      .ck-wal.cores { border-color: rgba(177,140,255,.5); }
+
+      /* holographic HUD strip — reticle, live readouts, radar */
+      .ck-hudrow { width: 100%; max-width: 400px; margin-top: 12px; display: flex; align-items: center; gap: 12px; padding: 9px 12px;
+        background: linear-gradient(180deg, rgba(10,30,50,.55), rgba(4,12,24,.5));
+        border: 1px solid rgba(63,214,255,.28); border-radius: 12px;
+        box-shadow: inset 0 1px 0 rgba(160,230,255,.14), 0 0 22px rgba(63,214,255,.08);
+      }
+      .ck-reticle { position: relative; flex: 0 0 auto; width: 44px; height: 44px; border: 1.5px solid rgba(63,214,255,.65); border-radius: 50%;
+        box-shadow: 0 0 12px rgba(63,214,255,.35), inset 0 0 10px rgba(63,214,255,.18); animation: ckReticle 7s ease-in-out infinite; }
+      .ck-reticle::before { content: ""; position: absolute; inset: 9px; border: 1px dashed rgba(63,214,255,.5); border-radius: 50%; animation: ckSpin 11s linear infinite; }
+      .ck-reticle::after { content: ""; position: absolute; left: 50%; top: 50%; width: 4px; height: 4px; margin: -2px; border-radius: 50%; background: #aee9ff; box-shadow: 0 0 8px rgba(63,214,255,.9); }
+      @keyframes ckReticle { 0%,100% { transform: translate(0,0); } 30% { transform: translate(2.5px,-2px); } 62% { transform: translate(-2px,1.5px); } }
+      @keyframes ckSpin { to { transform: rotate(360deg); } }
+      .ck-reads { flex: 1 1 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px 8px; min-width: 0; }
+      .ck-read { display: flex; flex-direction: column; gap: 0; }
+      .ck-read small { font-size: 8px; font-weight: 700; letter-spacing: .22em; color: rgba(140,220,255,.75); }
+      .ck-read b { font-family: "Orbitron", monospace; font-size: 13.5px; font-weight: 700; color: #d9f4ff; text-shadow: 0 0 9px rgba(63,214,255,.5); white-space: nowrap; }
+      .ck-read b.gold { color: #ffd98a; text-shadow: 0 0 9px rgba(255,176,46,.5); }
+      .ck-radar { position: relative; flex: 0 0 auto; width: 52px; height: 52px; border-radius: 50%; overflow: hidden;
+        border: 1.5px solid rgba(46,242,192,.55); background: radial-gradient(circle, rgba(46,242,192,.10), rgba(2,10,10,.6) 75%);
+        box-shadow: 0 0 12px rgba(46,242,192,.22), inset 0 0 12px rgba(46,242,192,.14); }
+      .ck-radar::before { content: ""; position: absolute; inset: 0; border-radius: 50%;
+        background: repeating-radial-gradient(circle, rgba(46,242,192,.16) 0 1px, rgba(0,0,0,0) 1px 12px); }
+      .ck-radar .sweep { position: absolute; inset: 0; border-radius: 50%;
+        background: conic-gradient(from 0deg, rgba(46,242,192,.55), rgba(46,242,192,0) 62deg); animation: ckSpin 3.4s linear infinite; }
+      .ck-radar .blip { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: #7dffd9; box-shadow: 0 0 6px rgba(46,242,192,.95); animation: dotPulse 1.9s ease-in-out infinite alternate; }
+
+      /* centre stage — consoles flanking the launch pad */
+      .ck-stage { position: relative; width: 100%; max-width: 400px; margin-top: 12px; min-height: 252px; }
+      .ck-padwrap { position: absolute; left: 50%; top: 0; transform: translateX(-50%); width: 216px; display: flex; flex-direction: column; align-items: center; }
+      #stage #scr-start .ck-padwrap .hero-zone { position: relative; left: auto; right: auto; bottom: auto; height: 178px; width: 196px; max-width: none; margin: 0; overflow: visible; z-index: 2; }
+      #stage #scr-start .ck-padwrap .hero { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); width: 176px; height: 172px; }
+      #stage #scr-start #hero-ship { width: 172px; height: 166px; }
+      .ck-pad { position: relative; width: 188px; height: 30px; margin-top: -8px; border-radius: 50%;
+        background: radial-gradient(ellipse, rgba(63,214,255,.30) 0%, rgba(63,214,255,.10) 55%, rgba(0,0,0,0) 72%);
+        border: 1px solid rgba(63,214,255,.28); box-shadow: 0 0 24px rgba(63,214,255,.22), inset 0 0 18px rgba(63,214,255,.16); }
+      .ck-pad i { position: absolute; top: 50%; width: 7px; height: 7px; margin-top: -3.5px; border-radius: 50%; background: #8fe6ff; box-shadow: 0 0 9px rgba(63,214,255,.95); animation: dotPulse 1.6s ease-in-out infinite alternate; }
+      .ck-pad i:nth-child(1) { left: 16%; } .ck-pad i:nth-child(2) { left: 38%; animation-delay: .3s; } .ck-pad i:nth-child(3) { left: 60%; animation-delay: .6s; } .ck-pad i:nth-child(4) { left: 80%; animation-delay: .9s; }
+      #scr-start .ck-stage #home-planet-cv { top: auto; bottom: 2px; right: auto; left: 0; width: 44px; height: 44px; z-index: 1; opacity: .95; }
+      .ck-haze { position: absolute; left: 8%; right: 8%; bottom: 16px; height: 26px; z-index: 3; pointer-events: none;
+        background: radial-gradient(ellipse at 30% 60%, rgba(190,220,240,.14), rgba(0,0,0,0) 65%), radial-gradient(ellipse at 72% 40%, rgba(190,220,240,.11), rgba(0,0,0,0) 65%);
+        filter: blur(3px); animation: ckHaze 6s ease-in-out infinite alternate; }
+      @keyframes ckHaze { from { transform: translateX(-5px); opacity: .7; } to { transform: translateX(6px); opacity: 1; } }
+      #home-planet-cv { z-index: 1; }
+      .ck-console {
+        position: absolute; top: 6px; width: 86px; z-index: 6; padding: 9px 8px 10px;
+        background: linear-gradient(180deg, rgba(20,38,60,.92), rgba(6,14,26,.94));
+        border: 1px solid rgba(120,205,255,.36); border-radius: 12px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.15), inset 0 -10px 18px rgba(0,0,0,.4), 0 8px 20px rgba(0,0,0,.5);
+      }
+      .ck-console.left { left: 0; } .ck-console.right { right: 0; }
+      .ck-con-title { font-size: 8px; font-weight: 700; letter-spacing: .24em; color: rgba(140,220,255,.8); margin-bottom: 7px; text-align: center; }
+      .ck-leds { display: flex; gap: 4px; justify-content: center; margin-bottom: 8px; }
+      .ck-leds i { width: 5px; height: 5px; border-radius: 50%; background: #2ef2c0; box-shadow: 0 0 6px rgba(46,242,192,.9); animation: ckLed 2.6s ease-in-out infinite; }
+      .ck-leds i:nth-child(2) { background: #3fd6ff; box-shadow: 0 0 6px rgba(63,214,255,.9); animation-delay: .5s; }
+      .ck-leds i:nth-child(3) { background: #ffb02e; box-shadow: 0 0 6px rgba(255,176,46,.9); animation-delay: 1s; }
+      .ck-leds i:nth-child(4) { background: #ff4d5e; box-shadow: 0 0 6px rgba(255,77,94,.9); animation-delay: 1.5s; }
+      @keyframes ckLed { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+      .ck-pilotchip { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+      .ck-pilotchip .hp-ava { width: 40px; height: 40px; } .ck-pilotchip .hp-ava svg { width: 40px; height: 40px; }
+      .ck-pilotchip .hp-name { font-size: 11px; }
+      .ck-pilotchip .hp-sub { font-size: 9.5px; letter-spacing: .06em; }
+      .ck-statbar { margin-top: 7px; }
+      .ck-statbar small { display: flex; justify-content: space-between; font-size: 8px; font-weight: 700; letter-spacing: .18em; color: var(--dim); }
+      .ck-statbar small b { color: var(--ink); font-family: "Orbitron", monospace; font-size: 9px; }
+      .ck-statbar .track { margin-top: 3px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.13); overflow: hidden; }
+      .ck-statbar .fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #2ef2c0, #3fd6ff); box-shadow: 0 0 7px rgba(63,214,255,.6); transition: width .5s cubic-bezier(.22,1,.36,1); }
+      .ck-statbar .fill.amber { background: linear-gradient(90deg, #ffb02e, #ffd23d); box-shadow: 0 0 7px rgba(255,176,46,.6); }
+      .ck-key {
+        position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; width: 100%;
+        padding: 8px 2px 7px; margin-top: 6px; cursor: pointer; color: var(--ink);
+        font-family: "Orbitron", monospace; font-size: 9px; font-weight: 700; letter-spacing: .14em;
+        background: linear-gradient(180deg, rgba(38,66,98,.95), rgba(12,26,44,.95));
+        border: 1px solid rgba(120,205,255,.45); border-radius: 9px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.2), inset 0 -6px 10px rgba(0,0,0,.35), 0 4px 10px rgba(0,0,0,.4);
+        transition: transform .13s cubic-bezier(.34,1.45,.64,1), box-shadow .2s ease, border-color .2s ease;
+      }
+      .ck-key:first-of-type { margin-top: 0; }
+      .ck-key svg { width: 17px; height: 17px; fill: #aee9ff; }
+      .ck-key:active { transform: translateY(2px) scale(.97); box-shadow: inset 0 2px 8px rgba(0,0,0,.5); }
+      .ck-key.lit { border-color: rgba(255,210,61,.8); color: #ffd98a; box-shadow: 0 0 13px rgba(255,176,46,.3), inset 0 1px 0 rgba(255,255,255,.2); }
+      .ck-key.lit svg { fill: #ffd98a; }
+      .ck-key .bdot { position: absolute; top: 5px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d5e; box-shadow: 0 0 8px rgba(255,77,94,.95); display: none; animation: dotPulse 1.2s ease-in-out infinite alternate; }
+      .ck-key.has-badge .bdot { display: block; }
+
+      /* next-boss plate + guarded LAUNCH */
+      .ck-bossplate { width: 100%; max-width: 400px; margin-top: 10px; display: flex; align-items: center; gap: 10px; padding: 9px 13px;
+        background: linear-gradient(180deg, rgba(46,10,16,.72), rgba(16,4,8,.78)); border: 1px solid rgba(255,77,94,.45); border-radius: 11px;
+        box-shadow: inset 0 1px 0 rgba(255,160,170,.14), 0 0 18px rgba(255,36,56,.12); }
+      .ck-bossplate .skull { flex: 0 0 auto; width: 22px; height: 22px; fill: #ff8a96; filter: drop-shadow(0 0 6px rgba(255,77,94,.7)); }
+      .ck-bossplate .bp-meta { flex: 1 1 auto; min-width: 0; text-align: left; }
+      .ck-bossplate .bp-k { font-size: 8.5px; font-weight: 700; letter-spacing: .26em; color: #ff9aa4; }
+      .ck-bossplate .bp-v { font-family: "Orbitron", monospace; font-size: 13.5px; font-weight: 700; color: #ffe9eb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .ck-bossplate .bp-bounty { font-family: "Orbitron", monospace; font-size: 12px; font-weight: 700; color: #ffd98a; text-align: right; }
+      .ck-bossplate .bp-bounty small { display: block; font-size: 8px; letter-spacing: .2em; color: var(--dim); }
+      .ck-launchwrap { width: 100%; max-width: 400px; margin-top: 13px; display: flex; flex-direction: column; align-items: center; }
+      .ck-guard { width: 210px; height: 9px; border-radius: 5px 5px 0 0; background: repeating-linear-gradient(45deg, #f7b733 0 10px, #191204 10px 20px); box-shadow: 0 0 12px rgba(247,183,51,.35); }
+      #stage #scr-start #btn-play {
+        margin: 0; width: 210px; max-width: none; padding: 15px 10px 14px;
+        background: linear-gradient(180deg, #ff6b57 0%, #e8232f 55%, #b30d1c 100%);
+        border: 1px solid rgba(255,190,180,.75); border-radius: 0 0 14px 14px;
+        color: #fff; font-family: "Orbitron", monospace; font-size: 19px; font-weight: 900; letter-spacing: .3em; padding-left: calc(10px + .3em);
+        text-shadow: 0 2px 6px rgba(90,0,8,.7);
+        box-shadow: 0 12px 34px rgba(232,35,47,.42), inset 0 1px 0 rgba(255,255,255,.5), inset 0 -12px 20px rgba(80,0,10,.45);
+        animation: ckLaunchPulse 2.4s ease-in-out infinite alternate; transition: transform .15s ease;
+      }
+      @keyframes ckLaunchPulse { from { box-shadow: 0 10px 26px rgba(232,35,47,.32), inset 0 1px 0 rgba(255,255,255,.5), inset 0 -12px 20px rgba(80,0,10,.45); } to { box-shadow: 0 14px 42px rgba(232,35,47,.55), inset 0 1px 0 rgba(255,255,255,.5), inset 0 -12px 20px rgba(80,0,10,.45); } }
+      #stage #scr-start #btn-play:active { transform: scale(.96); }
+      #stage #scr-start #btn-play.spooling { animation: ckSpool .32s linear infinite; letter-spacing: .18em; font-size: 15px; }
+      @keyframes ckSpool { from { filter: brightness(1); } 50% { filter: brightness(1.45); } to { filter: brightness(1); } }
+      #scr-start #run-tag { margin-top: 10px; }
+
+      /* hub loadout strip + pilot dock, cockpit trim */
+      #stage #scr-start .home-panel { background: linear-gradient(180deg, rgba(14,30,50,.88), rgba(5,12,24,.92)); border-color: rgba(63,214,255,.3); border-radius: 12px; box-shadow: inset 0 1px 0 rgba(160,230,255,.12), 0 8px 20px rgba(0,0,0,.45); }
+      #stage #scr-start .lo-label { color: #8fd8ff; }
+      #stage #scr-start .pilot-line { border-top-color: rgba(63,214,255,.16); }
+      #stage #scr-start .pilot-tag { color: #8fd8ff; }
+      #stage #scr-start #pilot-dock { background: none; border-top: none; justify-content: center; gap: 26px; padding: 12px 12px 0; width: 100%; }
+      #stage #scr-start .dock-name { color: #7d93a8; }
+      #stage #scr-start .dock-pilot.sel .dock-name { color: #ffd23d; }
+      #stage #scr-start .dock-pilot::after { background: #ffd23d; }
+      .ck-howto { margin-top: 14px; max-width: 348px; color: #7e97ab; font-size: 13px; font-weight: 600; line-height: 1.5; text-align: center; }
+      .ck-howto b { color: #d9f4ff; }
+      @media (max-height: 700px) {
+        .ck-stage { min-height: 218px; }
+        #stage #scr-start .ck-padwrap .hero-zone { height: 148px; }
+        #stage #scr-start .ck-padwrap .hero { width: 148px; height: 144px; }
+        #stage #scr-start #hero-ship { width: 144px; height: 140px; }
+        .ck-console { width: 78px; padding: 7px 6px 8px; }
+        .ck-key { font-size: 8px; padding: 6px 1px 5px; }
+      }
+
+      /* ---------- shared meta nav key-row ---------- */
+      .meta-nav { display: flex; gap: 6px; width: 100%; max-width: 400px; margin: 18px auto 2px; }
+      .meta-key {
+        position: relative; flex: 1 1 0; padding: 9px 2px 8px; cursor: pointer; text-align: center;
+        font-family: "Orbitron", monospace; font-size: 9.5px; font-weight: 700; letter-spacing: .1em; color: #9fc6dd;
+        background: linear-gradient(180deg, rgba(24,44,68,.92), rgba(8,18,32,.94));
+        border: 1px solid rgba(120,205,255,.35); border-radius: 9px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 4px 10px rgba(0,0,0,.4);
+        transition: transform .13s cubic-bezier(.34,1.45,.64,1), color .2s ease, border-color .2s ease;
+      }
+      .meta-key:active { transform: translateY(2px) scale(.97); }
+      .meta-key.on { color: #ffd98a; border-color: rgba(255,210,61,.75); box-shadow: 0 0 12px rgba(255,176,46,.25), inset 0 1px 0 rgba(255,255,255,.16); }
+      .meta-key .bdot { position: absolute; top: 5px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #ff4d5e; box-shadow: 0 0 8px rgba(255,77,94,.95); display: none; animation: dotPulse 1.2s ease-in-out infinite alternate; }
+      .meta-key.has-badge .bdot { display: block; }
+
+      /* ---------- HANGAR — engineering bay ---------- */
+      #scr-loadout {
+        background:
+          radial-gradient(ellipse 100% 40% at 50% 0%, rgba(255,170,60,.10), rgba(0,0,0,0) 60%),
+          radial-gradient(ellipse 120% 60% at 50% 30%, rgba(14,40,68,.92), rgba(2,5,12,.96) 78%);
+      }
+      .hg-stage { position: relative; width: 100%; max-width: 348px; height: 196px; margin-top: 10px; border-radius: 14px; overflow: hidden;
+        background: radial-gradient(ellipse 80% 60% at 50% 108%, rgba(63,214,255,.14), rgba(0,0,0,0) 65%), radial-gradient(1.2px 1.2px at 24% 26%, rgba(255,255,255,.5), rgba(0,0,0,0) 60%), radial-gradient(1px 1px at 76% 20%, rgba(255,255,255,.45), rgba(0,0,0,0) 60%), #040b16;
+        border: 1px solid rgba(120,205,255,.3); box-shadow: inset 0 0 34px rgba(0,0,0,.55), 0 10px 24px rgba(0,0,0,.4); }
+      .hg-stage::before, .hg-stage::after { content: ""; position: absolute; top: 0; bottom: 0; width: 26px; z-index: 3; pointer-events: none;
+        background: repeating-linear-gradient(180deg, rgba(120,205,255,.13) 0 3px, rgba(0,0,0,0) 3px 26px); border-color: rgba(120,205,255,.25); }
+      .hg-stage::before { left: 0; border-right: 1px solid rgba(120,205,255,.25); }
+      .hg-stage::after { right: 0; border-left: 1px solid rgba(120,205,255,.25); }
+      #hangar-canvas { position: absolute; left: 50%; top: 50%; width: 178px; height: 172px; transform: translate(-50%, -52%); display: block; }
+      .hg-ring { position: absolute; left: 50%; top: 50%; width: 168px; height: 168px; margin: -84px; border-radius: 50%; z-index: 2; pointer-events: none;
+        border: 1.5px dashed rgba(63,214,255,.5); box-shadow: 0 0 18px rgba(63,214,255,.18), inset 0 0 18px rgba(63,214,255,.12); animation: ckSpin 16s linear infinite; }
+      .hg-scan { position: absolute; left: 12%; right: 12%; top: 0; height: 22px; z-index: 2; pointer-events: none;
+        background: linear-gradient(180deg, rgba(0,0,0,0), rgba(63,214,255,.20), rgba(0,0,0,0)); animation: hgScan 3.6s ease-in-out infinite alternate; }
+      @keyframes hgScan { from { transform: translateY(6px); } to { transform: translateY(158px); } }
+      .hg-power { width: 100%; max-width: 348px; margin-top: 12px; padding: 10px 13px; border-radius: 11px; text-align: left;
+        background: linear-gradient(180deg, rgba(30,24,8,.85), rgba(10,8,3,.9)); border: 1px solid rgba(255,176,46,.45);
+        box-shadow: inset 0 1px 0 rgba(255,235,190,.14), 0 0 16px rgba(255,176,46,.10); }
+      .hg-power .hp-k { font-size: 9px; font-weight: 700; letter-spacing: .26em; color: #e9b558; }
+      .hg-power .hp-v { font-family: "Orbitron", monospace; font-size: 27px; font-weight: 900; color: #ffc44d; text-shadow: 0 0 16px rgba(255,170,40,.4); line-height: 1.15; }
+      .hg-power .hp-parts { font-size: 11.5px; font-weight: 600; color: #b9ac8d; line-height: 1.45; }
+      .upg-row { display: flex; align-items: center; gap: 10px; padding: 9px 11px; margin-top: 8px; border-radius: 10px;
+        background: rgba(4,12,24,.72); border: 1px solid rgba(63,214,255,.25); }
+      .upg-meta { flex: 1 1 auto; min-width: 0; text-align: left; }
+      .upg-name { font-family: "Orbitron", monospace; font-size: 12px; font-weight: 700; letter-spacing: .08em; color: var(--ink); }
+      .upg-fx { font-size: 11.5px; font-weight: 600; color: var(--dim); margin-top: 1px; }
+      .upg-pips { display: flex; gap: 3px; margin-top: 5px; }
+      .upg-pips span { width: 13px; height: 5px; border-radius: 2.5px; background: rgba(255,255,255,.14); }
+      .upg-pips span.on { background: var(--amber); box-shadow: 0 0 6px rgba(255,176,46,.7); }
+      .upg-btn {
+        flex: 0 0 auto; min-width: 86px; padding: 10px 10px; cursor: pointer; border-radius: 9px;
+        font-family: "Orbitron", monospace; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: #241503;
+        background: linear-gradient(180deg, #ffd97a, #f7b733 60%, #eda412); border: 1px solid rgba(255,226,160,.8);
+        box-shadow: 0 5px 14px rgba(247,183,51,.3), inset 0 1px 0 rgba(255,255,255,.6);
+        transition: transform .13s cubic-bezier(.34,1.45,.64,1), filter .2s ease;
+      }
+      .upg-btn:active { transform: scale(.95); }
+      .upg-btn:disabled { filter: grayscale(.8) brightness(.6); cursor: default; color: #cfd6dd; }
+      .hg-wallet { display: flex; align-items: center; gap: 7px; margin-top: 10px; font-family: "Orbitron", monospace; font-size: 13px; font-weight: 700; color: var(--ink); }
+      .hg-wallet .coin { width: 14px; height: 14px; border-radius: 50%; background: radial-gradient(circle at 35% 32%, #fff3cf, #f7b733 55%, #b97a08); box-shadow: 0 0 8px rgba(247,183,51,.8); }
+      .hg-wallet small { font-family: "Rajdhani", sans-serif; font-size: 10px; letter-spacing: .2em; color: var(--dim); }
+
+      /* ---------- QUESTS — incoming transmissions ---------- */
+      #scr-quests, #scr-campaign { justify-content: flex-start; overflow-y: auto; touch-action: pan-y; padding-top: calc(18px + env(safe-area-inset-top)); padding-bottom: 26px; text-align: left; }
+      #scr-quests h2, #scr-campaign h2 { align-self: center; }
+      #scr-quests .subtitle, #scr-campaign .subtitle { align-self: center; }
+      .q-sec { width: 100%; max-width: 356px; margin-top: 16px; }
+      .chest-track { position: relative; display: flex; justify-content: space-between; margin: 14px 4px 4px; }
+      .chest-track::before { content: ""; position: absolute; left: 6%; right: 6%; top: 19px; height: 3px; border-radius: 2px; background: rgba(63,214,255,.18); }
+      .chest-track .ct-fill { position: absolute; left: 6%; top: 19px; height: 3px; border-radius: 2px; background: linear-gradient(90deg, #f7b733, #ffd97a); box-shadow: 0 0 9px rgba(247,183,51,.65); transition: width .6s cubic-bezier(.22,1,.36,1); }
+      .chest { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; background: none; border: none; cursor: pointer; padding: 0; color: var(--dim); font-family: "Rajdhani", sans-serif; }
+      .chest .box { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+        background: linear-gradient(180deg, rgba(24,44,68,.92), rgba(8,18,32,.94)); border: 1px solid rgba(120,205,255,.35);
+        font-family: "Orbitron", monospace; font-size: 12px; font-weight: 700; color: #8fb8d8; transition: all .25s ease; }
+      .chest small { font-size: 9px; font-weight: 700; letter-spacing: .1em; }
+      .chest.ready .box { border-color: rgba(255,210,61,.85); color: #ffd98a; box-shadow: 0 0 14px rgba(255,176,46,.4); animation: ckLaunchPulse 1.6s ease-in-out infinite alternate; }
+      .chest.done { opacity: .55; } .chest.done .box { color: #2ef2c0; border-color: rgba(46,242,192,.5); animation: none; }
+      .q-row { position: relative; display: flex; gap: 10px; align-items: center; padding: 10px 11px; margin-top: 8px; border-radius: 11px;
+        background: linear-gradient(180deg, rgba(12,28,48,.85), rgba(4,11,22,.9)); border: 1px solid rgba(63,214,255,.26);
+        box-shadow: inset 0 1px 0 rgba(160,230,255,.10); overflow: hidden; }
+      .q-row::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(100deg, rgba(0,0,0,0) 30%, rgba(140,225,255,.06) 50%, rgba(0,0,0,0) 70%); animation: qShimmer 4.5s ease-in-out infinite; }
+      @keyframes qShimmer { 0%,100% { transform: translateX(-60%); } 50% { transform: translateX(60%); } }
+      .q-sig { flex: 0 0 auto; display: flex; align-items: flex-end; gap: 2px; height: 20px; }
+      .q-sig i { width: 3.5px; border-radius: 2px; background: rgba(63,214,255,.3); }
+      .q-sig i:nth-child(1) { height: 6px; } .q-sig i:nth-child(2) { height: 10px; } .q-sig i:nth-child(3) { height: 14px; } .q-sig i:nth-child(4) { height: 19px; }
+      .q-sig i.on { background: #3fd6ff; box-shadow: 0 0 5px rgba(63,214,255,.8); }
+      .q-meta { flex: 1 1 auto; min-width: 0; }
+      .q-from { font-size: 8.5px; font-weight: 700; letter-spacing: .22em; color: rgba(140,220,255,.75); }
+      .q-label { font-size: 14.5px; font-weight: 700; color: var(--ink); line-height: 1.25; }
+      .q-prog { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+      .q-prog .track { flex: 1; height: 5px; border-radius: 3px; background: rgba(255,255,255,.12); overflow: hidden; }
+      .q-prog .fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #2ef2c0, #3fd6ff); transition: width .5s cubic-bezier(.22,1,.36,1); }
+      .q-prog .num { font-family: "Orbitron", monospace; font-size: 10.5px; font-weight: 700; color: #aee9ff; white-space: nowrap; }
+      .q-claim {
+        flex: 0 0 auto; padding: 10px 12px; border-radius: 9px; cursor: pointer; border: 1px solid rgba(255,226,160,.8);
+        font-family: "Orbitron", monospace; font-size: 10.5px; font-weight: 700; letter-spacing: .05em; color: #241503;
+        background: linear-gradient(180deg, #ffd97a, #f7b733 60%, #eda412); box-shadow: 0 5px 14px rgba(247,183,51,.3);
+        transition: transform .13s cubic-bezier(.34,1.45,.64,1), filter .2s ease;
+      }
+      .q-claim:active { transform: scale(.95); }
+      .q-claim:disabled { background: rgba(20,36,56,.8); border-color: rgba(120,205,255,.25); color: #6f8aa0; box-shadow: none; cursor: default; }
+      .q-claim.claimed { background: rgba(10,40,32,.8); border-color: rgba(46,242,192,.5); color: #2ef2c0; }
+      .q-stamp { font-family: "Orbitron", monospace; font-size: 9px; font-weight: 700; letter-spacing: .14em; color: #2ef2c0; border: 1.5px solid rgba(46,242,192,.65); border-radius: 5px; padding: 3px 6px; transform: rotate(-4deg); }
+
+      /* ---------- CAMPAIGN — hologram table ---------- */
+      .camp-tabs { display: flex; gap: 7px; width: 100%; max-width: 356px; margin-top: 14px; }
+      .camp-tab { flex: 1 1 0; padding: 9px 4px; cursor: pointer; border-radius: 9px; text-align: center;
+        font-family: "Orbitron", monospace; font-size: 10.5px; font-weight: 700; letter-spacing: .08em; color: #9fc6dd;
+        background: rgba(8,20,36,.8); border: 1px solid rgba(120,205,255,.3); transition: all .2s ease; }
+      .camp-tab.on { color: #0a1626; background: linear-gradient(180deg, #8fe6ff, #3fd6ff); border-color: rgba(200,245,255,.8); box-shadow: 0 0 16px rgba(63,214,255,.4); }
+      .camp-list { width: 100%; max-width: 356px; margin-top: 6px; }
+      .camp-node { position: relative; display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 13px 15px; margin-top: 12px; cursor: pointer; text-align: left;
+        border-radius: 13px; color: var(--ink); font-family: "Rajdhani", sans-serif;
+        background: linear-gradient(180deg, rgba(14,34,56,.75), rgba(5,13,26,.82)); border: 1px solid rgba(63,214,255,.35);
+        box-shadow: inset 0 1px 0 rgba(160,230,255,.13), 0 0 20px rgba(63,214,255,.10);
+        transition: transform .15s cubic-bezier(.34,1.45,.64,1), border-color .2s ease, box-shadow .2s ease; }
+      .camp-node::after { content: ""; position: absolute; left: 50%; bottom: -9px; transform: translateX(-50%); width: 74px; height: 12px; pointer-events: none;
+        background: radial-gradient(ellipse, rgba(63,214,255,.4), rgba(0,0,0,0) 70%); clip-path: polygon(18% 100%, 82% 100%, 58% 0, 42% 0); opacity: .8; }
+      .camp-node:active { transform: scale(.98); }
+      .camp-node.sel { border-color: rgba(255,210,61,.85); box-shadow: 0 0 22px rgba(255,176,46,.28), inset 0 1px 0 rgba(255,235,190,.2); }
+      .camp-node.locked { opacity: .45; filter: saturate(.4); cursor: default; }
+      .camp-orb { flex: 0 0 auto; width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        font-family: "Orbitron", monospace; font-size: 15px; font-weight: 900; color: #06222e;
+        background: radial-gradient(circle at 34% 30%, #eafcff, #3fd6ff 55%, #0d5f8c); box-shadow: 0 0 16px rgba(63,214,255,.5), inset -6px -8px 14px rgba(0,20,40,.5); }
+      .camp-node.boss .camp-orb { width: 52px; height: 52px; background: radial-gradient(circle at 34% 30%, #ffe9eb, #ff4d5e 55%, #7c0d1c); box-shadow: 0 0 18px rgba(255,77,94,.55), inset -6px -8px 14px rgba(40,0,8,.55); color: #2b0208; }
+      .camp-meta { flex: 1 1 auto; min-width: 0; }
+      .camp-sky2 { font-family: "Orbitron", monospace; font-size: 14px; font-weight: 700; letter-spacing: .06em; color: #eaf6ff; }
+      .camp-boss2 { font-size: 12.5px; font-weight: 600; color: #9fc6dd; margin-top: 1px; }
+      .camp-right { text-align: right; flex: 0 0 auto; }
+      .camp-stars { font-size: 14px; letter-spacing: 2px; color: #ffd23d; text-shadow: 0 0 8px rgba(255,210,61,.6); }
+      .camp-stars .off { color: rgba(255,255,255,.18); text-shadow: none; }
+      .camp-bounty2 { font-family: "Orbitron", monospace; font-size: 11px; font-weight: 700; color: #ffd98a; margin-top: 2px; }
+      .camp-soon { width: 100%; max-width: 356px; margin-top: 18px; padding: 26px 18px; text-align: center; border-radius: 13px;
+        border: 1.5px dashed rgba(63,214,255,.45); background: rgba(6,18,34,.55); color: #8fd8ff;
+        font-family: "Orbitron", monospace; font-size: 15px; font-weight: 700; letter-spacing: .22em;
+        box-shadow: inset 0 0 30px rgba(63,214,255,.07); animation: ckHolo 3.2s ease-in-out infinite alternate; }
+      .camp-soon small { display: block; margin-top: 9px; font-family: "Rajdhani", sans-serif; font-size: 13px; font-weight: 600; letter-spacing: .04em; color: var(--dim); }
+      @keyframes ckHolo { from { opacity: .78; } to { opacity: 1; } }
+
+      /* ---------- RESULTS — rewards plate ---------- */
+      .res-rewards { width: 100%; max-width: 308px; margin-top: 16px; padding: 11px 13px 12px; border-radius: 11px; text-align: left;
+        background: linear-gradient(180deg, rgba(20,36,20,.0), rgba(0,0,0,0)), linear-gradient(180deg, rgba(30,26,8,.88), rgba(10,8,3,.92));
+        border: 1px solid rgba(255,176,46,.5); box-shadow: inset 0 1px 0 rgba(255,235,190,.14), 0 0 18px rgba(255,176,46,.10); }
+      .res-rewards .rr-k { font-size: 9px; font-weight: 700; letter-spacing: .26em; color: #e9b558; margin-bottom: 7px; }
+      .rr-row { display: flex; justify-content: space-between; align-items: baseline; padding: 3px 0; }
+      .rr-row span { font-size: 12px; font-weight: 700; letter-spacing: .14em; color: #b9ac8d; }
+      .rr-row b { font-family: "Orbitron", monospace; font-size: 15px; font-weight: 700; color: #ffc44d; }
+      .rr-row b.cyan { color: #8fe6ff; }
+      .rr-note { margin-top: 7px; padding-top: 7px; border-top: 1px solid rgba(255,176,46,.18); font-size: 12.5px; font-weight: 600; color: #2ef2c0; line-height: 1.45; }
+      .rr-note:empty { display: none; }
+      @media (prefers-reduced-motion: reduce) {
+        .screen.on, .ck-reticle, .ck-reticle::before, .ck-radar .sweep, .hg-ring, .hg-scan, .q-row::before, #stage #scr-start #btn-play, .chest.ready .box, .camp-soon { animation: none !important; }
+      }
     </style>
   </head>
   <body>
@@ -1185,90 +1545,96 @@
       <div id="hint"></div>
       <div id="count-num"></div>
 
-      <!-- START — Race The Sun home: Solar Gold default, Sunset / Eclipse themes in Settings -->
+      <!-- START — TEST RUN 04: Cockpit hub (Sample 04 premium). The selected ship on its
+           launch pad is the exact gameplay ship (shared drawShipModel canvas render). -->
       <div class="screen on theme-gold" id="scr-start">
-        <div class="rts-scene">
-          <div class="rts-sun-wrap" aria-hidden="true"><div class="rts-sun-glow"></div><div class="rts-sun"></div></div>
-          <canvas id="home-planet-cv" width="144" height="144" aria-hidden="true"></canvas>
-          <div class="rts-haze" aria-hidden="true"></div>
-          <div class="rts-layer rts-far" aria-hidden="true"><svg class="rts-drift" viewBox="0 0 1200 200" preserveAspectRatio="none"><polygon points="0,200 0,130 90,80 170,120 260,55 350,110 430,70 520,125 600,200"/><polygon points="600,200 600,130 690,80 770,120 860,55 950,110 1030,70 1120,125 1200,200"/><polygon points="180,200 240,120 300,200" opacity=".7"/><polygon points="780,200 840,120 900,200" opacity=".7"/></svg></div>
-          <div class="rts-layer rts-mid" aria-hidden="true"><svg class="rts-drift" viewBox="0 0 1200 220" preserveAspectRatio="none"><polygon points="0,220 0,150 120,95 210,140 330,80 430,150 520,105 600,220"/><polygon points="600,220 600,150 720,95 810,140 930,80 1030,150 1120,105 1200,220"/><rect x="60" y="150" width="46" height="70"/><rect x="660" y="150" width="46" height="70"/><rect x="380" y="130" width="30" height="90"/><rect x="980" y="130" width="30" height="90"/><polygon points="470,220 520,140 570,220"/><polygon points="1070,220 1120,140 1170,220"/></svg></div>
-          <div class="rts-ground" aria-hidden="true"></div>
-          <div class="rts-layer rts-near" aria-hidden="true"><svg class="rts-drift" viewBox="0 0 1200 200" preserveAspectRatio="none"><polygon points="0,200 0,110 70,200"/><polygon points="600,200 600,110 670,200"/><polygon points="150,200 215,95 280,200"/><polygon points="750,200 815,95 880,200"/><rect x="330" y="120" width="54" height="80"/><rect x="930" y="120" width="54" height="80"/><polygon points="440,200 520,150 600,200"/><polygon points="1040,200 1120,150 1200,200"/><polygon points="40,200 90,150 140,200"/><polygon points="640,200 690,150 740,200"/></svg></div>
-          <div class="rts-top">
-            <div style="display:flex;gap:8px;align-items:center">
-              <button class="icon-btn music-btn rts-icon" aria-label="Toggle music">
-                <svg class="ico-mon" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
-                <svg class="ico-moff" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/><path d="M3.4 2 2 3.4 20.6 22 22 20.6z"/></svg>
-              </button>
-              <button class="hub-seg rts-seg" id="btn-gyro" aria-label="Enable tilt steering">
-                <svg viewBox="0 0 24 24"><path d="M8.5 1.8h7A1.7 1.7 0 0 1 17.2 3.5v17a1.7 1.7 0 0 1-1.7 1.7h-7A1.7 1.7 0 0 1 6.8 20.5v-17A1.7 1.7 0 0 1 8.5 1.8z"/><circle cx="12" cy="19.35" r="1.35"/></svg>
-                <span class="gyro-label">TILT</span>
-              </button>
-            </div>
-            <div class="rts-bounty">BOUNTY<b>26,000 PTS</b></div>
-          </div>
-          <h1 class="title rts-title">STARFALL</h1>
-          <p class="rts-objective" id="home-objective">WAVE 1 — <b>VOID MOTHERSHIP</b> · 3,000 PTS</p>
-          <div class="rts-shipshadow" aria-hidden="true"></div>
-          <div class="hero-zone" aria-hidden="true">
-            <div class="hero">
-              <div class="hero-glow"></div>
-              <div id="hero-ship"><canvas id="hero-canvas" role="img" aria-label="Your selected ship, exactly as it flies in game"></canvas></div>
-              <span class="hero-puff p1"></span><span class="hero-puff p2"></span>
+        <div class="ck-scroll">
+          <div class="ck-topbar">
+            <button class="icon-btn music-btn" aria-label="Toggle music">
+              <svg class="ico-mon" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+              <svg class="ico-moff" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/><path d="M3.4 2 2 3.4 20.6 22 22 20.6z"/></svg>
+            </button>
+            <button class="hub-seg" id="btn-gyro" aria-label="Enable tilt steering">
+              <svg viewBox="0 0 24 24"><path d="M8.5 1.8h7A1.7 1.7 0 0 1 17.2 3.5v17a1.7 1.7 0 0 1-1.7 1.7h-7A1.7 1.7 0 0 1 6.8 20.5v-17A1.7 1.7 0 0 1 8.5 1.8z"/><circle cx="12" cy="19.35" r="1.35"/></svg>
+              <span class="gyro-label">TILT</span>
+            </button>
+            <div class="ck-wallet">
+              <span class="ck-wal"><span class="coin"></span><span id="hub-credits">0</span><small>CR</small></span>
+              <span class="ck-wal cores"><span class="core"></span><span id="hub-cores">0</span><small>CORES</small></span>
             </div>
           </div>
-        </div>
-        <div id="tilt-help" role="alertdialog" aria-labelledby="tilt-help-title" aria-describedby="tilt-help-lead">
-          <div class="tilt-help-title" id="tilt-help-title">TILT NEEDS MOTION ACCESS</div>
-          <p class="tilt-help-lead" id="tilt-help-lead">No permission prompt appeared and no tilt data is reaching the game — this in-app browser view can't ask for motion access.</p>
-          <ol class="tilt-help-steps">
-            <li><b>Open this game in Safari</b>, tap <b>TILT</b> there, and choose <b>Allow</b> — iOS shows the motion prompt in Safari. (If no prompt appears here, that's why.)</li>
-            <li>If Safari still doesn't ask: check <b>Settings &rarr; Apps &rarr; Safari</b> for a Motion &amp; Orientation Access switch and turn it <b>ON</b> — not every iOS version shows one.</li>
-          </ol>
-          <div class="tilt-help-btns">
-            <button class="tilt-help-retry" id="btn-tilt-retry">RETRY TILT</button>
-            <button class="tilt-help-close" id="btn-tilt-close">NOT NOW</button>
-          </div>
-        </div>
-        <div class="home-scroll rts-below">
-          <div id="pilot-dock" role="group" aria-label="Choose your pilot">
-            <button class="dock-pilot sel" data-pilot="nova"><span class="dock-name">NOVA</span></button>
-            <button class="dock-pilot" data-pilot="rex"><span class="dock-name">REX</span></button>
-            <button class="dock-pilot" data-pilot="ivy"><span class="dock-name">IVY</span></button>
-          </div>
-          <div class="pilot-line rts-pilot-line">
-            <span class="pilot-face" id="home-pilot-face"></span>
-            <span class="pilot-meta"><span class="pilot-name" id="home-pilot-name">NOVA</span><span class="pilot-perk" id="home-pilot-perk">Ace · +15% score</span></span>
-            <span class="pilot-tag">PILOT</span>
-          </div>
-          <div class="home-profile">
-            <span class="hp-ava" id="home-ava"></span>
-            <span class="hp-meta"><span class="hp-name" id="home-player-name">PLAYER</span><span class="hp-sub" id="home-profile-sub">TILT · SHIP</span></span>
-            <span class="pilot-tag">PROFILE</span>
-          </div>
-          <button class="btn" id="btn-play">PLAY</button>
-          <div class="rts-menu">
-            <button id="btn-menu-loadout">LOADOUT</button><span class="dot">·</span>
-            <button id="btn-menu-pilots">PILOTS</button><span class="dot">·</span>
-            <button id="btn-menu-settings">SETTINGS</button>
-          </div>
-          <div id="run-tag"></div>
-          <div class="rts-settings" id="rts-settings">
-            <div class="set-row">
-              <span class="set-label">SETTINGS</span>
-              <button class="set-btn on" data-set="shake">SCREEN SHAKE</button>
-              <button class="set-btn on" data-set="flash">FLASHES</button>
-              <button class="set-btn" data-set="text">LARGE TEXT</button>
-              <button class="set-btn" data-set="perf">PERF MODE</button>
+
+          <div class="ck-hudrow">
+            <div class="ck-reticle" aria-hidden="true"></div>
+            <div class="ck-reads">
+              <span class="ck-read"><small>PWR</small><b id="ck-pwr">0</b></span>
+              <span class="ck-read"><small>TARGET</small><b id="ck-wave">WAVE 1</b></span>
+              <span class="ck-read"><small>BOUNTY</small><b class="gold" id="ck-bnty">3,000</b></span>
+              <span class="ck-read"><small>ALT</small><b id="ck-alt">12,480</b></span>
+              <span class="ck-read"><small>VEL</small><b id="ck-vel">0.42c</b></span>
+              <span class="ck-read"><small>TILT</small><b id="ck-mode">SHIP</b></span>
             </div>
-            <div class="set-row">
-              <span class="set-label">HOME THEME</span>
-              <button class="theme-btn on" data-theme="gold">SOLAR GOLD</button>
-              <button class="theme-btn" data-theme="sunset">SUNSET</button>
-              <button class="theme-btn" data-theme="eclipse">ECLIPSE</button>
+            <div class="ck-radar" aria-hidden="true"><span class="sweep"></span><span class="blip" style="left:30%;top:26%"></span><span class="blip" style="left:64%;top:58%;animation-delay:.8s"></span></div>
+          </div>
+
+          <div class="ck-stage">
+            <canvas id="home-planet-cv" width="144" height="144" aria-hidden="true"></canvas>
+            <div class="ck-padwrap">
+              <div class="hero-zone" aria-hidden="true">
+                <div class="hero">
+                  <div class="hero-glow"></div>
+                  <div id="hero-ship"><canvas id="hero-canvas" role="img" aria-label="Your selected ship, exactly as it flies in game"></canvas></div>
+                  <span class="hero-puff p1"></span><span class="hero-puff p2"></span>
+                </div>
+              </div>
+              <div class="ck-pad" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+            </div>
+            <div class="ck-haze" aria-hidden="true"></div>
+            <div class="ck-console left">
+              <div class="ck-con-title">PILOT · STATUS</div>
+              <div class="ck-leds" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+              <div class="ck-pilotchip">
+                <span class="hp-ava" id="home-ava"></span>
+                <span class="hp-meta"><span class="hp-name" id="home-player-name">PLAYER</span><span class="hp-sub" id="home-profile-sub">TILT · SHIP</span></span>
+              </div>
+              <div class="ck-statbar"><small>HULL <b id="ck-hull-num">3/3</b></small><div class="track"><div class="fill" id="ck-hullbar" style="width:75%"></div></div></div>
+              <div class="ck-statbar"><small>POWER <b id="ck-pwr-num">0</b></small><div class="track"><div class="fill amber" id="ck-pwrbar" style="width:20%"></div></div></div>
+            </div>
+            <div class="ck-console right">
+              <div class="ck-con-title">SYSTEMS</div>
+              <button class="ck-key" id="btn-menu-loadout"><svg viewBox="0 0 24 24"><path d="M21 6.5a5.5 5.5 0 0 1-7.6 5L7 17.9V21H3.9v-3.1l6.4-6.4A5.5 5.5 0 0 1 15.5 3l-2.6 2.6.7 3.2 3.2.7L19.4 7c.9.9 1.6 2.1 1.6-.5zM5 19h2v-2H5z" transform="scale(.95)"/></svg>HANGAR</button>
+              <button class="ck-key" id="btn-ck-quests"><svg viewBox="0 0 24 24"><path d="M4 4h13a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4zm3 4v2h8V8H7zm0 4v2h10v-2H7zm0 4v2h6v-2H7z"/></svg>QUESTS<span class="bdot"></span></button>
+              <button class="ck-key" id="btn-ck-campaign"><svg viewBox="0 0 24 24"><path d="M12 2l2.4 6.2L21 9l-5 4.4 1.5 6.6L12 16.7 6.5 20 8 13.4 3 9l6.6-.8z"/></svg>CAMPAIGN</button>
+              <button class="ck-key" id="btn-menu-pilots"><svg viewBox="0 0 24 24"><path d="M12 12a4.5 4.5 0 1 0-4.5-4.5A4.5 4.5 0 0 0 12 12zm0 2.2c-3.4 0-9 1.7-9 5V21h18v-1.8c0-3.3-5.6-5-9-5z"/></svg>PILOTS</button>
+              <button class="ck-key" id="btn-menu-settings"><svg viewBox="0 0 24 24"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2-1.6-2-3.4-2.4 1a7.6 7.6 0 0 0-1.7-1L14.9 3H9.1L8.7 5.9a7.6 7.6 0 0 0-1.7 1l-2.4-1-2 3.4L4.6 11a7.6 7.6 0 0 0 0 2l-2 1.6 2 3.4 2.4-1a7.6 7.6 0 0 0 1.7 1l.4 2.9h5.8l.4-2.9a7.6 7.6 0 0 0 1.7-1l2.4 1 2-3.4zm-7.4 3a4 4 0 1 1 4-4 4 4 0 0 1-4 4z"/></svg>SETTINGS</button>
             </div>
           </div>
+
+          <div class="ck-bossplate">
+            <svg class="skull" viewBox="0 0 24 24"><path d="M12 2a8 8 0 0 0-8 8c0 2.9 1.6 5 3.5 6.3V20a1.5 1.5 0 0 0 1.5 1.5h6A1.5 1.5 0 0 0 16.5 20v-3.7C18.4 15 20 12.9 20 10a8 8 0 0 0-8-8zM8.5 13.5a2 2 0 1 1 2-2 2 2 0 0 1-2 2zm7 0a2 2 0 1 1 2-2 2 2 0 0 1-2 2z"/></svg>
+            <span class="bp-meta"><span class="bp-k">NEXT BOSS — <span id="ck-boss-sky">WAVE 1 · DEEP SPACE</span></span><span class="bp-v" id="home-objective">VOID MOTHERSHIP</span></span>
+            <span class="bp-bounty"><span id="ck-boss-bounty">3,000</span><small>PTS BOUNTY</small></span>
+          </div>
+
+          <div class="ck-launchwrap">
+            <div class="ck-guard" aria-hidden="true"></div>
+            <button class="btn" id="btn-play"><span id="launch-label">LAUNCH</span></button>
+            <div id="run-tag"></div>
+          </div>
+
+          <div id="tilt-help" role="alertdialog" aria-labelledby="tilt-help-title" aria-describedby="tilt-help-lead">
+            <div class="tilt-help-title" id="tilt-help-title">TILT NEEDS MOTION ACCESS</div>
+            <p class="tilt-help-lead" id="tilt-help-lead">No permission prompt appeared and no tilt data is reaching the game — this in-app browser view can't ask for motion access.</p>
+            <ol class="tilt-help-steps">
+              <li><b>Open this game in Safari</b>, tap <b>TILT</b> there, and choose <b>Allow</b> — iOS shows the motion prompt in Safari. (If no prompt appears here, that's why.)</li>
+              <li>If Safari still doesn't ask: check <b>Settings &rarr; Apps &rarr; Safari</b> for a Motion &amp; Orientation Access switch and turn it <b>ON</b> — not every iOS version shows one.</li>
+            </ol>
+            <div class="tilt-help-btns">
+              <button class="tilt-help-retry" id="btn-tilt-retry">RETRY TILT</button>
+              <button class="tilt-help-close" id="btn-tilt-close">NOT NOW</button>
+            </div>
+          </div>
+
           <div class="home-panel">
             <div class="lo-label">YOUR LOADOUT</div>
             <div class="glance-grid">
@@ -1276,23 +1642,21 @@
               <div class="glance-cell"><span class="glance-k">CANNON</span><span class="glance-v" id="home-gun">Pulse</span></div>
               <div class="glance-cell"><span class="glance-k">DRONE WING</span><span class="glance-v" id="home-drone">Scout</span></div>
             </div>
+            <div class="pilot-line">
+              <span class="pilot-face" id="home-pilot-face"></span>
+              <span class="pilot-meta"><span class="pilot-name" id="home-pilot-name">NOVA</span><span class="pilot-perk" id="home-pilot-perk">Ace · +15% score</span></span>
+              <span class="pilot-tag">PILOT</span>
+            </div>
           </div>
-          <div class="home-panel">
-            <div class="lo-label">THE CAMPAIGN — FIVE SKIES, FIVE BOSSES</div>
-            <div class="camp-row"><span class="camp-w">W1</span><span class="camp-sky">DEEP SPACE</span><span class="camp-boss">Void Mothership</span></div>
-            <div class="camp-row"><span class="camp-w">W2</span><span class="camp-sky">EMBER NEBULA</span><span class="camp-boss">Ember Dreadnought</span></div>
-            <div class="camp-row"><span class="camp-w">W3</span><span class="camp-sky">VOID RIFT</span><span class="camp-boss">Rift Leviathan</span></div>
-            <div class="camp-row"><span class="camp-w">W4</span><span class="camp-sky">CRYO ABYSS</span><span class="camp-boss">Cryo Warden</span></div>
-            <div class="camp-row"><span class="camp-w">W5</span><span class="camp-sky">EVENT HORIZON</span><span class="camp-boss">Eclipse Titan</span></div>
+
+          <div id="pilot-dock" role="group" aria-label="Choose your pilot">
+            <button class="dock-pilot sel" data-pilot="nova"><span class="dock-name">NOVA</span></button>
+            <button class="dock-pilot" data-pilot="rex"><span class="dock-name">REX</span></button>
+            <button class="dock-pilot" data-pilot="ivy"><span class="dock-name">IVY</span></button>
           </div>
-          <div class="howto">
-            <b>Drag</b> to fly — your ship fires on its own. Or tap <b>TILT</b> up top and steer by leaning your phone — hold it level to hover, lean to glide that way; the sky leans with you too.<br />
-            Grab <b style="color:var(--amber)">W</b> cores to stack your cannon, <b style="color:var(--teal)">S</b> cells for a shield, <b style="color:var(--cyan)">D</b> cells to deploy wing drones.<br />
-            Each cannon flies differently: <b>Pulse</b> sprays rapid cyan bolts, <b>Scatter</b> bursts orange pellets up close, <b>Lance</b> burns a piercing beam. Every drone wing has its own guns and temperament — check the loadout cards.<br />
-            <b>Hold, then release</b> for a piercing <b>charge shot</b>. The <b>BOMB</b> button (or <b>B</b> key) clears every enemy bullet and blasts the whole sky. Hit a boss's <b>glowing core</b> for double damage.<br />
-            Keyboard: <b>WASD</b> / <b>arrows</b> · <b>P</b> pauses · <b>M</b> mutes
-          </div>
-          <div class="fineprint">Home theme is saved on this device. Run progress is session-only — reloading resets the run.</div>
+
+          <div class="ck-howto"><b>Drag</b> to fly — your ship fires on its own. <b>TILT</b> steers by leaning (mode in Settings). <b>Hold, then release</b> for a charge shot; two fingers — or the <b>BOMB</b> button — fire the smart bomb. Hit a boss's <b>glowing core</b> for double damage.</div>
+          <div class="fineprint">Five skies. Five bosses. How far can you fly?</div>
         </div>
       </div>
 
@@ -1306,6 +1670,17 @@
         </div>
         <h2>LOADOUT</h2>
         <div class="subtitle" style="margin-top:8px">Ship · Cannon · Drones · Pilot</div>
+
+        <div class="hg-stage" aria-hidden="true">
+          <div class="hg-ring"></div>
+          <canvas id="hangar-canvas"></canvas>
+          <div class="hg-scan"></div>
+        </div>
+        <div class="hg-power">
+          <div class="hp-k">COMBAT POWER</div>
+          <div class="hp-v" id="hg-power">0</div>
+          <div class="hp-parts" id="hg-power-parts"></div>
+        </div>
 
         <div class="lo-group">
           <div class="lo-label">SHIP</div>
@@ -1410,8 +1785,107 @@
 
         <div class="lo-summary" id="lo-summary">VANGUARD · PULSE · SCOUT · NOVA<small>Combined build stats update as you pick</small></div>
 
+        <div class="lo-group">
+          <div class="lo-label">UPGRADES — ENGINEERING BAY</div>
+          <div class="upg-row">
+            <div class="upg-meta">
+              <div class="upg-name">POWER <span id="upg-power-lv" style="color:var(--amber)">LV 0</span></div>
+              <div class="upg-fx">+4% bullet damage per level — live in every shot you fire</div>
+              <div class="upg-pips" id="upg-power-pips"></div>
+            </div>
+            <button class="upg-btn" id="upg-power-btn">300 CR</button>
+          </div>
+          <div class="upg-row">
+            <div class="upg-meta">
+              <div class="upg-name">CANNON <span id="upg-cannon-lv" style="color:var(--amber)">LV 0</span></div>
+              <div class="upg-fx">+3% fire rate per level — your cannon cycles faster</div>
+              <div class="upg-pips" id="upg-cannon-pips"></div>
+            </div>
+            <button class="upg-btn" id="upg-cannon-btn">300 CR</button>
+          </div>
+          <div class="hg-wallet"><span class="coin"></span><span id="hg-credits">0</span><small>CREDITS AVAILABLE</small></div>
+        </div>
+
+        <div class="lo-group">
+          <div class="lo-label">SKIN — LIVERY</div>
+          <div class="lo-label" style="margin-top:2px; font-size:10px; letter-spacing:.2em; color:var(--dim)">SHIP COLOUR</div>
+          <div class="swatch-row" role="group" aria-label="Ship colour">
+            <button class="swatch" data-shipcolor="gold" style="background:#f5b93f" aria-label="Solar Gold"></button>
+            <button class="swatch" data-shipcolor="cyan" style="background:#3fd6ff" aria-label="Ion Cyan"></button>
+            <button class="swatch" data-shipcolor="crimson" style="background:#ff4d5e" aria-label="Crimson"></button>
+            <button class="swatch" data-shipcolor="violet" style="background:#b18cff" aria-label="Violet"></button>
+            <button class="swatch" data-shipcolor="emerald" style="background:#2ef2c0" aria-label="Emerald"></button>
+          </div>
+          <div class="lo-label" style="margin-top:11px; font-size:10px; letter-spacing:.2em; color:var(--dim)">BLASTERS</div>
+          <div class="swatch-row" role="group" aria-label="Blaster colour">
+            <button class="swatch" data-blaster="cyan" style="background:#3fd6ff" aria-label="Cyan bolts"></button>
+            <button class="swatch" data-blaster="gold" style="background:#ffd23d" aria-label="Gold bolts"></button>
+            <button class="swatch" data-blaster="magenta" style="background:#ff5da2" aria-label="Magenta bolts"></button>
+            <button class="swatch" data-blaster="lime" style="background:#a6ff4d" aria-label="Lime bolts"></button>
+          </div>
+          <div class="lo-label" style="margin-top:11px; font-size:10px; letter-spacing:.2em; color:var(--dim)">THRUSTERS</div>
+          <div class="swatch-row" role="group" aria-label="Thruster style">
+            <button class="swatch" data-thruster="cyan" style="background:linear-gradient(180deg,#fff,#3fd6ff 45%,transparent)" aria-label="Cyan Jet"></button>
+            <button class="swatch" data-thruster="solar" style="background:linear-gradient(180deg,#fff,#ff8a3d 45%,transparent)" aria-label="Solar Flare"></button>
+            <button class="swatch" data-thruster="magenta" style="background:linear-gradient(180deg,#fff,#ff5da2 45%,transparent)" aria-label="Magenta Pulse"></button>
+            <button class="swatch" data-thruster="emerald" style="background:linear-gradient(180deg,#fff,#2ef2c0 45%,transparent)" aria-label="Emerald Trail"></button>
+          </div>
+        </div>
+
         <button class="btn" id="btn-launch">LAUNCH&ensp;▶</button>
+        <button class="btn ghost" id="btn-try">TRY NOW — TEST FLIGHT</button>
         <button class="btn ghost" id="btn-loadout-back">BACK</button>
+        <nav class="meta-nav" aria-label="Cockpit sections">
+          <button class="meta-key" data-nav="start">HUB</button>
+          <button class="meta-key on" data-nav="loadout">HANGAR</button>
+          <button class="meta-key" data-nav="quests">QUESTS<span class="bdot"></span></button>
+          <button class="meta-key" data-nav="campaign">CAMPAIGN</button>
+          <button class="meta-key" data-nav="settings">SETTINGS</button>
+        </nav>
+      </div>
+
+      <!-- QUESTS — transmission style; every counter is fed by real gameplay events -->
+      <div class="screen" id="scr-quests">
+        <h2>QUESTS</h2>
+        <div class="subtitle" style="margin-top:8px">Incoming transmissions</div>
+        <div class="q-sec">
+          <div class="lo-label">DAILY — <span id="q-points">0</span>/100 QUEST POINTS · CHESTS</div>
+          <div class="chest-track" id="chest-track"></div>
+          <div id="q-daily"></div>
+        </div>
+        <div class="q-sec">
+          <div class="lo-label">ACHIEVEMENTS</div>
+          <div id="q-ach"></div>
+        </div>
+        <button class="btn ghost" id="btn-quests-back">BACK</button>
+        <nav class="meta-nav" aria-label="Cockpit sections">
+          <button class="meta-key" data-nav="start">HUB</button>
+          <button class="meta-key" data-nav="loadout">HANGAR</button>
+          <button class="meta-key on" data-nav="quests">QUESTS<span class="bdot"></span></button>
+          <button class="meta-key" data-nav="campaign">CAMPAIGN</button>
+          <button class="meta-key" data-nav="settings">SETTINGS</button>
+        </nav>
+      </div>
+
+      <!-- CAMPAIGN — hologram table: five skies, boss rush, endless -->
+      <div class="screen" id="scr-campaign">
+        <h2>CAMPAIGN</h2>
+        <div class="subtitle" style="margin-top:8px">Hologram table — five skies</div>
+        <div class="camp-tabs" role="group" aria-label="Campaign mode">
+          <button class="camp-tab on" data-ctab="campaign">CAMPAIGN</button>
+          <button class="camp-tab" data-ctab="rush">BOSS RUSH</button>
+          <button class="camp-tab" data-ctab="endless">ENDLESS</button>
+        </div>
+        <div class="camp-list" id="camp-list"></div>
+        <button class="btn" id="btn-camp-launch">LAUNCH TO SKY&ensp;▶</button>
+        <button class="btn ghost" id="btn-campaign-back">BACK</button>
+        <nav class="meta-nav" aria-label="Cockpit sections">
+          <button class="meta-key" data-nav="start">HUB</button>
+          <button class="meta-key" data-nav="loadout">HANGAR</button>
+          <button class="meta-key" data-nav="quests">QUESTS<span class="bdot"></span></button>
+          <button class="meta-key on" data-nav="campaign">CAMPAIGN</button>
+          <button class="meta-key" data-nav="settings">SETTINGS</button>
+        </nav>
       </div>
 
       <!-- PAUSE -->
@@ -1462,7 +1936,14 @@
           <div class="res-cell"><span>ACCURACY</span><b id="over-acc">0%</b></div>
           <div class="res-cell"><span>RANK</span><b class="rank" id="over-rank">D</b></div>
         </div>
+        <div class="res-rewards">
+          <div class="rr-k">REWARDS — THIS RUN</div>
+          <div class="rr-row"><span>CREDITS EARNED</span><b data-rew-credits>+0</b></div>
+          <div class="rr-row"><span>STAR CORES</span><b class="cyan" data-rew-cores>+0</b></div>
+          <div class="rr-note" data-rew-note></div>
+        </div>
         <button class="btn" id="btn-restart-over">RESTART</button>
+        <button class="btn ghost" id="btn-hangar-over">HANGAR</button>
         <button class="btn ghost home-btn" id="btn-home-over"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 8h-3v9h-4.5v-6h-3v6H6v-9H3z"/></svg>BACK TO HOME</button>
       </div>
 
@@ -1479,7 +1960,14 @@
           <div class="res-cell"><span>ACCURACY</span><b id="win-acc">0%</b></div>
           <div class="res-cell"><span>RANK</span><b class="rank" id="win-rank">D</b></div>
         </div>
+        <div class="res-rewards">
+          <div class="rr-k">REWARDS — THIS RUN</div>
+          <div class="rr-row"><span>CREDITS EARNED</span><b data-rew-credits>+0</b></div>
+          <div class="rr-row"><span>STAR CORES</span><b class="cyan" data-rew-cores>+0</b></div>
+          <div class="rr-note" data-rew-note></div>
+        </div>
         <button class="btn" id="btn-restart-win">RESTART</button>
+        <button class="btn ghost" id="btn-hangar-win">HANGAR</button>
         <button class="btn amber" id="btn-next-run">NEXT RUN&nbsp; +</button>
         <button class="btn ghost home-btn" id="btn-home-win"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l9 8h-3v9h-4.5v-6h-3v6H6v-9H3z"/></svg>BACK TO HOME</button>
         <p class="tagline" style="font-size:13.5px">Next run: same sky, angrier enemies — tougher hulls, faster fire.</p>
@@ -1572,6 +2060,13 @@
           <div class="set-note">Music has its own note button on the home screen and in the pause menu. Everything on this page is saved on this device and applies immediately.</div>
         </div>
 
+        <nav class="meta-nav" aria-label="Cockpit sections">
+          <button class="meta-key" data-nav="start">HUB</button>
+          <button class="meta-key" data-nav="loadout">HANGAR</button>
+          <button class="meta-key" data-nav="quests">QUESTS<span class="bdot"></span></button>
+          <button class="meta-key" data-nav="campaign">CAMPAIGN</button>
+          <button class="meta-key on" data-nav="settings">SETTINGS</button>
+        </nav>
         <button class="btn" id="btn-settings-play">LOADOUT&ensp;▶</button>
         <button class="btn ghost" id="btn-settings-back">BACK</button>
       </div>
@@ -1806,6 +2301,373 @@
       function blasterHex() { return BLASTERS[PROFILE.blaster] || "#3fd6ff"; }
       function thrusterHex() { return THRUSTERS[PROFILE.thruster] || "#3fd6ff"; }
       function hexRgb(hex) { var n = parseInt(hex.slice(1), 16); return ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255); }
+      /* ================= META SYSTEMS (Test Run 04 — Cockpit) =================
+         Wallet, career stats, quests, upgrades and the loadout now persist on
+         this device. Every counter below is fed by real gameplay events:
+         killEnemy / killBoss / detonateBomb / run settlement. Loads validate
+         field-by-field and default cleanly, so existing players keep their
+         profile, customization and settings keys untouched. */
+      function el(id) { return document.getElementById(id); }
+      function fmtN(n) { return (Math.round(n) || 0).toLocaleString("en-US"); }
+      function todayStr() { var d = new Date(); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
+      function loadJSON(key) { try { var v = JSON.parse(localStorage.getItem(key) || "null"); return (v && typeof v === "object") ? v : null; } catch (e) { return null; } }
+      function saveJSON(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) {} }
+
+      var WALLET = { credits: 0, cores: 0 };
+      var CAREER = { kills: 0, bossKills: 0, wavesCleared: 0, bombsUsed: 0, chargeKills: 0, noDmgWaves: 0, lifetimeScore: 0, victories: 0, skiesCleared: [], skyStars: {} };
+      var UPG = { power: 0, cannon: 0 };
+      var LAUNCH = { sector: 1, rush: false };
+      var CAMP_TAB = "campaign";
+      function defaultDaily() { return { date: todayStr(), prog: { kills: 0, waves: 0, bosses: 0, bombs: 0, score: 0 }, claimed: {} }; }
+      var QUESTS = { daily: defaultDaily(), achClaimed: {}, chestsClaimed: [] };
+      (function loadMeta() {
+        var w = loadJSON("starfall-wallet-v1");
+        if (w) { if (typeof w.credits === "number" && w.credits >= 0) WALLET.credits = Math.floor(w.credits); if (typeof w.cores === "number" && w.cores >= 0) WALLET.cores = Math.floor(w.cores); }
+        var c = loadJSON("starfall-career-v1");
+        if (c) {
+          var nums = ["kills", "bossKills", "wavesCleared", "bombsUsed", "chargeKills", "noDmgWaves", "lifetimeScore", "victories"];
+          for (var i = 0; i < nums.length; i++) if (typeof c[nums[i]] === "number" && c[nums[i]] >= 0) CAREER[nums[i]] = Math.floor(c[nums[i]]);
+          if (Array.isArray(c.skiesCleared)) for (var j = 0; j < c.skiesCleared.length; j++) { var s = Math.floor(c.skiesCleared[j]); if (s >= 1 && s <= 5 && CAREER.skiesCleared.indexOf(s) < 0) CAREER.skiesCleared.push(s); }
+          if (c.skyStars && typeof c.skyStars === "object") for (var k in c.skyStars) { var kn = parseInt(k, 10), kv = Math.floor(c.skyStars[k]); if (kn >= 1 && kn <= 5 && kv >= 0 && kv <= 2) CAREER.skyStars[kn] = kv; }
+        }
+        var u = loadJSON("starfall-upgrades-v1");
+        if (u) { UPG.power = clamp(Math.floor(+u.power) || 0, 0, 10); UPG.cannon = clamp(Math.floor(+u.cannon) || 0, 0, 10); }
+        var q = loadJSON("starfall-quests-v1");
+        if (q) {
+          if (q.daily && typeof q.daily === "object" && typeof q.daily.date === "string") {
+            QUESTS.daily = q.daily;
+            if (!QUESTS.daily.prog || typeof QUESTS.daily.prog !== "object") QUESTS.daily.prog = { kills: 0, waves: 0, bosses: 0, bombs: 0, score: 0 };
+            if (!QUESTS.daily.claimed || typeof QUESTS.daily.claimed !== "object") QUESTS.daily.claimed = {};
+          }
+          if (q.achClaimed && typeof q.achClaimed === "object") QUESTS.achClaimed = q.achClaimed;
+          if (Array.isArray(q.chestsClaimed)) QUESTS.chestsClaimed = q.chestsClaimed.filter(function (x) { return typeof x === "number" && x >= 0 && x <= 4; });
+        }
+      })();
+      function ensureDaily() {
+        if (!QUESTS.daily || QUESTS.daily.date !== todayStr()) { QUESTS.daily = defaultDaily(); QUESTS.chestsClaimed = []; }
+      }
+      ensureDaily();
+      function saveMeta() {
+        saveJSON("starfall-wallet-v1", WALLET);
+        saveJSON("starfall-career-v1", CAREER);
+        saveJSON("starfall-quests-v1", QUESTS);
+        saveJSON("starfall-upgrades-v1", UPG);
+      }
+      function saveLoadout() { saveJSON("starfall-loadout-v1", LOADOUT); }
+
+      var DAILY_QUESTS = [
+        { id: "kills", from: "FLIGHT OPS", label: "Destroy 60 enemies", target: 60, reward: 150 },
+        { id: "waves", from: "FLIGHT OPS", label: "Clear 2 waves", target: 2, reward: 150 },
+        { id: "bosses", from: "BOUNTY BOARD", label: "Kill 1 boss", target: 1, reward: 300 },
+        { id: "bombs", from: "ORDNANCE", label: "Use 2 smart bombs", target: 2, reward: 120 },
+        { id: "score", from: "FLIGHT OPS", label: "Score 15,000 today", target: 15000, reward: 250 }
+      ];
+      var ACH_QUESTS = [
+        { id: "a_k500", stat: "kills", from: "HALL OF RECORDS", label: "Destroy 500 enemies", target: 500, reward: 500 },
+        { id: "a_k2000", stat: "kills", from: "HALL OF RECORDS", label: "Destroy 2,000 enemies", target: 2000, reward: 1500 },
+        { id: "a_b5", stat: "bossKills", from: "HALL OF RECORDS", label: "Kill 5 bosses", target: 5, reward: 800 },
+        { id: "a_b15", stat: "bossKills", from: "HALL OF RECORDS", label: "Kill 15 bosses", target: 15, reward: 2000 },
+        { id: "a_win", stat: "victories", from: "HALL OF RECORDS", label: "Hold every sky — clear Wave 5", target: 1, reward: 1000 },
+        { id: "a_score", stat: "lifetimeScore", from: "HALL OF RECORDS", label: "Earn 50,000 lifetime PTS", target: 50000, reward: 1200 }
+      ];
+      var CHESTS = [{ pts: 20, reward: 100 }, { pts: 40, reward: 150 }, { pts: 60, reward: 200 }, { pts: 80, reward: 250 }, { pts: 100, reward: 400 }];
+      function questPoints() { ensureDaily(); var n = 0; for (var i = 0; i < DAILY_QUESTS.length; i++) if ((QUESTS.daily.prog[DAILY_QUESTS[i].id] || 0) >= DAILY_QUESTS[i].target) n++; return n * 20; }
+      function anyClaimable() {
+        ensureDaily();
+        var i;
+        for (i = 0; i < DAILY_QUESTS.length; i++) { var q = DAILY_QUESTS[i]; if (!QUESTS.daily.claimed[q.id] && (QUESTS.daily.prog[q.id] || 0) >= q.target) return true; }
+        for (i = 0; i < ACH_QUESTS.length; i++) { var a = ACH_QUESTS[i]; if (!QUESTS.achClaimed[a.id] && (CAREER[a.stat] || 0) >= a.target) return true; }
+        var pts = questPoints();
+        for (i = 0; i < CHESTS.length; i++) if (QUESTS.chestsClaimed.indexOf(i) < 0 && pts >= CHESTS[i].pts) return true;
+        return false;
+      }
+      /* Combat Power — one honest formula, displayed with its parts in the hangar */
+      function combatPower() {
+        var shipP = { vanguard: 120, phantom: 135, aegis: 110 }[LOADOUT.ship] || 120;
+        var gunP = { pulse: 40, scatter: 55, lance: 70 }[LOADOUT.gun] || 40;
+        var droneP = { scout: 20, wasp: 25, twin: 35, phantom: 50, guardian: 45, swarm: 40 }[LOADOUT.drone] || 20;
+        var upgP = UPG.power * 25 + UPG.cannon * 20;
+        return { total: shipP + gunP + droneP + upgP, ship: shipP, gun: gunP, drone: droneP, upg: upgP };
+      }
+      function upgCost(lvl) { return Math.round(300 * Math.pow(1.6, lvl) / 10) * 10; }
+      function skyUnlocked(n) { return n === 1 || CAREER.skiesCleared.indexOf(n - 1) >= 0; }
+      function highestUnlocked() { var h = 1; for (var n = 2; n <= 5; n++) if (skyUnlocked(n)) h = n; return h; }
+
+      /* ---- gameplay event tracking (called from the engine's real events) ---- */
+      function trackKill(e) {
+        ensureDaily();
+        CAREER.kills++; QUESTS.daily.prog.kills = (QUESTS.daily.prog.kills || 0) + 1;
+        if (e && e._ck) CAREER.chargeKills++;
+        saveMeta();
+      }
+      function trackBomb() { ensureDaily(); CAREER.bombsUsed++; QUESTS.daily.prog.bombs = (QUESTS.daily.prog.bombs || 0) + 1; saveMeta(); }
+      function trackBossKill(kind, sector) {
+        ensureDaily();
+        CAREER.bossKills++; CAREER.wavesCleared++;
+        QUESTS.daily.prog.bosses = (QUESTS.daily.prog.bosses || 0) + 1;
+        QUESTS.daily.prog.waves = (QUESTS.daily.prog.waves || 0) + 1;
+        var cores = kind === "eclipse" ? 2 : 1;
+        WALLET.cores += cores;
+        if (typeof G !== "undefined" && G) G.runCores = (G.runCores || 0) + cores;
+        if (CAREER.skiesCleared.indexOf(sector) < 0) CAREER.skiesCleared.push(sector);
+        var ratio = (typeof G !== "undefined" && G && G.player.maxHp) ? G.player.hp / G.player.maxHp : 1;
+        var stars = ratio >= 0.5 ? 2 : 1;
+        if ((CAREER.skyStars[sector] || 0) < stars) CAREER.skyStars[sector] = stars;
+        if (typeof G !== "undefined" && G && G.waveDamage === 0) CAREER.noDmgWaves++;
+        saveMeta();
+      }
+      /* Run settlement — paid once per run, from the final score: Credits = PTS ÷ 10 */
+      function settleRun(won) {
+        if (!G || G.settled) return;
+        G.settled = true;
+        ensureDaily();
+        if (won && !G.rushMode) CAREER.victories++; // a Boss Rush win is a boss kill, not a campaign victory
+        CAREER.lifetimeScore += G.score;
+        QUESTS.daily.prog.score = (QUESTS.daily.prog.score || 0) + G.score;
+        var credits = Math.floor(G.score / 10);
+        WALLET.credits += credits;
+        G.runCredits = credits;
+        saveMeta();
+        fillRewardsPlate();
+      }
+      function fillRewardsPlate() {
+        var ready = [], i, q;
+        ensureDaily();
+        for (i = 0; i < DAILY_QUESTS.length; i++) { q = DAILY_QUESTS[i]; if (!QUESTS.daily.claimed[q.id] && (QUESTS.daily.prog[q.id] || 0) >= q.target) ready.push(q.label); }
+        for (i = 0; i < ACH_QUESTS.length; i++) { q = ACH_QUESTS[i]; if (!QUESTS.achClaimed[q.id] && (CAREER[q.stat] || 0) >= q.target) ready.push(q.label); }
+        var cr = document.querySelectorAll("[data-rew-credits]");
+        for (i = 0; i < cr.length; i++) cr[i].textContent = "+" + fmtN(G.runCredits || 0) + " CR";
+        var co = document.querySelectorAll("[data-rew-cores]");
+        for (i = 0; i < co.length; i++) co[i].textContent = "+" + (G.runCores || 0);
+        var nt = document.querySelectorAll("[data-rew-note]");
+        var note = ready.length ? "QUEST READY TO CLAIM: " + ready.slice(0, 2).join(" · ") + (ready.length > 2 ? " · +" + (ready.length - 2) + " more" : "") : "";
+        for (i = 0; i < nt.length; i++) nt[i].textContent = note;
+      }
+
+      /* ---- HUB ---- */
+      function syncClaimBadges() {
+        var on = anyClaimable();
+        var els = document.querySelectorAll("#btn-ck-quests, .meta-key[data-nav='quests']");
+        for (var i = 0; i < els.length; i++) els[i].classList.toggle("has-badge", on);
+      }
+      function renderHubMeta() {
+        ensureDaily();
+        var sec = clamp(LAUNCH.sector || 1, 1, 5), kind = BOSS_KINDS[sec - 1];
+        var bounty = LAUNCH.rush ? Math.floor(BOSS_BOUNTY[kind] / 2) : BOSS_BOUNTY[kind];
+        if (el("hub-credits")) el("hub-credits").textContent = fmtN(WALLET.credits);
+        if (el("hub-cores")) el("hub-cores").textContent = fmtN(WALLET.cores);
+        if (el("ck-wave")) el("ck-wave").textContent = (LAUNCH.rush ? "RUSH W" : "WAVE ") + sec;
+        if (el("ck-bnty")) el("ck-bnty").textContent = fmtN(bounty);
+        var cp = combatPower();
+        if (el("ck-pwr")) el("ck-pwr").textContent = cp.total;
+        if (el("ck-mode")) el("ck-mode").textContent = PROFILE.tiltMode === "ship" ? "SHIP" : "ENVIR.";
+        if (el("ck-boss-sky")) el("ck-boss-sky").textContent = "WAVE " + sec + " · " + ENVS[sec - 1].name;
+        if (el("home-objective")) el("home-objective").textContent = BOSS_NAMES[kind];
+        if (el("ck-boss-bounty")) el("ck-boss-bounty").textContent = fmtN(bounty);
+        var hull = SHIPS[LOADOUT.ship].hp;
+        if (el("ck-hull-num")) el("ck-hull-num").textContent = hull;
+        if (el("ck-hullbar")) el("ck-hullbar").style.width = (hull / 4 * 100) + "%";
+        if (el("ck-pwr-num")) el("ck-pwr-num").textContent = cp.total;
+        if (el("ck-pwrbar")) el("ck-pwrbar").style.width = clamp(cp.total / 650 * 100, 4, 100) + "%";
+        syncClaimBadges();
+      }
+      /* Hologram telemetry — ALT/VEL tick gently around their live values */
+      setInterval(function () {
+        if (!el("scr-start") || !el("scr-start").classList.contains("on")) return;
+        var t = performance.now() / 1000;
+        if (el("ck-alt")) el("ck-alt").textContent = fmtN(12480 + Math.round(Math.sin(t / 7) * 160 + Math.sin(t / 2.3) * 24));
+        if (el("ck-vel")) el("ck-vel").textContent = (0.42 + Math.sin(t / 11) * 0.03).toFixed(2) + "c";
+      }, 900);
+
+      /* ---- HANGAR ---- */
+      function renderUpgRow(kind) {
+        var lvl = UPG[kind];
+        if (el("upg-" + kind + "-lv")) el("upg-" + kind + "-lv").textContent = "LV " + lvl;
+        var pips = el("upg-" + kind + "-pips");
+        if (pips) { var h = ""; for (var i = 0; i < 10; i++) h += "<span class=\"" + (i < lvl ? "on" : "") + "\"></span>"; pips.innerHTML = h; }
+        var btn = el("upg-" + kind + "-btn");
+        if (btn) {
+          if (lvl >= 10) { btn.textContent = "MAX LV"; btn.disabled = true; }
+          else { var cost = upgCost(lvl); btn.textContent = fmtN(cost) + " CR"; btn.disabled = WALLET.credits < cost; }
+        }
+      }
+      function renderHangarMeta() {
+        var cp = combatPower();
+        if (el("hg-power")) el("hg-power").textContent = cp.total;
+        if (el("hg-power-parts")) el("hg-power-parts").textContent = "Ship " + cp.ship + " · Cannon " + cp.gun + " · Drone wing " + cp.drone + " · Upgrades " + cp.upg + " — POWER Lv " + UPG.power + " (+4% dmg/lv) · CANNON Lv " + UPG.cannon + " (+3% rate/lv)";
+        if (el("hg-credits")) el("hg-credits").textContent = fmtN(WALLET.credits);
+        renderUpgRow("power"); renderUpgRow("cannon");
+      }
+      function buyUpgrade(kind) {
+        var lvl = UPG[kind];
+        if (lvl >= 10) return;
+        var cost = upgCost(lvl);
+        Sfx.ensure();
+        if (WALLET.credits < cost) { Sfx.blip(); return; }
+        WALLET.credits -= cost; UPG[kind] = lvl + 1;
+        saveMeta(); renderHangarMeta(); renderHubMeta();
+        Sfx.powerup();
+      }
+
+      /* ---- QUESTS ---- */
+      function sigHTML(frac) {
+        var on = Math.round(clamp(frac, 0, 1) * 4), h = "<span class=\"q-sig\">";
+        for (var i = 0; i < 4; i++) h += "<i class=\"" + (i < on ? "on" : "") + "\"></i>";
+        return h + "</span>";
+      }
+      function questRowHTML(q, prog, claimed, kind) {
+        var done = prog >= q.target, pct = clamp(prog / q.target * 100, 0, 100), btn;
+        if (claimed) btn = "<span class=\"q-stamp\">✓ RECEIVED</span>";
+        else if (done) btn = "<button class=\"q-claim\" data-claim=\"" + kind + "\" data-qid=\"" + q.id + "\">CLAIM " + q.reward + " CR</button>";
+        else btn = "<button class=\"q-claim\" disabled>" + q.reward + " CR</button>";
+        return "<div class=\"q-row\">" + sigHTML(prog / q.target) + "<div class=\"q-meta\"><div class=\"q-from\">▸ TRANSMISSION — " + q.from + "</div><div class=\"q-label\">" + q.label + "</div><div class=\"q-prog\"><span class=\"track\"><span class=\"fill\" style=\"display:block;width:" + pct + "%\"></span></span><span class=\"num\">" + fmtN(Math.min(prog, q.target)) + " / " + fmtN(q.target) + "</span></div></div>" + btn + "</div>";
+      }
+      function renderQuests() {
+        ensureDaily();
+        var pts = questPoints(), i, h;
+        if (el("q-points")) el("q-points").textContent = pts;
+        var ct = el("chest-track");
+        if (ct) {
+          h = "<span class=\"ct-fill\" style=\"width:" + (pts / 100 * 88) + "%\"></span>";
+          for (i = 0; i < CHESTS.length; i++) {
+            var claimed = QUESTS.chestsClaimed.indexOf(i) >= 0, ready = !claimed && pts >= CHESTS[i].pts;
+            h += "<button class=\"chest" + (claimed ? " done" : ready ? " ready" : "") + "\" data-chest=\"" + i + "\"" + (ready ? "" : " disabled") + "><span class=\"box\">" + (claimed ? "✓" : CHESTS[i].pts) + "</span><small>" + CHESTS[i].reward + " CR</small></button>";
+          }
+          ct.innerHTML = h;
+        }
+        var dq = el("q-daily");
+        if (dq) { h = ""; for (i = 0; i < DAILY_QUESTS.length; i++) { var q = DAILY_QUESTS[i]; h += questRowHTML(q, QUESTS.daily.prog[q.id] || 0, !!QUESTS.daily.claimed[q.id], "daily"); } dq.innerHTML = h; }
+        var aq = el("q-ach");
+        if (aq) { h = ""; for (i = 0; i < ACH_QUESTS.length; i++) { var a = ACH_QUESTS[i]; h += questRowHTML(a, CAREER[a.stat] || 0, !!QUESTS.achClaimed[a.id], "ach"); } aq.innerHTML = h; }
+        syncClaimBadges();
+      }
+      function claimQuest(kind, id) {
+        var q = null, i;
+        if (kind === "daily") {
+          for (i = 0; i < DAILY_QUESTS.length; i++) if (DAILY_QUESTS[i].id === id) q = DAILY_QUESTS[i];
+          if (!q || QUESTS.daily.claimed[id] || (QUESTS.daily.prog[id] || 0) < q.target) return;
+          QUESTS.daily.claimed[id] = 1;
+        } else {
+          for (i = 0; i < ACH_QUESTS.length; i++) if (ACH_QUESTS[i].id === id) q = ACH_QUESTS[i];
+          if (!q || QUESTS.achClaimed[id] || (CAREER[q.stat] || 0) < q.target) return;
+          QUESTS.achClaimed[id] = 1;
+        }
+        WALLET.credits += q.reward;
+        saveMeta(); renderQuests();
+        Sfx.ensure(); Sfx.powerup();
+      }
+      function claimChest(i) {
+        if (QUESTS.chestsClaimed.indexOf(i) >= 0 || questPoints() < CHESTS[i].pts) return;
+        QUESTS.chestsClaimed.push(i);
+        WALLET.credits += CHESTS[i].reward;
+        saveMeta(); renderQuests();
+        Sfx.ensure(); Sfx.powerup();
+      }
+
+      /* ---- CAMPAIGN ---- */
+      function campNodeHTML(n, rush) {
+        var kind = BOSS_KINDS[n - 1], un = skyUnlocked(n), stars = CAREER.skyStars[n] || 0;
+        var bounty = rush ? Math.floor(BOSS_BOUNTY[kind] / 2) : BOSS_BOUNTY[kind];
+        var sel = !rush && LAUNCH.sector === n && !LAUNCH.rush;
+        var label = rush
+          ? (un ? "TAP TO FIGHT — STRAIGHT TO THE BOSS · BOUNTY AT 50%" : "LOCKED — KILL THIS BOSS IN CAMPAIGN FIRST")
+          : (un ? (CAREER.skiesCleared.indexOf(n) >= 0 ? "SKY HELD — REPLAY ANY TIME" : "UNLOCKED — TAP TO TARGET") : "LOCKED — KILL THE WAVE " + (n - 1) + " BOSS TO OPEN");
+        return "<button class=\"camp-node boss" + (un ? "" : " locked") + (sel ? " sel" : "") + "\" data-sky=\"" + n + "\" data-rush=\"" + (rush ? 1 : 0) + "\"" + (un ? "" : " disabled") + ">" +
+          "<span class=\"camp-orb\">" + n + "</span>" +
+          "<span class=\"camp-meta\"><span class=\"camp-sky2\" style=\"display:block\">WAVE " + n + " · " + ENVS[n - 1].name + "</span>" +
+          "<span class=\"camp-boss2\" style=\"display:block\">" + BOSS_NAMES[kind] + " — " + BOSS_EPITHETS[kind] + "</span>" +
+          "<span class=\"camp-boss2\" style=\"display:block;color:#7d93a8;font-size:11px\">" + label + "</span></span>" +
+          "<span class=\"camp-right\"><span class=\"camp-stars\"><span class=\"" + (stars >= 1 ? "" : "off") + "\">★</span><span class=\"" + (stars >= 2 ? "" : "off") + "\">★</span></span>" +
+          "<span class=\"camp-bounty2\" style=\"display:block\">" + fmtN(bounty) + " PTS" + (rush ? " · 50%" : "") + "</span></span></button>";
+      }
+      function renderCampaign() {
+        var list = el("camp-list"); if (!list) return;
+        var tabs = document.querySelectorAll(".camp-tab");
+        for (var t = 0; t < tabs.length; t++) tabs[t].classList.toggle("on", tabs[t].getAttribute("data-ctab") === CAMP_TAB);
+        var launchBtn = el("btn-camp-launch"), h = "", n;
+        if (CAMP_TAB === "endless") {
+          if (launchBtn) launchBtn.style.display = "none";
+          h = "<div class=\"camp-soon\">ENDLESS<small>An unbroken wave beyond the fifth sky — still being charted. It is not playable yet, and nothing here pretends otherwise.</small></div>";
+        } else if (CAMP_TAB === "rush") {
+          if (launchBtn) launchBtn.style.display = "none";
+          for (n = 1; n <= 5; n++) h += campNodeHTML(n, true);
+        } else {
+          if (launchBtn) { launchBtn.style.display = ""; launchBtn.innerHTML = "LAUNCH — WAVE " + LAUNCH.sector + " · " + ENVS[LAUNCH.sector - 1].name + "&ensp;▶"; }
+          for (n = 1; n <= 5; n++) h += campNodeHTML(n, false);
+        }
+        list.innerHTML = h;
+      }
+
+      /* ---- meta wiring (elements all exist — this script runs at the end of body) ---- */
+      (function wireMeta() {
+        var i, els;
+        els = document.querySelectorAll(".opt-card");
+        for (i = 0; i < els.length; i++) els[i].addEventListener("click", function () {
+          LOADOUT[this.getAttribute("data-group")] = this.getAttribute("data-value");
+          saveLoadout(); renderHangarMeta(); renderHubMeta();
+        });
+        els = document.querySelectorAll(".dock-pilot");
+        for (i = 0; i < els.length; i++) els[i].addEventListener("click", function () { LOADOUT.pilot = this.getAttribute("data-pilot"); saveLoadout(); });
+        if (el("upg-power-btn")) el("upg-power-btn").addEventListener("click", function () { buyUpgrade("power"); });
+        if (el("upg-cannon-btn")) el("upg-cannon-btn").addEventListener("click", function () { buyUpgrade("cannon"); });
+        if (el("btn-try")) el("btn-try").addEventListener("click", function () { Sfx.ensure(); Music.start(); startRun(1); });
+        if (el("btn-ck-quests")) el("btn-ck-quests").addEventListener("click", function () { Sfx.ensure(); Sfx.blip(); showScreen("quests"); });
+        if (el("btn-ck-campaign")) el("btn-ck-campaign").addEventListener("click", function () { Sfx.ensure(); Sfx.blip(); showScreen("campaign"); });
+        if (el("btn-quests-back")) el("btn-quests-back").addEventListener("click", function () { Sfx.ensure(); Sfx.blip(); showScreen("start"); });
+        if (el("btn-campaign-back")) el("btn-campaign-back").addEventListener("click", function () { Sfx.ensure(); Sfx.blip(); showScreen("start"); });
+        if (el("btn-camp-launch")) el("btn-camp-launch").addEventListener("click", function () { Sfx.ensure(); Music.start(); startRun(1); });
+        if (el("btn-hangar-over")) el("btn-hangar-over").addEventListener("click", function () { Sfx.ensure(); Sfx.blip(); showScreen("loadout"); });
+        if (el("btn-hangar-win")) el("btn-hangar-win").addEventListener("click", function () { Sfx.ensure(); Sfx.blip(); showScreen("loadout"); });
+        els = document.querySelectorAll(".camp-tab");
+        for (i = 0; i < els.length; i++) els[i].addEventListener("click", function () { CAMP_TAB = this.getAttribute("data-ctab"); Sfx.ensure(); Sfx.blip(); renderCampaign(); });
+        var cl = el("camp-list");
+        if (cl) cl.addEventListener("click", function (e) {
+          var node = e.target;
+          while (node && node !== cl && !node.getAttribute("data-sky")) node = node.parentNode;
+          if (!node || node === cl || node.disabled) return;
+          var n = parseInt(node.getAttribute("data-sky"), 10);
+          if (!skyUnlocked(n)) return;
+          LAUNCH.sector = n;
+          Sfx.ensure(); Sfx.blip();
+          if (node.getAttribute("data-rush") === "1") { LAUNCH.rush = true; Music.start(); startRun(1); }
+          else { LAUNCH.rush = false; renderCampaign(); renderHubMeta(); }
+        });
+        var qs = el("scr-quests");
+        if (qs) qs.addEventListener("click", function (e) {
+          var t = e.target;
+          var claimBtn = (t.closest && t.closest("[data-claim]")) || (t.getAttribute("data-claim") ? t : null);
+          if (claimBtn) { claimQuest(claimBtn.getAttribute("data-claim"), claimBtn.getAttribute("data-qid")); return; }
+          var chestBtn = (t.closest && t.closest("[data-chest]")) || (t.getAttribute("data-chest") ? t : null);
+          if (chestBtn && !chestBtn.disabled) claimChest(parseInt(chestBtn.getAttribute("data-chest"), 10));
+        });
+        els = document.querySelectorAll("[data-nav]");
+        for (i = 0; i < els.length; i++) els[i].addEventListener("click", function () {
+          var n = this.getAttribute("data-nav");
+          Sfx.ensure(); Sfx.blip();
+          if (n === "settings") openSettings("start");
+          else showScreen(n);
+        });
+      })();
+      /* Boot: restore the persisted loadout, aim LAUNCH at the highest unlocked sky */
+      function initMeta() {
+        var lo = loadJSON("starfall-loadout-v1");
+        if (lo) {
+          if (SHIPS[lo.ship]) LOADOUT.ship = lo.ship;
+          if (GUNS[lo.gun]) LOADOUT.gun = lo.gun;
+          if (DRONEWINGS[lo.drone]) LOADOUT.drone = lo.drone;
+          if (PILOTS[lo.pilot]) LOADOUT.pilot = lo.pilot;
+        }
+        LAUNCH.sector = highestUnlocked();
+        var groups = ["ship", "gun", "drone", "pilot"];
+        for (var gi = 0; gi < groups.length; gi++) {
+          var cs = document.querySelectorAll('.opt-card[data-group="' + groups[gi] + '"]');
+          for (var ci = 0; ci < cs.length; ci++) cs[ci].classList.toggle("sel", cs[ci].getAttribute("data-value") === LOADOUT[groups[gi]]);
+        }
+        syncHome();
+        syncLoadoutPreview();
+        renderHubMeta();
+      }
+
       /* Six original identity avatars in the game's emblem language — portrait
          medallions, each with its own symbol and frame colour. This is the
          player's identity mark, separate from the Nova/Rex/Ivy pilot perks. */
@@ -1861,7 +2723,8 @@
         p.ship = LOADOUT.ship;
         p.maxHp = sh.hp; p.hp = sh.hp;
         p.moveMul = sh.move;
-        p.rateMul = sh.rate * gn.rate * (pi.rate || 1);
+        p.rateMul = sh.rate * gn.rate * (pi.rate || 1) / (1 + 0.03 * UPG.cannon); // CANNON upgrade: +3% fire rate per level
+        g.dmgMul = 1 + 0.04 * UPG.power; // POWER upgrade: +4% bullet damage per level (applied at every bullet/beam hit)
         p.spreadMul = gn.spread; p.gunDmg = gn.dmg; p.gunType = LOADOUT.gun; p.gunSpeed = gn.speed || 640; p.gunCol = blasterHex(); p.beamT = 0; p.beamOn = false; p.beamHitY = 0;
         p.weapon = sh.startWeapon;
         p.drones = dr.count; p.droneRate = dr.rate; p.droneDmg = dr.dmg || 1;
@@ -2398,7 +3261,7 @@
         p.beamT -= dt;
         if (p.beamT > 0) return;
         p.beamT = 0.15;
-        var dmg = 2 + Math.floor(p.weapon / 2); // DMG 2–4 per tick — the heaviest single-target gun, one narrow column
+        var dmg = (2 + Math.floor(p.weapon / 2)) * (G.dmgMul || 1); // DMG 2–4 per tick × POWER upgrade — the heaviest single-target gun, one narrow column
         for (j = G.enemies.length - 1; j >= 0; j--) {
           en = G.enemies[j];
           if (Math.abs(en.x - p.x) < en.r + 12 && en.y < p.y - 10) {
@@ -2500,7 +3363,8 @@
 
       function killEnemy(e, idx) {
         e.dead = true;
-        G.kills++; G.combo++; G.comboT = 2.5; // chain link — the combo window refreshes on every kill
+        G.kills++; trackKill(e);
+        G.combo++; G.comboT = 2.5; // chain link — the combo window refreshes on every kill
         if (G.combo > G.comboMax) G.comboMax = G.combo;
         var cbEl = document.getElementById("combo-box");
         if (cbEl && !REDUCED) { cbEl.classList.remove("pop"); void cbEl.offsetWidth; cbEl.classList.add("pop"); }
@@ -2521,6 +3385,8 @@
       function killBoss() {
         var b = G.boss;
         var bounty = BOSS_BOUNTY[b.kind] || 3000;
+        if (G.rushMode) bounty = Math.floor(bounty / 2); // Boss Rush pays half bounty — the kill, stars and Core count in full
+        trackBossKill(b.kind, G.sector);
         b.dead = true; G.combo += 5; G.comboT = 2.5;
         if (G.combo > G.comboMax) G.comboMax = G.combo;
         addScore(bounty, b.x, b.y, "#ffb02e");
@@ -2568,6 +3434,7 @@
         $("wave-results").classList.remove("show");
         $("objective-box").classList.remove("on"); ObjToast.until = 0;
         var p = G.player;
+        if (G.rushMode) { victory(); return; } // Boss Rush: the one boss is down — the run settles here
         if (G.sector >= TOTAL_WAVES) { victory(); return; }
         if (G.repairPerk && p.hp < p.maxHp) { p.hp++; addPopup(p.x, p.y - 42, "REPAIR +1", "#2ef2c0"); }
         if (p.hp < p.maxHp) { p.hp++; addPopup(p.x, p.y - 42, "HULL +1", "#2ef2c0"); }
@@ -2839,11 +3706,11 @@
             var en = G.enemies[j];
             if (dist2(b.x, b.y, en.x, en.y) < Math.pow(en.r + 4, 2)) {
               if (b.pierce && en.pierceMark === b.id) continue; // a piercing bolt wounds each enemy once
-              en.hp -= (b.dmg || 1); en.flash = 0.08; G.hits++;
+              en.hp -= (b.dmg || 1) * (G.dmgMul || 1); if (b.charged) en._ck = 1; en.flash = 0.08; G.hits++;
               // Hit feedback — impact sparks + a floating damage number (throttled so streams stay readable)
               for (var sp2 = 0; sp2 < 2; sp2++)
                 G.parts.push({ x: b.x, y: b.y, vx: rand(-70, 70), vy: rand(-70, 30), life: 0.16, t: 0, color: "#ffe98a", size: 1.8, drag: 1 });
-              if (G.time - G.lastDmgPop > 0.09) { G.lastDmgPop = G.time; addPopup(b.x + rand(-4, 4), b.y - 8, "" + (b.dmg || 1), "#ffd9a0", true); }
+              if (G.time - G.lastDmgPop > 0.09) { G.lastDmgPop = G.time; addPopup(b.x + rand(-4, 4), b.y - 8, "" + Math.max(1, Math.round((b.dmg || 1) * (G.dmgMul || 1))), "#ffd9a0", true); }
               if (b.pierce) { en.pierceMark = b.id; }
               else { G.bullets.splice(i, 1); consumed = true; }
               if (en.hp <= 0) killEnemy(en, j); else Sfx.enemyHit();
@@ -2856,9 +3723,9 @@
             if (dx * dx + dy * dy < 1) {
               // Weak point: the glowing core takes double damage
               var coreHit = dist2(b.x, b.y, bb.x, bb.y + 2) < 24 * 24;
-              bb.hp -= (b.dmg || 1) * (coreHit ? 2 : 1); bb.flash = 0.06; G.hits++;
+              bb.hp -= (b.dmg || 1) * (G.dmgMul || 1) * (coreHit ? 2 : 1); bb.flash = 0.06; G.hits++;
               if (coreHit) G.coreHits++;
-              if (G.time - G.lastDmgPop > 0.09) { G.lastDmgPop = G.time; addPopup(b.x + rand(-4, 4), b.y - 10, "" + (b.dmg || 1) * (coreHit ? 2 : 1), coreHit ? "#ffd23d" : "#ffd9a0", true); }
+              if (G.time - G.lastDmgPop > 0.09) { G.lastDmgPop = G.time; addPopup(b.x + rand(-4, 4), b.y - 10, "" + Math.max(1, Math.round((b.dmg || 1) * (G.dmgMul || 1) * (coreHit ? 2 : 1))), coreHit ? "#ffd23d" : "#ffd9a0", true); }
               checkBossEnrage();
               if (coreHit && G.time - G.lastCritPop > 0.4) { G.lastCritPop = G.time; addPopup(b.x, b.y - 8, "CORE HIT ×2", "#ffd23d"); }
               if (b.pierce) b.bossHit = true; else G.bullets.splice(i, 1);
@@ -2921,7 +3788,7 @@
       function killEnemySilent(e, idx) { // collision kill: explosion, no score/popup chain
         var colors = { diver: "#ff4d5e", charger: "#ffb02e", weaver: "#2ef2c0", lancer: "#ff5da2", bulwark: "#ff7a3d", sentinel: "#7dd3fc" };
         explode(e.x, e.y, colors[e.type], 18, false); Sfx.explosion(false);
-        G.kills++;
+        G.kills++; trackKill(e);
         G.enemies.splice(idx, 1);
       }
 
@@ -2956,7 +3823,7 @@
          delivers it now instead of it landing all at once. */
       function detonateBomb() {
         if (!G || G.mode !== "playing" || G.bombs <= 0 || !G.player.alive) return;
-        G.bombs--;
+        G.bombs--; trackBomb();
         var sx = G.player.x, sy = G.player.y, pending = [], i, dx, dy;
         for (i = 0; i < G.ebullets.length; i++) { dx = G.ebullets[i].x - sx; dy = G.ebullets[i].y - sy; pending.push({ kind: "eb", ref: G.ebullets[i], dist: Math.sqrt(dx * dx + dy * dy) }); }
         for (i = 0; i < G.enemies.length; i++) { dx = G.enemies[i].x - sx; dy = G.enemies[i].y - sy; pending.push({ kind: "enemy", ref: G.enemies[i], dist: Math.sqrt(dx * dx + dy * dy) }); }
@@ -4756,12 +5623,14 @@
       }
       /* ================= 7. UI / FLOW ================= */
       var $ = function (id) { return document.getElementById(id); };
-      var screens = { start: $("scr-start"), loadout: $("scr-loadout"), pause: $("scr-pause"), over: $("scr-over"), win: $("scr-win"), settings: $("scr-settings") };
+      var screens = { start: $("scr-start"), loadout: $("scr-loadout"), pause: $("scr-pause"), over: $("scr-over"), win: $("scr-win"), settings: $("scr-settings"), quests: $("scr-quests"), campaign: $("scr-campaign") };
       function showScreen(name) {
         for (var k in screens) screens[k].classList.toggle("on", k === name);
         $("hud").classList.toggle("on", name === null || name === "pause");
-        if (name === "start") syncHome();
-        if (name === "loadout") paintLoadoutArt();
+        if (name === "start") { syncHome(); renderHubMeta(); }
+        if (name === "loadout") { paintLoadoutArt(); renderHangarMeta(); }
+        if (name === "quests") renderQuests();
+        if (name === "campaign") renderCampaign();
       }
       /* Home page mirrors the current loadout: hero ship art, ship/cannon/drone names, pilot face + perk */
       function syncHome() {
@@ -4870,6 +5739,8 @@
         if (!startScr || !setScr) return;
         var t = performance.now() / 1000;
         if (startScr.classList.contains("on")) { var hc = $("hero-canvas"); if (hc) paintShipCanvas(hc, t, 0.44);  paintHomePlanet(); }
+        var loScr = $("scr-loadout");
+        if (loScr && loScr.classList.contains("on")) { var hgc = $("hangar-canvas"); if (hgc) paintShipCanvas(hgc, t, 0.5); }
         if (setScr.classList.contains("on")) { var pc = $("pv-canvas"); if (pc) paintShipCanvas(pc, t, 0.45); }
       })();
 
@@ -5023,13 +5894,21 @@
         showBossBar(false);
         $("run-tag").textContent = run > 1 ? "RUN " + run + " · ENEMY THREAT +" + Math.round((run - 1) * 30) + "%" : "";
         syncHud();
-        startSector(1);
+        var startAt = clamp(LAUNCH.sector || 1, 1, TOTAL_WAVES);
+        if (!skyUnlocked(startAt)) startAt = 1;
+        G.rushMode = !!LAUNCH.rush;
+        startSector(startAt);
+        if (G.rushMode) { // Boss Rush — skip the assault phase, straight to the boss
+          G.spawnQueue.length = 0; G.enemies.length = 0; G.portals.length = 0;
+          G.waveState = "bosswait"; G.waveT = 0;
+        }
       }
       function gameOver() {
         G.mode = "over";
         $("weapons-offline").classList.remove("on");
         $("objective-box").classList.remove("on"); $("objective-sliver").classList.remove("vis"); $("wave-results").classList.remove("show");
         fillResults("over", false);
+        settleRun(false);
         $("over-score").textContent = G.score.toLocaleString("en-US");
         $("over-wave").textContent = "Reached Wave " + G.sector + " — " + ENVS[G.sector - 1].name + (G.bossSpawned ? " · boss fight" : "") + " · Run " + G.run;
         showScreen("over"); showBossBar(false);
@@ -5039,6 +5918,11 @@
         $("weapons-offline").classList.remove("on");
         $("objective-box").classList.remove("on"); $("objective-sliver").classList.remove("vis"); $("wave-results").classList.remove("show");
         fillResults("win", true);
+        settleRun(true);
+        var wt = document.querySelector("#scr-win h2");
+        if (wt) wt.textContent = G.rushMode ? "BOSS DOWN" : "SKY HELD";
+        var wg = document.querySelector("#scr-win .tagline");
+        if (wg) wg.textContent = G.rushMode ? "Boss Rush complete — bounty paid at 50%. The kill, the sky stars and the Star Core count in full." : "All five wave bosses — Mothership, Dreadnought, Leviathan, Cryo Warden and the Eclipse Titan — are burning wreckage. Every sky held.";
         $("win-score").textContent = G.score.toLocaleString("en-US");
         showScreen("win");
       }
@@ -5109,7 +5993,29 @@
         for (var i = 0; i < btns.length; i++) btns[i].classList.toggle("off", !Music.on);
       }
 
-      $("btn-play").addEventListener("click", function () { Sfx.ensure(); Music.start(); showScreen("loadout"); }); // no Gyro.request() here — iOS motion permission is requested only from the TILT tap itself
+      /* LAUNCH — the guarded cockpit button spools the systems up, then starts a run at the
+         campaign sky selected on the Campaign table (LAUNCH.sector; Boss Rush if armed).
+         No Gyro.request() here either — iOS motion permission is requested only from the TILT tap. */
+      var launchSpooling = false;
+      $("btn-play").addEventListener("click", function () {
+        if (launchSpooling) return;
+        Sfx.ensure(); Music.start();
+        if (REDUCED) { startRun(1); return; }
+        launchSpooling = true;
+        var btn = $("btn-play"), lbl = $("launch-label");
+        btn.classList.add("spooling");
+        var stages = ["IGNITION", "THRUSTERS", "LAUNCH"], si2 = 0;
+        if (lbl) lbl.textContent = stages[0] + "…";
+        var iv = setInterval(function () {
+          si2++;
+          if (si2 < stages.length) { if (lbl) lbl.textContent = stages[si2] + "…"; return; }
+          clearInterval(iv);
+          btn.classList.remove("spooling");
+          if (lbl) lbl.textContent = "LAUNCH";
+          launchSpooling = false;
+          startRun(1);
+        }, 230);
+      });
       /* TILT button — honest states, driven by Gyro.perm / Gyro.blocked: "TILT ON" (and the gold
          armed style the idle-drift check reads) appears only when tilt is enabled AND real sensor
          data is flowing. A refused permission, a view that blocked the prompt, or a sensor-less
@@ -5320,8 +6226,7 @@
         if (k === "b") { Sfx.ensure(); tryDetonateBomb(); }
         if (k === "enter" && G.mode === "start") {
           Sfx.ensure(); Music.start();
-          if (screens.loadout.classList.contains("on")) startRun(1);
-          else showScreen("loadout");
+          startRun(1);
         }
       });
       document.addEventListener("visibilitychange", function () { if (document.hidden) pauseGame(); });
@@ -5340,6 +6245,7 @@
       syncLoadoutPreview();
       paintLoadoutArt();
       syncSettingsUI();
+      initMeta();
       var heroZoneEl = document.querySelector(".hero-zone");
       var comboEl = $("hud-combo"), comboFillEl = $("combo-fill"), chargeEl = $("chargebar"), chargeFillEl = $("charge-fill"), bombBtnEl = $("btn-bomb"), bombCountEl = $("bomb-count");
       var bossChipEl = $("bosschip"), objTextEl = $("hud-objective");
