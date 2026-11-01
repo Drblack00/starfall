@@ -1298,8 +1298,8 @@
         box-shadow: inset 0 1px 0 rgba(255,160,170,.14), 0 0 18px rgba(255,36,56,.12); }
       .ck-bossplate .skull { flex: 0 0 auto; width: 22px; height: 22px; fill: #ff8a96; filter: drop-shadow(0 0 6px rgba(255,77,94,.7)); }
       .ck-bossplate .bp-meta { flex: 1 1 auto; min-width: 0; text-align: left; }
-      .ck-bossplate .bp-k { font-size: 8.5px; font-weight: 700; letter-spacing: .26em; color: #ff9aa4; }
-      .ck-bossplate .bp-v { font-family: "Orbitron", monospace; font-size: 13.5px; font-weight: 700; color: #ffe9eb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .ck-bossplate .bp-k { display: block; font-size: 8.5px; font-weight: 700; letter-spacing: .26em; line-height: 1.5; color: #ff9aa4; }
+      .ck-bossplate .bp-v { display: block; margin-top: 2px; font-family: "Orbitron", monospace; font-size: 13.5px; font-weight: 700; color: #ffe9eb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .ck-bossplate .bp-bounty { font-family: "Orbitron", monospace; font-size: 12px; font-weight: 700; color: #ffd98a; text-align: right; }
       .ck-bossplate .bp-bounty small { display: block; font-size: 8px; letter-spacing: .2em; color: var(--dim); }
       .ck-launchwrap { width: 100%; max-width: 400px; margin-top: 13px; display: flex; flex-direction: column; align-items: center; }
@@ -1491,6 +1491,106 @@
       @media (prefers-reduced-motion: reduce) {
         .screen.on, .ck-reticle, .ck-reticle::before, .ck-radar .sweep, .hg-ring, .hg-scan, .q-row::before, #stage #scr-start #btn-play, .chest.ready .box, .camp-soon { animation: none !important; }
       }
+
+      /* ============================================================
+         APPROVED PACK — Fleet / Sections / Boss kits / Living planets
+         / UX expansion styles
+         ============================================================ */
+      .sec-block { }
+      #scr-loadout[data-sec="hangar"] .sec-block:not([data-sec="hangar"]),
+      #scr-loadout[data-sec="arsenal"] .sec-block:not([data-sec="arsenal"]),
+      #scr-loadout[data-sec="drones"] .sec-block:not([data-sec="drones"]),
+      #scr-loadout[data-sec="pilots"] .sec-block:not([data-sec="pilots"]),
+      #scr-loadout[data-sec="engineering"] .sec-block:not([data-sec="engineering"]),
+      #scr-loadout[data-sec="livery"] .sec-block:not([data-sec="livery"]) { display: none !important; }
+      .meta-nav { flex-wrap: wrap; }
+      .meta-key { flex: 1 1 17%; font-size: 8.5px; padding: 8px 1px 7px; }
+      .meta-key .bdot, .ck-gkey .bdot { position: absolute; top: 4px; right: 5px; min-width: 15px; height: 15px; padding: 0 4px; border-radius: 8px; background: #ff4d5e; color: #fff; font-size: 9px; font-weight: 700; line-height: 15px; text-align: center; box-shadow: 0 0 8px rgba(255,77,94,.9); display: none; }
+      .meta-key.has-badge .bdot, .ck-gkey.has-badge .bdot { display: block; }
+      .ck-gkey { position: relative; }
+      .ck-sysrow { display: flex; justify-content: space-between; align-items: baseline; gap: 4px; padding: 3px 1px; border-top: 1px solid rgba(63,214,255,.12); }
+      .ck-sysrow small { font-size: 7.5px; font-weight: 700; letter-spacing: .18em; color: var(--dim); }
+      .ck-sysrow b { font-family: "Orbitron", monospace; font-size: 9px; font-weight: 700; color: #d9f4ff; text-align: right; }
+      .ck-keygrid { width: 100%; max-width: 400px; margin-top: 14px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+      .ck-gkey { padding: 13px 4px 12px; cursor: pointer; color: var(--ink); font-family: "Orbitron", monospace; font-size: 10px; font-weight: 700; letter-spacing: .1em; background: linear-gradient(180deg, rgba(38,66,98,.95), rgba(12,26,44,.95)); border: 1px solid rgba(120,205,255,.45); border-radius: 10px; box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 4px 10px rgba(0,0,0,.4); transition: transform .13s cubic-bezier(.34,1.45,.64,1); }
+      .ck-gkey:active { transform: translateY(2px) scale(.97); }
+      .hub-plate { width: 100%; max-width: 400px; margin-top: 9px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; background: linear-gradient(180deg, rgba(14,30,50,.88), rgba(5,12,24,.92)); border: 1px solid rgba(63,214,255,.35); border-radius: 11px; }
+      .hub-plate[hidden] { display: none !important; }
+      .hub-plate.gold { border-color: rgba(255,210,61,.8); background: linear-gradient(180deg, rgba(52,38,6,.9), rgba(20,14,2,.92)); box-shadow: 0 0 18px rgba(255,176,46,.25); }
+      .hub-plate.slim { padding: 7px 12px; opacity: .92; }
+      .hp-txt { font-family: "Orbitron", monospace; font-size: 10.5px; font-weight: 700; letter-spacing: .08em; color: #d9f4ff; text-align: left; line-height: 1.5; }
+      .hub-plate.gold .hp-txt { color: #ffd98a; }
+      .hp-btns { display: flex; gap: 6px; flex: 0 0 auto; }
+      .hp-btn { padding: 8px 11px; cursor: pointer; border-radius: 8px; font-family: "Orbitron", monospace; font-size: 10px; font-weight: 700; letter-spacing: .06em; color: #aee9ff; background: rgba(10,26,46,.8); border: 1px solid rgba(120,205,255,.4); }
+      .hp-btn.go { color: #241503; background: linear-gradient(180deg, #ffd97a, #f7b733); border-color: rgba(255,226,160,.85); }
+      .hp-btn.big { padding: 12px 18px; font-size: 12px; }
+      .hp-btn:active { transform: scale(.95); }
+      #launch-confirm { position: absolute; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(2,6,14,.78); -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px); }
+      #launch-confirm[hidden] { display: none !important; }
+      .lc-card { width: 100%; max-width: 320px; padding: 18px; border-radius: 14px; background: linear-gradient(180deg, rgba(18,38,62,.97), rgba(6,14,28,.98)); border: 1px solid rgba(255,210,61,.6); box-shadow: 0 22px 60px rgba(0,0,0,.7), 0 0 30px rgba(255,176,46,.15); }
+      .lc-k { font-family: "Orbitron", monospace; font-size: 11px; font-weight: 900; letter-spacing: .3em; color: #ffd98a; text-align: center; margin-bottom: 12px; }
+      .lc-row { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-top: 1px solid rgba(63,214,255,.14); }
+      .lc-row span { font-size: 9px; font-weight: 700; letter-spacing: .22em; color: var(--dim); padding-top: 3px; }
+      .lc-row b { font-family: "Orbitron", monospace; font-size: 12px; font-weight: 700; color: var(--ink); text-align: right; }
+      .lc-btns { display: flex; gap: 8px; margin-top: 14px; } .lc-btns .hp-btn { flex: 1; }
+      .opt-card { position: relative; }
+      .opt-card.locked { cursor: default; filter: saturate(.25); }
+      .opt-card.locked .lo-ship-cv { opacity: .9; }
+      .opt-role { font-size: 9px; font-weight: 700; letter-spacing: .06em; color: #8fd8ff; line-height: 1.3; text-align: center; }
+      .lock-plate { display: block; margin-top: 5px; padding: 5px 4px; border-radius: 6px; background: rgba(30,22,4,.85); border: 1px solid rgba(255,210,61,.65); color: #ffd98a; font-family: "Orbitron", monospace; font-size: 8.5px; font-weight: 700; letter-spacing: .08em; line-height: 1.5; }
+      .lock-plate small { display: block; font-family: "Rajdhani", sans-serif; font-size: 9.5px; letter-spacing: .03em; color: #e9cf8d; }
+      .opt-card select { font: inherit; }
+      .cmp-pick { display: flex; align-items: center; gap: 8px; }
+      .cmp-pick select { flex: 1 1 0; min-width: 0; background: rgba(2,8,18,.85); color: var(--ink); border: 1px solid rgba(63,214,255,.4); border-radius: 8px; padding: 9px 6px; font-family: "Orbitron", monospace; font-size: 10.5px; font-weight: 700; }
+      .cmp-vs { font-family: "Orbitron", monospace; font-size: 10px; font-weight: 900; color: var(--amber); }
+      #cmp-out { margin-top: 10px; }
+      .cmp-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+      .cmp-row em { font-style: normal; font-size: 8.5px; font-weight: 700; letter-spacing: .14em; color: var(--dim); width: 38px; flex: 0 0 auto; }
+      .cmp-bars { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+      .cmp-bars i { height: 5px; border-radius: 3px; background: rgba(255,255,255,.12); overflow: hidden; }
+      .cmp-bars i b { display: block; height: 100%; }
+      .cmp-delta { font-family: "Orbitron", monospace; font-size: 10.5px; font-weight: 700; width: 58px; text-align: right; flex: 0 0 auto; }
+      .cmp-delta.up { color: #2ef2c0; } .cmp-delta.dn { color: #ff8a96; } .cmp-delta.eq { color: var(--dim); }
+      .camp-guide { display: block; font-size: 11px; font-weight: 700; letter-spacing: .06em; margin-top: 2px; }
+      /* UX02 wave rail */
+      #wave-rail { position: absolute; left: 50%; transform: translateX(-50%); top: calc(34px + env(safe-area-inset-top)); width: min(72%, 300px); z-index: 5; pointer-events: none; display: none; text-align: center; }
+      #wave-rail.on { display: block; }
+      #wave-rail-track { height: 4px; border-radius: 2px; background: rgba(255,255,255,.15); overflow: hidden; }
+      #wave-rail-fill { height: 100%; width: 0%; border-radius: 2px; background: linear-gradient(90deg, #2ef2c0, #3fd6ff); transition: width .3s ease; }
+      #wave-rail-label { font-family: "Orbitron", monospace; font-size: 8.5px; font-weight: 700; letter-spacing: .3em; color: #aee9ff; margin-top: 4px; text-shadow: 0 1px 8px rgba(0,0,0,.85); }
+      #wave-rail.inbound #wave-rail-label { color: #ff8a96; }
+      #wave-rail.inbound #wave-rail-fill { background: linear-gradient(90deg, #ff2438, #ff7a3d); }
+      /* UX03 damage direction edges */
+      #dmg-n, #dmg-s, #dmg-e, #dmg-w { position: absolute; z-index: 4; pointer-events: none; opacity: 0; transition: opacity .45s ease; }
+      #dmg-n { left: 0; right: 0; top: 0; height: 54px; background: linear-gradient(180deg, rgba(255,36,56,.5), rgba(255,36,56,0)); }
+      #dmg-s { left: 0; right: 0; bottom: 0; height: 54px; background: linear-gradient(0deg, rgba(255,36,56,.5), rgba(255,36,56,0)); }
+      #dmg-w { left: 0; top: 0; bottom: 0; width: 54px; background: linear-gradient(90deg, rgba(255,36,56,.5), rgba(255,36,56,0)); }
+      #dmg-e { right: 0; top: 0; bottom: 0; width: 54px; background: linear-gradient(270deg, rgba(255,36,56,.5), rgba(255,36,56,0)); }
+      #dmg-n.show, #dmg-s.show, #dmg-e.show, #dmg-w.show { opacity: 1; transition: opacity .06s ease; }
+      /* UX04 hull critical frame */
+      #crit-frame { position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0; box-shadow: inset 0 0 64px rgba(255,20,40,.55), inset 0 0 18px rgba(255,20,40,.4); }
+      #crit-frame.on { opacity: 1; animation: critPulse .85s ease-in-out infinite alternate; }
+      @keyframes critPulse { from { opacity: .45; } to { opacity: 1; } }
+      #me-hull.critical #me-hull-fill { background: #ff2438; }
+      #me-hull.critical #me-hp-text { color: #ff8a96; }
+      /* UX09 coach marks */
+      #coach { display: none; position: absolute; left: 50%; top: calc(118px + env(safe-area-inset-top)); transform: translateX(-50%); z-index: 8; width: min(84%, 320px); text-align: center; padding: 13px 14px 11px; border-radius: 13px; background: rgba(4,14,26,.92); border: 1px solid rgba(255,210,61,.65); box-shadow: 0 16px 44px rgba(0,0,0,.6); pointer-events: none; }
+      #coach.on { display: block; animation: coachIn .32s cubic-bezier(.22,1,.36,1); }
+      @keyframes coachIn { from { opacity: 0; transform: translateX(-50%) translateY(8px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+      #coach-step { font-family: "Orbitron", monospace; font-size: 8.5px; font-weight: 700; letter-spacing: .3em; color: var(--amber); }
+      #coach-text { font-family: "Orbitron", monospace; font-size: 14.5px; font-weight: 900; letter-spacing: .1em; color: var(--ink); margin-top: 5px; line-height: 1.45; }
+      #coach-skip { pointer-events: auto; margin-top: 9px; padding: 7px 14px; cursor: pointer; border-radius: 999px; background: transparent; border: 1px solid rgba(120,205,255,.45); color: #aee9ff; font-family: "Orbitron", monospace; font-size: 9.5px; font-weight: 700; letter-spacing: .14em; }
+      /* UX06 boss card extras */
+      #boss-card { pointer-events: auto; cursor: pointer; width: min(78%, 300px); }
+      #bc-canvas { width: 168px; height: 106px; display: block; margin: 0 auto 4px; }
+      #bc-abilities { margin-top: 9px; display: flex; flex-direction: column; gap: 4px; }
+      .bc-ab { font-size: 11.5px; font-weight: 700; letter-spacing: .1em; color: #ffd9de; }
+      .bc-ab b { color: #ff8a96; font-family: "Orbitron", monospace; font-size: 10px; margin-right: 5px; }
+      #bc-skip { margin-top: 9px; font-size: 8.5px; font-weight: 700; letter-spacing: .3em; color: rgba(255,220,225,.55); }
+      @media (prefers-reduced-motion: reduce) { #crit-frame.on { animation: none; } #coach.on { animation: none; } }
+      .camp-orb { position: relative; overflow: hidden; background: radial-gradient(circle at 34% 30%, #12303f, #050b14 70%); }
+      .camp-planet { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .camp-num { position: relative; z-index: 1; text-shadow: 0 1px 7px rgba(0,0,0,.75); }
     </style>
   </head>
   <body>
@@ -1541,9 +1641,13 @@
       <div id="banner"></div>
       <div id="chargebar"><div id="charge-fill"></div></div>
       <div id="perf-ind">PERF MODE</div>
-      <div id="boss-card"><div id="bc-name">VOID MOTHERSHIP</div><div id="bc-epi">THE FIRST HUNGER</div><div id="bc-bounty">BOUNTY 3,000 PTS</div></div>
+      <div id="boss-card"><canvas id="bc-canvas" width="300" height="190" aria-hidden="true"></canvas><div id="bc-name">VOID MOTHERSHIP</div><div id="bc-epi">THE FIRST HUNGER</div><div id="bc-abilities"></div><div id="bc-bounty">BOUNTY 3,000 PTS</div><div id="bc-skip">TAP TO SKIP</div></div>
       <div id="hint"></div>
       <div id="count-num"></div>
+      <div id="wave-rail"><div id="wave-rail-track"><div id="wave-rail-fill"></div></div><div id="wave-rail-label">ASSAULT</div></div>
+      <div id="dmg-n"></div><div id="dmg-s"></div><div id="dmg-e"></div><div id="dmg-w"></div>
+      <div id="crit-frame"></div>
+      <div id="coach"><div id="coach-step">1 / 3</div><div id="coach-text">DRAG TO STEER</div><button id="coach-skip" aria-label="Skip tutorial">SKIP ✕</button></div>
 
       <!-- START — TEST RUN 04: Cockpit hub (Sample 04 premium). The selected ship on its
            launch pad is the exact gameplay ship (shared drawShipModel canvas render). -->
@@ -1602,11 +1706,11 @@
             </div>
             <div class="ck-console right">
               <div class="ck-con-title">SYSTEMS</div>
-              <button class="ck-key" id="btn-menu-loadout"><svg viewBox="0 0 24 24"><path d="M21 6.5a5.5 5.5 0 0 1-7.6 5L7 17.9V21H3.9v-3.1l6.4-6.4A5.5 5.5 0 0 1 15.5 3l-2.6 2.6.7 3.2 3.2.7L19.4 7c.9.9 1.6 2.1 1.6-.5zM5 19h2v-2H5z" transform="scale(.95)"/></svg>HANGAR</button>
-              <button class="ck-key" id="btn-ck-quests"><svg viewBox="0 0 24 24"><path d="M4 4h13a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3V4zm3 4v2h8V8H7zm0 4v2h10v-2H7zm0 4v2h6v-2H7z"/></svg>QUESTS<span class="bdot"></span></button>
-              <button class="ck-key" id="btn-ck-campaign"><svg viewBox="0 0 24 24"><path d="M12 2l2.4 6.2L21 9l-5 4.4 1.5 6.6L12 16.7 6.5 20 8 13.4 3 9l6.6-.8z"/></svg>CAMPAIGN</button>
-              <button class="ck-key" id="btn-menu-pilots"><svg viewBox="0 0 24 24"><path d="M12 12a4.5 4.5 0 1 0-4.5-4.5A4.5 4.5 0 0 0 12 12zm0 2.2c-3.4 0-9 1.7-9 5V21h18v-1.8c0-3.3-5.6-5-9-5z"/></svg>PILOTS</button>
-              <button class="ck-key" id="btn-menu-settings"><svg viewBox="0 0 24 24"><path d="M19.4 13a7.6 7.6 0 0 0 0-2l2-1.6-2-3.4-2.4 1a7.6 7.6 0 0 0-1.7-1L14.9 3H9.1L8.7 5.9a7.6 7.6 0 0 0-1.7 1l-2.4-1-2 3.4L4.6 11a7.6 7.6 0 0 0 0 2l-2 1.6 2 3.4 2.4-1a7.6 7.6 0 0 0 1.7 1l.4 2.9h5.8l.4-2.9a7.6 7.6 0 0 0 1.7-1l2.4 1 2-3.4zm-7.4 3a4 4 0 1 1 4-4 4 4 0 0 1-4 4z"/></svg>SETTINGS</button>
+              <div class="ck-sysrow"><small>SHIP</small><b id="ck-sys-ship">VANGUARD</b></div>
+              <div class="ck-sysrow"><small>CANNON</small><b id="ck-sys-gun">PULSE</b></div>
+              <div class="ck-sysrow"><small>DRONES</small><b id="ck-sys-drone">SCOUT</b></div>
+              <div class="ck-sysrow"><small>PILOT</small><b id="ck-sys-pilot">NOVA</b></div>
+              <div class="ck-statbar"><small>QUESTS READY <b id="ck-sys-claim">0</b></small><div class="track"><div class="fill" id="ck-claimbar" style="width:0%"></div></div></div>
             </div>
           </div>
 
@@ -1616,10 +1720,40 @@
             <span class="bp-bounty"><span id="ck-boss-bounty">3,000</span><small>PTS BOUNTY</small></span>
           </div>
 
+          <div class="hub-plate gold" id="unlock-notice" hidden><span class="hp-txt" id="unlock-notice-txt">UNLOCKED</span><button class="hp-btn" id="btn-unlock-ok">GOT IT</button></div>
+          <div class="hub-plate" id="resume-plate" hidden><span class="hp-txt" id="resume-txt">RESUME — WAVE 2</span><span class="hp-btns"><button class="hp-btn go" id="btn-resume-run">RESUME</button><button class="hp-btn" id="btn-resume-dismiss">DISCARD</button></span></div>
+          <div class="hub-plate" id="firstwin-plate"><span class="hp-txt" id="firstwin-txt">FIRST WIN TODAY: +150 CR — kill any boss</span></div>
+          <div class="hub-plate slim" id="unlock-tracker"><span class="hp-txt" id="unlock-tracker-txt">NEXT UNLOCK — SOLARIS · 0/1 CAMPAIGN VICTORY</span></div>
+
           <div class="ck-launchwrap">
             <div class="ck-guard" aria-hidden="true"></div>
             <button class="btn" id="btn-play"><span id="launch-label">LAUNCH</span></button>
             <div id="run-tag"></div>
+          </div>
+
+          <div class="ck-keygrid" role="navigation" aria-label="Cockpit sections">
+            <button class="ck-gkey" data-nav="hangar">HANGAR</button>
+            <button class="ck-gkey" data-nav="arsenal">ARSENAL</button>
+            <button class="ck-gkey" data-nav="drones">DRONE BAY</button>
+            <button class="ck-gkey" data-nav="pilots">PILOTS</button>
+            <button class="ck-gkey" data-nav="engineering">ENGINEERING</button>
+            <button class="ck-gkey" data-nav="livery">LIVERY</button>
+            <button class="ck-gkey" data-nav="quests">QUESTS<span class="bdot"></span></button>
+            <button class="ck-gkey" data-nav="campaign">CAMPAIGN</button>
+            <button class="ck-gkey" data-nav="settings">SETTINGS</button>
+          </div>
+
+          <div id="launch-confirm" hidden>
+            <div class="lc-card">
+              <div class="lc-k">LAUNCH CHECK</div>
+              <div class="lc-row"><span>SKY</span><b id="lc-sky">WAVE 1 · DEEP SPACE</b></div>
+              <div class="lc-row"><span>BOSS</span><b id="lc-boss">VOID MOTHERSHIP</b></div>
+              <div class="lc-row"><span>SHIP</span><b id="lc-ship">VANGUARD</b></div>
+              <div class="lc-row"><span>CANNON</span><b id="lc-gun">PULSE</b></div>
+              <div class="lc-row"><span>DRONES</span><b id="lc-drone">SCOUT</b></div>
+              <div class="lc-row"><span>PILOT</span><b id="lc-pilot">NOVA</b></div>
+              <div class="lc-btns"><button class="hp-btn go big" id="btn-lc-go">LAUNCH ▶</button><button class="hp-btn big" id="btn-lc-cancel">CANCEL</button></div>
+            </div>
           </div>
 
           <div id="tilt-help" role="alertdialog" aria-labelledby="tilt-help-title" aria-describedby="tilt-help-lead">
@@ -1661,108 +1795,169 @@
       </div>
 
       <!-- LOADOUT -->
-      <div class="screen" id="scr-loadout">
+      <div class="screen" id="scr-loadout" data-sec="hangar">
         <div class="corner-btns">
           <button class="icon-btn music-btn" aria-label="Toggle music">
             <svg class="ico-mon" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
             <svg class="ico-moff" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/><path d="M3.4 2 2 3.4 20.6 22 22 20.6z"/></svg>
           </button>
         </div>
-        <h2>LOADOUT</h2>
-        <div class="subtitle" style="margin-top:8px">Ship · Cannon · Drones · Pilot</div>
+        <h2 id="lo-title">HANGAR</h2>
+        <div class="subtitle" id="lo-sub" style="margin-top:8px">Ships only — pick your hull</div>
 
-        <div class="hg-stage" aria-hidden="true">
+        <div class="hg-stage sec-block" data-sec="hangar" aria-hidden="true">
           <div class="hg-ring"></div>
           <canvas id="hangar-canvas"></canvas>
           <div class="hg-scan"></div>
         </div>
-        <div class="hg-power">
+        <div class="hg-power sec-block" data-sec="engineering">
           <div class="hp-k">COMBAT POWER</div>
           <div class="hp-v" id="hg-power">0</div>
           <div class="hp-parts" id="hg-power-parts"></div>
         </div>
 
-        <div class="lo-group">
-          <div class="lo-label">SHIP</div>
+        <div class="lo-group sec-block" data-sec="hangar">
+          <div class="lo-label">SHIP — 12 HULLS · 4 EARNED IN COMBAT</div>
           <div class="opt-row">
             <button class="opt-card sel" data-group="ship" data-value="vanguard">
               <canvas class="lo-cv lo-ship-cv" data-ship="vanguard" width="216" height="216" aria-hidden="true"></canvas>
               <span class="opt-name">VANGUARD</span>
-              <span class="opt-stat">Balanced · Hull 3</span><span class="stat-bars"><span class="sb"><em>HULL</em><i><b style="width:60%;background:#3fd6ff"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:62%;background:#3fd6ff"></b></i></span><span class="sb"><em>FIRE</em><i><b style="width:55%;background:#3fd6ff"></b></i></span></span>
+              <span class="opt-stat">Balanced · Hull 3</span><span class="opt-role">ALL-ROUNDER — BEST FOR: LEARNING THE SKIES</span><span class="stat-bars"><span class="sb"><em>HULL</em><i><b style="width:60%;background:#3fd6ff"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:62%;background:#3fd6ff"></b></i></span><span class="sb"><em>FIRE</em><i><b style="width:55%;background:#3fd6ff"></b></i></span></span>
             </button>
             <button class="opt-card" data-group="ship" data-value="phantom">
               <canvas class="lo-cv lo-ship-cv" data-ship="phantom" width="216" height="216" aria-hidden="true"></canvas>
               <span class="opt-name">PHANTOM</span>
-              <span class="opt-stat">Hull 3 · Fast, quick fire</span><span class="stat-bars"><span class="sb"><em>HULL</em><i><b style="width:60%;background:#b18cff"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:100%;background:#b18cff"></b></i></span><span class="sb"><em>FIRE</em><i><b style="width:85%;background:#b18cff"></b></i></span></span>
+              <span class="opt-stat">Hull 3 · Fast, quick fire</span><span class="opt-role">SPEEDSTER — BEST FOR: SURVIVAL &amp; DODGING</span><span class="stat-bars"><span class="sb"><em>HULL</em><i><b style="width:60%;background:#b18cff"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:100%;background:#b18cff"></b></i></span><span class="sb"><em>FIRE</em><i><b style="width:85%;background:#b18cff"></b></i></span></span>
             </button>
             <button class="opt-card" data-group="ship" data-value="aegis">
               <canvas class="lo-cv lo-ship-cv" data-ship="aegis" width="216" height="216" aria-hidden="true"></canvas>
               <span class="opt-name">AEGIS</span>
-              <span class="opt-stat">Hull 4 · Cannon LV 2</span><span class="stat-bars"><span class="sb"><em>HULL</em><i><b style="width:85%;background:#ffb02e"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:40%;background:#ffb02e"></b></i></span><span class="sb"><em>FIRE</em><i><b style="width:35%;background:#ffb02e"></b></i></span></span>
+              <span class="opt-stat">Hull 4 · Cannon LV 2</span><span class="opt-role">TANK — BEST FOR: BOSS FIGHTS</span><span class="stat-bars"><span class="sb"><em>HULL</em><i><b style="width:85%;background:#ffb02e"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:40%;background:#ffb02e"></b></i></span><span class="sb"><em>FIRE</em><i><b style="width:35%;background:#ffb02e"></b></i></span></span>
+            </button>
+          </div>
+          <div class="opt-row">
+            <button class="opt-card" data-group="ship" data-value="interceptor">
+              <canvas class="lo-cv lo-ship-cv" data-ship="interceptor" width="216" height="216" aria-hidden="true"></canvas>
+              <span class="opt-name">INTERCEPTOR</span>
+              <span class="opt-stat">Hull 2 · Fastest handling</span><span class="opt-role">DART — BEST FOR: SURVIVAL &amp; WEAVING</span><span class="stat-bars"><span class="sb"><em>HULL</em><i><b style="width:40%;background:#7dd3fc"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:100%;background:#7dd3fc"></b></i></span><span class="sb"><em>FIRE</em><i><b style="width:70%;background:#7dd3fc"></b></i></span></span>
+            </button>
+            <button class="opt-card" data-group="ship" data-value="bulwark">
+              <canvas class="lo-cv lo-ship-cv" data-ship="bulwark" width="216" height="216" aria-hidden="true"></canvas>
+              <span class="opt-name">BULWARK</span>
+              <span class="opt-stat">Hull 5 · Heavy guns</span><span class="opt-role">GUNSHIP — BEST FOR: BOSS MELT</span><span class="stat-bars"><span class="sb"><em>HULL</em><i><b style="width:100%;background:#ffb02e"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:28%;background:#ffb02e"></b></i></span><span class="sb"><em>FIRE</em><i><b style="width:62%;background:#ffb02e"></b></i></span></span>
+            </button>
+            <button class="opt-card" data-group="ship" data-value="spectre">
+              <canvas class="lo-cv lo-ship-cv" data-ship="spectre" width="216" height="216" aria-hidden="true"></canvas>
+              <span class="opt-name">SPECTRE</span>
+              <span class="opt-stat">Hull 3 · Stealth wedge</span><span class="opt-role">GHOST — BEST FOR: HIT-AND-RUN</span><span class="stat-bars"><span class="sb"><em>HULL</em><i><b style="width:60%;background:#b18cff"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:95%;background:#b18cff"></b></i></span><span class="sb"><em>FIRE</em><i><b style="width:62%;background:#b18cff"></b></i></span></span>
+            </button>
+          </div>
+          <div class="opt-row">
+            <button class="opt-card" data-group="ship" data-value="tempest">
+              <canvas class="lo-cv lo-ship-cv" data-ship="tempest" width="216" height="216" aria-hidden="true"></canvas>
+              <span class="opt-name">TEMPEST</span>
+              <span class="opt-stat">Hull 3 · Quad engines</span><span class="opt-role">STORM — BEST FOR: CROWDS</span><span class="stat-bars"><span class="sb"><em>HULL</em><i><b style="width:60%;background:#2ef2c0"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:72%;background:#2ef2c0"></b></i></span><span class="sb"><em>FIRE</em><i><b style="width:92%;background:#2ef2c0"></b></i></span></span>
+            </button>
+            <button class="opt-card" data-group="ship" data-value="nomad">
+              <canvas class="lo-cv lo-ship-cv" data-ship="nomad" width="216" height="216" aria-hidden="true"></canvas>
+              <span class="opt-name">NOMAD</span>
+              <span class="opt-stat">Hull 3 · Strong magnet</span><span class="opt-role">EXPLORER — BEST FOR: PICKUP FARMING</span><span class="stat-bars"><span class="sb"><em>HULL</em><i><b style="width:60%;background:#ffb35c"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:74%;background:#ffb35c"></b></i></span><span class="sb"><em>FIRE</em><i><b style="width:55%;background:#ffb35c"></b></i></span></span>
+            </button>
+            <button class="opt-card locked" data-group="ship" data-value="solaris">
+              <canvas class="lo-cv lo-ship-cv" data-ship="solaris" width="216" height="216" aria-hidden="true"></canvas>
+              <span class="opt-name">SOLARIS</span>
+              <span class="opt-stat">Hull 4 · Premium all-round</span><span class="opt-role">FLAGSHIP — BEST FOR: EVERYTHING</span><span class="stat-bars"><span class="sb"><em>HULL</em><i><b style="width:80%;background:#ffd23d"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:80%;background:#ffd23d"></b></i></span><span class="sb"><em>FIRE</em><i><b style="width:72%;background:#ffd23d"></b></i></span></span><span class="lock-plate">LOCKED<small>CLEAR WAVE 5 — BEAT THE ECLIPSE TITAN</small></span>
+            </button>
+          </div>
+          <div class="opt-row">
+            <button class="opt-card locked" data-group="ship" data-value="reaper">
+              <canvas class="lo-cv lo-ship-cv" data-ship="reaper" width="216" height="216" aria-hidden="true"></canvas>
+              <span class="opt-name">VOID REAPER</span>
+              <span class="opt-stat">Hull 2 · Extreme fire</span><span class="opt-role">ASSASSIN — BEST FOR: BOSS RUSH</span><span class="stat-bars"><span class="sb"><em>HULL</em><i><b style="width:40%;background:#ff5da2"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:92%;background:#ff5da2"></b></i></span><span class="sb"><em>FIRE</em><i><b style="width:96%;background:#ff5da2"></b></i></span></span><span class="lock-plate">LOCKED<small>KILL 15 BOSSES</small></span>
+            </button>
+            <button class="opt-card locked" data-group="ship" data-value="starforge">
+              <canvas class="lo-cv lo-ship-cv" data-ship="starforge" width="216" height="216" aria-hidden="true"></canvas>
+              <span class="opt-name">STARFORGE</span>
+              <span class="opt-stat">Hull 5 · Max armour &amp; fire</span><span class="opt-role">DREADNOUGHT — BEST FOR: LATE WAVES</span><span class="stat-bars"><span class="sb"><em>HULL</em><i><b style="width:100%;background:#ff8a3d"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:22%;background:#ff8a3d"></b></i></span><span class="sb"><em>FIRE</em><i><b style="width:80%;background:#ff8a3d"></b></i></span></span><span class="lock-plate">LOCKED<small>DESTROY 2,000 ENEMIES</small></span>
+            </button>
+            <button class="opt-card locked" data-group="ship" data-value="sovereign">
+              <canvas class="lo-cv lo-ship-cv" data-ship="sovereign" width="216" height="216" aria-hidden="true"></canvas>
+              <span class="opt-name">ECLIPSE SOVEREIGN</span>
+              <span class="opt-stat">Hull 4 · Best overall</span><span class="opt-role">SOVEREIGN — BEST FOR: FINAL WAVE</span><span class="stat-bars"><span class="sb"><em>HULL</em><i><b style="width:80%;background:#ffd23d"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:86%;background:#ffd23d"></b></i></span><span class="sb"><em>FIRE</em><i><b style="width:100%;background:#ffd23d"></b></i></span></span><span class="lock-plate">LOCKED<small>EARN 50,000 LIFETIME PTS</small></span>
             </button>
           </div>
         </div>
 
-        <div class="lo-group">
+        <div class="lo-group sec-block" data-sec="hangar">
+          <div class="lo-label">COMPARE SHIPS</div>
+          <div class="cmp-pick">
+            <select id="cmp-a" aria-label="Compare ship A"></select>
+            <span class="cmp-vs">VS</span>
+            <select id="cmp-b" aria-label="Compare ship B"></select>
+          </div>
+          <div id="cmp-out"></div>
+        </div>
+
+        <div class="lo-group sec-block" data-sec="arsenal">
           <div class="lo-label">CANNON</div>
           <div class="opt-row">
             <button class="opt-card sel" data-group="gun" data-value="pulse">
               <svg viewBox="0 0 48 48"><circle cx="15" cy="5" r="2.4" fill="#aee9ff"/><circle cx="33" cy="5" r="2.4" fill="#aee9ff"/><rect x="12.5" y="6" width="5" height="17" rx="2.4" fill="#59c7e8"/><rect x="30.5" y="6" width="5" height="17" rx="2.4" fill="#59c7e8"/><rect x="13.5" y="9" width="3" height="7" fill="#dff6ff"/><rect x="31.5" y="9" width="3" height="7" fill="#dff6ff"/><path d="M8 40 L13 24 H35 L40 40 Z" fill="#33506b"/><path d="M8 40 L13 24 H35 L40 40 Z" fill="#8fb8d8" opacity=".35"/><circle cx="24" cy="33" r="3" fill="#3fd6ff"/></svg>
               <span class="opt-name">PULSE</span>
-              <span class="opt-stat">Twin cyan bolts · fastest fire · all-rounder</span><span class="stat-bars"><span class="sb"><em>DMG</em><i><b style="width:45%;background:#3fd6ff"></b></i></span><span class="sb"><em>RATE</em><i><b style="width:95%;background:#3fd6ff"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:85%;background:#3fd6ff"></b></i></span><span class="sb"><em>SPREAD</em><i><b style="width:40%;background:#3fd6ff"></b></i></span></span>
+              <span class="opt-stat">Twin cyan bolts · fastest fire · all-rounder</span><span class="opt-role">ALL-ROUNDER — BEST FOR: BOSS FIGHTS</span><span class="stat-bars"><span class="sb"><em>DMG</em><i><b style="width:45%;background:#3fd6ff"></b></i></span><span class="sb"><em>RATE</em><i><b style="width:95%;background:#3fd6ff"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:85%;background:#3fd6ff"></b></i></span><span class="sb"><em>SPREAD</em><i><b style="width:40%;background:#3fd6ff"></b></i></span></span>
             </button>
             <button class="opt-card" data-group="gun" data-value="scatter">
               <svg viewBox="0 0 48 48"><g fill="#ff9a3d"><circle cx="6" cy="4" r="1.8" fill="#ffd9a0"/><circle cx="17" cy="2" r="1.8" fill="#ffd9a0"/><circle cx="24" cy="1.5" r="1.8" fill="#ffd9a0"/><circle cx="31" cy="2" r="1.8" fill="#ffd9a0"/><circle cx="42" cy="4" r="1.8" fill="#ffd9a0"/><rect x="6" y="14" width="4.6" height="15" rx="2.2" transform="rotate(-32 8 36)"/><rect x="15" y="10" width="4.6" height="17" rx="2.2" transform="rotate(-14 17 36)"/><rect x="22" y="8" width="4.6" height="18" rx="2.2"/><rect x="29" y="10" width="4.6" height="17" rx="2.2" transform="rotate(14 31 36)"/><rect x="38" y="14" width="4.6" height="15" rx="2.2" transform="rotate(32 40 36)"/></g><path d="M10 42 L16 30 H32 L38 42 Z" fill="#6e4512"/><circle cx="24" cy="37" r="2.8" fill="#ffb02e"/></svg>
               <span class="opt-name">SCATTER</span>
-              <span class="opt-stat">Orange pellet fan · burst up close · short range</span><span class="stat-bars"><span class="sb"><em>DMG</em><i><b style="width:80%;background:#ff9a3d"></b></i></span><span class="sb"><em>RATE</em><i><b style="width:40%;background:#ff9a3d"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:55%;background:#ff9a3d"></b></i></span><span class="sb"><em>SPREAD</em><i><b style="width:100%;background:#ff9a3d"></b></i></span></span>
+              <span class="opt-stat">Orange pellet fan · burst up close · short range</span><span class="opt-role">CROWD CLEAR — BEST FOR: SWARMS</span><span class="stat-bars"><span class="sb"><em>DMG</em><i><b style="width:80%;background:#ff9a3d"></b></i></span><span class="sb"><em>RATE</em><i><b style="width:40%;background:#ff9a3d"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:55%;background:#ff9a3d"></b></i></span><span class="sb"><em>SPREAD</em><i><b style="width:100%;background:#ff9a3d"></b></i></span></span>
             </button>
             <button class="opt-card" data-group="gun" data-value="lance">
               <svg viewBox="0 0 48 48"><rect x="21" y="2" width="6" height="34" rx="3" fill="#ff5da2"/><rect x="23" y="5" width="2" height="26" fill="#ffffff"/><rect x="17.5" y="10" width="13" height="3.4" rx="1.7" fill="#ffd7ec"/><rect x="17.5" y="19" width="13" height="3.4" rx="1.7" fill="#ffd7ec"/><rect x="17.5" y="28" width="13" height="3.4" rx="1.7" fill="#ffd7ec"/><circle cx="24" cy="2" r="2.6" fill="#ffffff"/><path d="M12 42 L18 36 H30 L36 42 Z" fill="#571433"/><circle cx="24" cy="39" r="2.4" fill="#ff5da2"/></svg>
               <span class="opt-name">LANCE</span>
-              <span class="opt-stat">Piercing beam · heavy ticks · narrow column</span><span class="stat-bars"><span class="sb"><em>DMG</em><i><b style="width:100%;background:#ff5da2"></b></i></span><span class="sb"><em>RATE</em><i><b style="width:30%;background:#ff5da2"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:100%;background:#ff5da2"></b></i></span><span class="sb"><em>SPREAD</em><i><b style="width:8%;background:#ff5da2"></b></i></span></span>
+              <span class="opt-stat">Piercing beam · heavy ticks · narrow column</span><span class="opt-role">LANCE — BEST FOR: SINGLE TARGETS &amp; BOSSES</span><span class="stat-bars"><span class="sb"><em>DMG</em><i><b style="width:100%;background:#ff5da2"></b></i></span><span class="sb"><em>RATE</em><i><b style="width:30%;background:#ff5da2"></b></i></span><span class="sb"><em>SPEED</em><i><b style="width:100%;background:#ff5da2"></b></i></span><span class="sb"><em>SPREAD</em><i><b style="width:8%;background:#ff5da2"></b></i></span></span>
             </button>
           </div>
         </div>
 
-        <div class="lo-group">
+        <div class="lo-group sec-block" data-sec="drones">
           <div class="lo-label">DRONE WING</div>
           <div class="opt-row">
             <button class="opt-card sel" data-group="drone" data-value="scout">
               <canvas class="lo-cv lo-drone-cv" data-drone="scout" width="144" height="144" aria-hidden="true"></canvas>
               <span class="opt-name">SCOUT</span>
-              <span class="opt-stat">1 drone · fast light bolts · DMG 1 · quickest</span><span class="stat-bars"><span class="sb"><em>DMG</em><i><b style="width:50%;background:#3fd6ff"></b></i></span><span class="sb"><em>RATE</em><i><b style="width:78%;background:#3fd6ff"></b></i></span><span class="sb"><em>WING</em><i><b style="width:33%;background:#3fd6ff"></b></i></span></span>
+              <span class="opt-stat">1 drone · fast light bolts · DMG 1 · quickest</span><span class="opt-role">BEST FOR: FIRST FLIGHTS</span><span class="stat-bars"><span class="sb"><em>DMG</em><i><b style="width:50%;background:#3fd6ff"></b></i></span><span class="sb"><em>RATE</em><i><b style="width:78%;background:#3fd6ff"></b></i></span><span class="sb"><em>WING</em><i><b style="width:33%;background:#3fd6ff"></b></i></span></span>
             </button>
             <button class="opt-card" data-group="drone" data-value="wasp">
               <canvas class="lo-cv lo-drone-cv" data-drone="wasp" width="144" height="144" aria-hidden="true"></canvas>
               <span class="opt-name">WASP</span>
-              <span class="opt-stat">1 drone · angled strafing fire · DMG 1 · rapid</span><span class="stat-bars"><span class="sb"><em>DMG</em><i><b style="width:50%;background:#2ef2c0"></b></i></span><span class="sb"><em>RATE</em><i><b style="width:96%;background:#2ef2c0"></b></i></span><span class="sb"><em>WING</em><i><b style="width:33%;background:#2ef2c0"></b></i></span></span>
+              <span class="opt-stat">1 drone · angled strafing fire · DMG 1 · rapid</span><span class="opt-role">BEST FOR: STRAFING RUNS</span><span class="stat-bars"><span class="sb"><em>DMG</em><i><b style="width:50%;background:#2ef2c0"></b></i></span><span class="sb"><em>RATE</em><i><b style="width:96%;background:#2ef2c0"></b></i></span><span class="sb"><em>WING</em><i><b style="width:33%;background:#2ef2c0"></b></i></span></span>
             </button>
             <button class="opt-card" data-group="drone" data-value="twin">
               <canvas class="lo-cv lo-drone-cv" data-drone="twin" width="144" height="144" aria-hidden="true"></canvas>
               <span class="opt-name">TWIN</span>
-              <span class="opt-stat">2 drones · twin bolts · steady rate</span><span class="stat-bars"><span class="sb"><em>DMG</em><i><b style="width:50%;background:#3fd6ff"></b></i></span><span class="sb"><em>RATE</em><i><b style="width:52%;background:#3fd6ff"></b></i></span><span class="sb"><em>WING</em><i><b style="width:66%;background:#3fd6ff"></b></i></span></span>
+              <span class="opt-stat">2 drones · twin bolts · steady rate</span><span class="opt-role">BEST FOR: WIDE COVERAGE</span><span class="stat-bars"><span class="sb"><em>DMG</em><i><b style="width:50%;background:#3fd6ff"></b></i></span><span class="sb"><em>RATE</em><i><b style="width:52%;background:#3fd6ff"></b></i></span><span class="sb"><em>WING</em><i><b style="width:66%;background:#3fd6ff"></b></i></span></span>
             </button>
           </div>
           <div class="opt-row" style="margin-top:8px">
             <button class="opt-card" data-group="drone" data-value="phantom">
               <canvas class="lo-cv lo-drone-cv" data-drone="phantom" width="144" height="144" aria-hidden="true"></canvas>
               <span class="opt-name">PHANTOM</span>
-              <span class="opt-stat">2 drones · piercing bolts · DMG 2 · slow rate</span><span class="stat-bars"><span class="sb"><em>DMG</em><i><b style="width:100%;background:#b18cff"></b></i></span><span class="sb"><em>RATE</em><i><b style="width:46%;background:#b18cff"></b></i></span><span class="sb"><em>WING</em><i><b style="width:66%;background:#b18cff"></b></i></span></span>
+              <span class="opt-stat">2 drones · piercing bolts · DMG 2 · slow rate</span><span class="opt-role">BEST FOR: BOSS MELT</span><span class="stat-bars"><span class="sb"><em>DMG</em><i><b style="width:100%;background:#b18cff"></b></i></span><span class="sb"><em>RATE</em><i><b style="width:46%;background:#b18cff"></b></i></span><span class="sb"><em>WING</em><i><b style="width:66%;background:#b18cff"></b></i></span></span>
             </button>
             <button class="opt-card" data-group="drone" data-value="guardian">
               <canvas class="lo-cv lo-drone-cv" data-drone="guardian" width="144" height="144" aria-hidden="true"></canvas>
               <span class="opt-name">GUARDIAN</span>
-              <span class="opt-stat">1 drone · heavy shells DMG 2 · blocks enemy fire</span><span class="stat-bars"><span class="sb"><em>DMG</em><i><b style="width:100%;background:#ffb02e"></b></i></span><span class="sb"><em>RATE</em><i><b style="width:34%;background:#ffb02e"></b></i></span><span class="sb"><em>WING</em><i><b style="width:33%;background:#ffb02e"></b></i></span></span>
+              <span class="opt-stat">1 drone · heavy shells DMG 2 · blocks enemy fire</span><span class="opt-role">BEST FOR: SURVIVAL</span><span class="stat-bars"><span class="sb"><em>DMG</em><i><b style="width:100%;background:#ffb02e"></b></i></span><span class="sb"><em>RATE</em><i><b style="width:34%;background:#ffb02e"></b></i></span><span class="sb"><em>WING</em><i><b style="width:33%;background:#ffb02e"></b></i></span></span>
             </button>
             <button class="opt-card" data-group="drone" data-value="swarm">
               <canvas class="lo-cv lo-drone-cv" data-drone="swarm" width="144" height="144" aria-hidden="true"></canvas>
               <span class="opt-name">SWARM</span>
-              <span class="opt-stat">3 micro drones · rapid pings · wide coverage</span><span class="stat-bars"><span class="sb"><em>DMG</em><i><b style="width:50%;background:#ffd23d"></b></i></span><span class="sb"><em>RATE</em><i><b style="width:66%;background:#ffd23d"></b></i></span><span class="sb"><em>WING</em><i><b style="width:100%;background:#ffd23d"></b></i></span></span>
+              <span class="opt-stat">3 micro drones · rapid pings · wide coverage</span><span class="opt-role">BEST FOR: CROWDS</span><span class="stat-bars"><span class="sb"><em>DMG</em><i><b style="width:50%;background:#ffd23d"></b></i></span><span class="sb"><em>RATE</em><i><b style="width:66%;background:#ffd23d"></b></i></span><span class="sb"><em>WING</em><i><b style="width:100%;background:#ffd23d"></b></i></span></span>
             </button>
           </div>
         </div>
 
-        <div class="lo-group">
+        <div class="lo-group sec-block" data-sec="pilots">
           <div class="lo-label">PILOT</div>
           <div class="opt-row">
             <button class="opt-card sel" data-group="pilot" data-value="nova">
@@ -1783,10 +1978,10 @@
           </div>
         </div>
 
-        <div class="lo-summary" id="lo-summary">VANGUARD · PULSE · SCOUT · NOVA<small>Combined build stats update as you pick</small></div>
+        <div class="lo-summary sec-block" data-sec="hangar" id="lo-summary">VANGUARD · PULSE · SCOUT · NOVA<small>Combined build stats update as you pick</small></div>
 
-        <div class="lo-group">
-          <div class="lo-label">UPGRADES — ENGINEERING BAY</div>
+        <div class="lo-group sec-block" data-sec="engineering">
+          <div class="lo-label">UPGRADES — ENGINEERING</div>
           <div class="upg-row">
             <div class="upg-meta">
               <div class="upg-name">POWER <span id="upg-power-lv" style="color:var(--amber)">LV 0</span></div>
@@ -1806,7 +2001,7 @@
           <div class="hg-wallet"><span class="coin"></span><span id="hg-credits">0</span><small>CREDITS AVAILABLE</small></div>
         </div>
 
-        <div class="lo-group">
+        <div class="lo-group sec-block" data-sec="livery">
           <div class="lo-label">SKIN — LIVERY</div>
           <div class="lo-label" style="margin-top:2px; font-size:10px; letter-spacing:.2em; color:var(--dim)">SHIP COLOUR</div>
           <div class="swatch-row" role="group" aria-label="Ship colour">
@@ -1832,12 +2027,17 @@
           </div>
         </div>
 
-        <button class="btn" id="btn-launch">LAUNCH&ensp;▶</button>
-        <button class="btn ghost" id="btn-try">TRY NOW — TEST FLIGHT</button>
+        <button class="btn sec-block" data-sec="hangar" id="btn-launch">LAUNCH&ensp;▶</button>
+        <button class="btn ghost sec-block" data-sec="hangar" id="btn-try">TRY NOW — TEST FLIGHT</button>
         <button class="btn ghost" id="btn-loadout-back">BACK</button>
         <nav class="meta-nav" aria-label="Cockpit sections">
           <button class="meta-key" data-nav="start">HUB</button>
-          <button class="meta-key on" data-nav="loadout">HANGAR</button>
+          <button class="meta-key" data-nav="hangar">HANGAR</button>
+          <button class="meta-key" data-nav="arsenal">ARSENAL</button>
+          <button class="meta-key" data-nav="drones">DRONE BAY</button>
+          <button class="meta-key" data-nav="pilots">PILOTS</button>
+          <button class="meta-key" data-nav="engineering">ENGINEERING</button>
+          <button class="meta-key" data-nav="livery">LIVERY</button>
           <button class="meta-key" data-nav="quests">QUESTS<span class="bdot"></span></button>
           <button class="meta-key" data-nav="campaign">CAMPAIGN</button>
           <button class="meta-key" data-nav="settings">SETTINGS</button>
@@ -1857,11 +2057,17 @@
           <div class="lo-label">ACHIEVEMENTS</div>
           <div id="q-ach"></div>
         </div>
+        <button class="btn amber" id="btn-claim-all" style="display:none">CLAIM ALL</button>
         <button class="btn ghost" id="btn-quests-back">BACK</button>
         <nav class="meta-nav" aria-label="Cockpit sections">
           <button class="meta-key" data-nav="start">HUB</button>
-          <button class="meta-key" data-nav="loadout">HANGAR</button>
-          <button class="meta-key on" data-nav="quests">QUESTS<span class="bdot"></span></button>
+          <button class="meta-key" data-nav="hangar">HANGAR</button>
+          <button class="meta-key" data-nav="arsenal">ARSENAL</button>
+          <button class="meta-key" data-nav="drones">DRONE BAY</button>
+          <button class="meta-key" data-nav="pilots">PILOTS</button>
+          <button class="meta-key" data-nav="engineering">ENGINEERING</button>
+          <button class="meta-key" data-nav="livery">LIVERY</button>
+          <button class="meta-key" data-nav="quests">QUESTS<span class="bdot"></span></button>
           <button class="meta-key" data-nav="campaign">CAMPAIGN</button>
           <button class="meta-key" data-nav="settings">SETTINGS</button>
         </nav>
@@ -1881,9 +2087,14 @@
         <button class="btn ghost" id="btn-campaign-back">BACK</button>
         <nav class="meta-nav" aria-label="Cockpit sections">
           <button class="meta-key" data-nav="start">HUB</button>
-          <button class="meta-key" data-nav="loadout">HANGAR</button>
+          <button class="meta-key" data-nav="hangar">HANGAR</button>
+          <button class="meta-key" data-nav="arsenal">ARSENAL</button>
+          <button class="meta-key" data-nav="drones">DRONE BAY</button>
+          <button class="meta-key" data-nav="pilots">PILOTS</button>
+          <button class="meta-key" data-nav="engineering">ENGINEERING</button>
+          <button class="meta-key" data-nav="livery">LIVERY</button>
           <button class="meta-key" data-nav="quests">QUESTS<span class="bdot"></span></button>
-          <button class="meta-key on" data-nav="campaign">CAMPAIGN</button>
+          <button class="meta-key" data-nav="campaign">CAMPAIGN</button>
           <button class="meta-key" data-nav="settings">SETTINGS</button>
         </nav>
       </div>
@@ -2050,6 +2261,8 @@
             <button class="set-btn" data-set="text">LARGE TEXT</button>
             <button class="set-btn" data-set="perf">PERF MODE</button>
             <button class="set-btn on" id="set-sound">SOUND ON</button>
+            <button class="set-btn" data-set="colorsafe">COLOUR-SAFE FIRE</button>
+            <button class="set-btn on" data-set="haptics">HAPTICS</button>
           </div>
           <div class="set-row" style="justify-content:flex-start">
             <span class="set-label" style="text-align:left">HOME THEME</span>
@@ -2062,10 +2275,15 @@
 
         <nav class="meta-nav" aria-label="Cockpit sections">
           <button class="meta-key" data-nav="start">HUB</button>
-          <button class="meta-key" data-nav="loadout">HANGAR</button>
+          <button class="meta-key" data-nav="hangar">HANGAR</button>
+          <button class="meta-key" data-nav="arsenal">ARSENAL</button>
+          <button class="meta-key" data-nav="drones">DRONE BAY</button>
+          <button class="meta-key" data-nav="pilots">PILOTS</button>
+          <button class="meta-key" data-nav="engineering">ENGINEERING</button>
+          <button class="meta-key" data-nav="livery">LIVERY</button>
           <button class="meta-key" data-nav="quests">QUESTS<span class="bdot"></span></button>
           <button class="meta-key" data-nav="campaign">CAMPAIGN</button>
-          <button class="meta-key on" data-nav="settings">SETTINGS</button>
+          <button class="meta-key" data-nav="settings">SETTINGS</button>
         </nav>
         <button class="btn" id="btn-settings-play">LOADOUT&ensp;▶</button>
         <button class="btn ghost" id="btn-settings-back">BACK</button>
@@ -2261,11 +2479,11 @@
       };
 
       /* ================= SETTINGS (session-only toggles) ================= */
-      var SETTINGS = { shake: true, flash: true, largeText: false, perfForce: false, perfAuto: true };
+      var SETTINGS = { shake: true, flash: true, largeText: false, perfForce: false, perfAuto: true, colorSafe: false, haptics: true };
       (function loadSettings() {
         try {
           var s = JSON.parse(localStorage.getItem("starfall-settings-v1") || "null");
-          if (s) { if (typeof s.shake === "boolean") SETTINGS.shake = s.shake; if (typeof s.flash === "boolean") SETTINGS.flash = s.flash; if (typeof s.largeText === "boolean") SETTINGS.largeText = s.largeText; if (typeof s.perfForce === "boolean") SETTINGS.perfForce = s.perfForce; }
+          if (s) { if (typeof s.shake === "boolean") SETTINGS.shake = s.shake; if (typeof s.flash === "boolean") SETTINGS.flash = s.flash; if (typeof s.largeText === "boolean") SETTINGS.largeText = s.largeText; if (typeof s.perfForce === "boolean") SETTINGS.perfForce = s.perfForce; if (typeof s.colorSafe === "boolean") SETTINGS.colorSafe = s.colorSafe; if (typeof s.haptics === "boolean") SETTINGS.haptics = s.haptics; }
         } catch (e) {}
       })();
       function saveSettings() { try { localStorage.setItem("starfall-settings-v1", JSON.stringify(SETTINGS)); } catch (e) {} }
@@ -2314,7 +2532,7 @@
       function saveJSON(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) {} }
 
       var WALLET = { credits: 0, cores: 0 };
-      var CAREER = { kills: 0, bossKills: 0, wavesCleared: 0, bombsUsed: 0, chargeKills: 0, noDmgWaves: 0, lifetimeScore: 0, victories: 0, skiesCleared: [], skyStars: {} };
+      var CAREER = { kills: 0, bossKills: 0, wavesCleared: 0, bombsUsed: 0, chargeKills: 0, noDmgWaves: 0, lifetimeScore: 0, victories: 0, skiesCleared: [], skyStars: {}, skyBest: {} };
       var UPG = { power: 0, cannon: 0 };
       var LAUNCH = { sector: 1, rush: false };
       var CAMP_TAB = "campaign";
@@ -2329,6 +2547,7 @@
           for (var i = 0; i < nums.length; i++) if (typeof c[nums[i]] === "number" && c[nums[i]] >= 0) CAREER[nums[i]] = Math.floor(c[nums[i]]);
           if (Array.isArray(c.skiesCleared)) for (var j = 0; j < c.skiesCleared.length; j++) { var s = Math.floor(c.skiesCleared[j]); if (s >= 1 && s <= 5 && CAREER.skiesCleared.indexOf(s) < 0) CAREER.skiesCleared.push(s); }
           if (c.skyStars && typeof c.skyStars === "object") for (var k in c.skyStars) { var kn = parseInt(k, 10), kv = Math.floor(c.skyStars[k]); if (kn >= 1 && kn <= 5 && kv >= 0 && kv <= 2) CAREER.skyStars[kn] = kv; }
+          if (c.skyBest && typeof c.skyBest === "object") for (var m2 in c.skyBest) { var bn = parseInt(m2, 10), bv = Math.floor(c.skyBest[m2]); if (bn >= 1 && bn <= 5 && bv >= 0) CAREER.skyBest[bn] = bv; }
         }
         var u = loadJSON("starfall-upgrades-v1");
         if (u) { UPG.power = clamp(Math.floor(+u.power) || 0, 0, 10); UPG.cannon = clamp(Math.floor(+u.cannon) || 0, 0, 10); }
@@ -2383,7 +2602,7 @@
       }
       /* Combat Power — one honest formula, displayed with its parts in the hangar */
       function combatPower() {
-        var shipP = { vanguard: 120, phantom: 135, aegis: 110 }[LOADOUT.ship] || 120;
+        var shipP = { vanguard: 120, phantom: 135, aegis: 110, interceptor: 125, bulwark: 150, spectre: 140, tempest: 155, nomad: 130, solaris: 175, reaper: 170, starforge: 185, sovereign: 210 }[LOADOUT.ship] || 120;
         var gunP = { pulse: 40, scatter: 55, lance: 70 }[LOADOUT.gun] || 40;
         var droneP = { scout: 20, wasp: 25, twin: 35, phantom: 50, guardian: 45, swarm: 40 }[LOADOUT.drone] || 20;
         var upgP = UPG.power * 25 + UPG.cannon * 20;
@@ -2398,6 +2617,7 @@
         ensureDaily();
         CAREER.kills++; QUESTS.daily.prog.kills = (QUESTS.daily.prog.kills || 0) + 1;
         if (e && e._ck) CAREER.chargeKills++;
+        checkFleetUnlocks();
         saveMeta();
       }
       function trackBomb() { ensureDaily(); CAREER.bombsUsed++; QUESTS.daily.prog.bombs = (QUESTS.daily.prog.bombs || 0) + 1; saveMeta(); }
@@ -2414,6 +2634,9 @@
         var stars = ratio >= 0.5 ? 2 : 1;
         if ((CAREER.skyStars[sector] || 0) < stars) CAREER.skyStars[sector] = stars;
         if (typeof G !== "undefined" && G && G.waveDamage === 0) CAREER.noDmgWaves++;
+        if (typeof G !== "undefined" && G && G.score > (CAREER.skyBest[sector] || 0)) CAREER.skyBest[sector] = G.score;
+        firstWinCheck();
+        checkFleetUnlocks();
         saveMeta();
       }
       /* Run settlement — paid once per run, from the final score: Credits = PTS ÷ 10 */
@@ -2427,6 +2650,7 @@
         var credits = Math.floor(G.score / 10);
         WALLET.credits += credits;
         G.runCredits = credits;
+        checkFleetUnlocks();
         saveMeta();
         fillRewardsPlate();
       }
@@ -2440,15 +2664,27 @@
         var co = document.querySelectorAll("[data-rew-cores]");
         for (i = 0; i < co.length; i++) co[i].textContent = "+" + (G.runCores || 0);
         var nt = document.querySelectorAll("[data-rew-note]");
+        var extras = [];
+        if (G.firstWinPaid) extras.push("FIRST WIN OF THE DAY +150 CR");
+        var pendU = pendingUnlockNames(); for (var pui = 0; pui < pendU.length; pui++) extras.push("UNLOCKED — " + pendU[pui]);
+        var nu2 = nearestUnlock(); if (nu2) extras.push("NEXT UNLOCK: " + nu2.text);
         var note = ready.length ? "QUEST READY TO CLAIM: " + ready.slice(0, 2).join(" · ") + (ready.length > 2 ? " · +" + (ready.length - 2) + " more" : "") : "";
+        if (extras.length) note = (note ? note + " · " : "") + extras.join(" · ");
         for (i = 0; i < nt.length; i++) nt[i].textContent = note;
       }
 
       /* ---- HUB ---- */
       function syncClaimBadges() {
-        var on = anyClaimable();
-        var els = document.querySelectorAll("#btn-ck-quests, .meta-key[data-nav='quests']");
-        for (var i = 0; i < els.length; i++) els[i].classList.toggle("has-badge", on);
+        var n = claimableCount();
+        var els = document.querySelectorAll(".meta-key[data-nav='quests'], .ck-gkey[data-nav='quests']");
+        for (var i = 0; i < els.length; i++) {
+          els[i].classList.toggle("has-badge", n > 0);
+          var bd = els[i].querySelector(".bdot"); if (bd) bd.textContent = n > 0 ? n : "";
+        }
+        var cab = el("btn-claim-all");
+        if (cab) { var tot = claimableTotal(); cab.style.display = tot > 0 ? "" : "none"; if (tot > 0) cab.textContent = "CLAIM ALL · +" + fmtN(tot) + " CR"; }
+        if (el("ck-sys-claim")) el("ck-sys-claim").textContent = n;
+        var cb2 = el("ck-claimbar"); if (cb2) cb2.style.width = clamp(n * 25, 0, 100) + "%";
       }
       function renderHubMeta() {
         ensureDaily();
@@ -2469,6 +2705,11 @@
         if (el("ck-hullbar")) el("ck-hullbar").style.width = (hull / 4 * 100) + "%";
         if (el("ck-pwr-num")) el("ck-pwr-num").textContent = cp.total;
         if (el("ck-pwrbar")) el("ck-pwrbar").style.width = clamp(cp.total / 650 * 100, 4, 100) + "%";
+        if (el("ck-sys-ship")) el("ck-sys-ship").textContent = LOADOUT.ship.toUpperCase();
+        if (el("ck-sys-gun")) el("ck-sys-gun").textContent = LOADOUT.gun.toUpperCase();
+        if (el("ck-sys-drone")) el("ck-sys-drone").textContent = LOADOUT.drone.toUpperCase();
+        if (el("ck-sys-pilot")) el("ck-sys-pilot").textContent = LOADOUT.pilot.toUpperCase();
+        renderHubPlates();
         syncClaimBadges();
       }
       /* Hologram telemetry — ALT/VEL tick gently around their live values */
@@ -2492,6 +2733,7 @@
         }
       }
       function renderHangarMeta() {
+        renderFleetLocks();
         var cp = combatPower();
         if (el("hg-power")) el("hg-power").textContent = cp.total;
         if (el("hg-power-parts")) el("hg-power-parts").textContent = "Ship " + cp.ship + " · Cannon " + cp.gun + " · Drone wing " + cp.drone + " · Upgrades " + cp.upg + " — POWER Lv " + UPG.power + " (+4% dmg/lv) · CANNON Lv " + UPG.cannon + " (+3% rate/lv)";
@@ -2506,6 +2748,7 @@
         if (WALLET.credits < cost) { Sfx.blip(); return; }
         WALLET.credits -= cost; UPG[kind] = lvl + 1;
         saveMeta(); renderHangarMeta(); renderHubMeta();
+        buzz(25);
         Sfx.powerup();
       }
 
@@ -2573,10 +2816,12 @@
           ? (un ? "TAP TO FIGHT — STRAIGHT TO THE BOSS · BOUNTY AT 50%" : "LOCKED — KILL THIS BOSS IN CAMPAIGN FIRST")
           : (un ? (CAREER.skiesCleared.indexOf(n) >= 0 ? "SKY HELD — REPLAY ANY TIME" : "UNLOCKED — TAP TO TARGET") : "LOCKED — KILL THE WAVE " + (n - 1) + " BOSS TO OPEN");
         return "<button class=\"camp-node boss" + (un ? "" : " locked") + (sel ? " sel" : "") + "\" data-sky=\"" + n + "\" data-rush=\"" + (rush ? 1 : 0) + "\"" + (un ? "" : " disabled") + ">" +
-          "<span class=\"camp-orb\">" + n + "</span>" +
+          "<span class=\"camp-orb\"><canvas class=\"camp-planet\" width=\"92\" height=\"92\" data-pkind=\"" + ["deep","ember","rift","cryo","eclipse"][n - 1] + "\"></canvas><span class=\"camp-num\">" + n + "</span></span>" +
           "<span class=\"camp-meta\"><span class=\"camp-sky2\" style=\"display:block\">WAVE " + n + " · " + ENVS[n - 1].name + "</span>" +
           "<span class=\"camp-boss2\" style=\"display:block\">" + BOSS_NAMES[kind] + " — " + BOSS_EPITHETS[kind] + "</span>" +
-          "<span class=\"camp-boss2\" style=\"display:block;color:#7d93a8;font-size:11px\">" + label + "</span></span>" +
+          "<span class=\"camp-boss2\" style=\"display:block;color:#7d93a8;font-size:11px\">" + label + "</span>" +
+          "<span class=\"camp-boss2\" style=\"display:block\">BEST " + fmtN(CAREER.skyBest[n] || 0) + " PTS · REC. POWER " + REC_POWER[n - 1] + " · YOURS " + combatPower().total + "</span>" +
+          "<span class=\"camp-guide\" style=\"color:" + (combatPower().total >= REC_POWER[n - 1] ? "#2ef2c0" : "#ff8a96") + "\">" + (combatPower().total >= REC_POWER[n - 1] ? "READY" : "UNDER — VISIT ENGINEERING") + "</span></span>" +
           "<span class=\"camp-right\"><span class=\"camp-stars\"><span class=\"" + (stars >= 1 ? "" : "off") + "\">★</span><span class=\"" + (stars >= 2 ? "" : "off") + "\">★</span></span>" +
           "<span class=\"camp-bounty2\" style=\"display:block\">" + fmtN(bounty) + " PTS" + (rush ? " · 50%" : "") + "</span></span></button>";
       }
@@ -2603,6 +2848,7 @@
         var i, els;
         els = document.querySelectorAll(".opt-card");
         for (i = 0; i < els.length; i++) els[i].addEventListener("click", function () {
+          if (this.classList.contains("locked")) { Sfx.ensure(); Sfx.blip(); return; }
           LOADOUT[this.getAttribute("data-group")] = this.getAttribute("data-value");
           saveLoadout(); renderHangarMeta(); renderHubMeta();
         });
@@ -2657,6 +2903,7 @@
           if (DRONEWINGS[lo.drone]) LOADOUT.drone = lo.drone;
           if (PILOTS[lo.pilot]) LOADOUT.pilot = lo.pilot;
         }
+        if (!shipUnlocked(LOADOUT.ship)) LOADOUT.ship = "vanguard"; // a locked hull can never boot as the saved pick
         LAUNCH.sector = highestUnlocked();
         var groups = ["ship", "gun", "drone", "pilot"];
         for (var gi = 0; gi < groups.length; gi++) {
@@ -2690,9 +2937,18 @@
       /* ================= LOADOUT (pre-game selection) ================= */
       var LOADOUT = { ship: "vanguard", gun: "pulse", drone: "scout", pilot: "nova" };
       var SHIPS = {
-        vanguard: { hp: 3, move: 1.0, rate: 1.0, startWeapon: 1 },
-        phantom: { hp: 3, move: 1.3, rate: 0.87, startWeapon: 1 },
-        aegis: { hp: 4, move: 0.85, rate: 1.12, startWeapon: 2 }
+        vanguard: { hp: 3, move: 1.0, rate: 1.0, startWeapon: 1, magnet: 1 },
+        phantom: { hp: 3, move: 1.3, rate: 0.87, startWeapon: 1, magnet: 1 },
+        aegis: { hp: 4, move: 0.85, rate: 1.12, startWeapon: 2, magnet: 1 },
+        interceptor: { hp: 2, move: 1.45, rate: 0.92, startWeapon: 1, magnet: 1 },
+        bulwark: { hp: 5, move: 0.72, rate: 0.95, startWeapon: 2, magnet: 1 },
+        spectre: { hp: 3, move: 1.38, rate: 0.95, startWeapon: 1, magnet: 1 },
+        tempest: { hp: 3, move: 1.05, rate: 0.82, startWeapon: 1, magnet: 1 },
+        nomad: { hp: 3, move: 1.08, rate: 1.0, startWeapon: 1, magnet: 1.65 },
+        solaris: { hp: 4, move: 1.15, rate: 0.9, startWeapon: 2, magnet: 1.1 },
+        reaper: { hp: 2, move: 1.35, rate: 0.8, startWeapon: 1, magnet: 1 },
+        starforge: { hp: 5, move: 0.68, rate: 0.88, startWeapon: 2, magnet: 1 },
+        sovereign: { hp: 4, move: 1.25, rate: 0.78, startWeapon: 2, magnet: 1.2 }
       };
       var GUNS = {
         pulse: { dmg: 1, rate: 0.85, spread: 1.0, speed: 720, col: "#3fd6ff" },
@@ -2715,7 +2971,16 @@
       var SHIP_ART = {
         vanguard: { hull: "#e8f2fa", wing: "#7d93ad", canopy: "#0d7fc4", podCol: "#22303f", tip: "#3fd6ff", panel: "rgba(20,40,60,.45)", span: 21, hullHalf: 8, nose: -24, pods: "twin", decal: "07" },
         phantom: { hull: "#463a75", wing: "#2c2150", canopy: "#b18cff", podCol: "#1c1236", tip: "#b18cff", panel: "rgba(8,4,24,.55)", span: 16, hullHalf: 6.5, nose: -29, pods: "single", decal: "13" },
-        aegis: { hull: "#d8c9a3", wing: "#9a7f4a", canopy: "#7a4d12", podCol: "#4a3410", tip: "#ffb02e", panel: "rgba(60,42,10,.5)", span: 26, hullHalf: 10.5, nose: -20, pods: "armor", decal: "03" }
+        aegis: { hull: "#d8c9a3", wing: "#9a7f4a", canopy: "#7a4d12", podCol: "#4a3410", tip: "#ffb02e", panel: "rgba(60,42,10,.5)", span: 26, hullHalf: 10.5, nose: -20, pods: "armor", decal: "03" },
+        interceptor: { hull: "#dfe9f2", wing: "#54687c", canopy: "#19b6e8", podCol: "#1d2a38", tip: "#7dd3fc", panel: "rgba(20,40,60,.45)", span: 15, hullHalf: 5.5, nose: -31, pods: "single", decal: "09" },
+        bulwark: { hull: "#8a7a5c", wing: "#54492e", canopy: "#b06f10", podCol: "#3a2f18", tip: "#ffb02e", panel: "rgba(50,38,10,.5)", span: 28, hullHalf: 11.5, nose: -19, pods: "armor", decal: "11" },
+        spectre: { hull: "#39424f", wing: "#171c24", canopy: "#8a6ae0", podCol: "#10131a", tip: "#b18cff", panel: "rgba(4,6,12,.6)", span: 20, hullHalf: 7, nose: -27, pods: "single", decal: "00" },
+        tempest: { hull: "#c9d6e2", wing: "#5f768c", canopy: "#0f9d76", podCol: "#22384a", tip: "#2ef2c0", panel: "rgba(16,44,40,.45)", span: 24, hullHalf: 9, nose: -23, pods: "quad", decal: "21" },
+        nomad: { hull: "#b08968", wing: "#6e5233", canopy: "#a35c10", podCol: "#3d2a16", tip: "#ffb35c", panel: "rgba(52,34,12,.5)", span: 22, hullHalf: 9.5, nose: -21, pods: "twin", decal: "42" },
+        solaris: { hull: "#f2e3c2", wing: "#a8853a", canopy: "#c9930a", podCol: "#4a3410", tip: "#ffd23d", panel: "rgba(70,50,10,.45)", span: 23, hullHalf: 9, nose: -25, pods: "twin", decal: "01" },
+        reaper: { hull: "#4a2a44", wing: "#1d1020", canopy: "#d6337f", podCol: "#180a1c", tip: "#ff5da2", panel: "rgba(20,4,18,.6)", span: 19, hullHalf: 6.5, nose: -28, pods: "single", decal: "66" },
+        starforge: { hull: "#a88f6a", wing: "#5e4d2c", canopy: "#c25e10", podCol: "#3a2c12", tip: "#ff8a3d", panel: "rgba(54,36,8,.5)", span: 29, hullHalf: 12, nose: -18, pods: "armor", decal: "88" },
+        sovereign: { hull: "#2b3247", wing: "#10131e", canopy: "#c9930a", podCol: "#0c0f18", tip: "#ffd23d", panel: "rgba(6,8,16,.6)", span: 25, hullHalf: 10, nose: -26, pods: "quad", decal: "99" }
       };
       function applyLoadout(g) {
         var sh = SHIPS[LOADOUT.ship], gn = GUNS[LOADOUT.gun], dr = DRONEWINGS[LOADOUT.drone], pi = PILOTS[LOADOUT.pilot];
@@ -2729,6 +2994,7 @@
         p.weapon = sh.startWeapon;
         p.drones = dr.count; p.droneRate = dr.rate; p.droneDmg = dr.dmg || 1;
         p.droneType = LOADOUT.drone;
+        p.magnetMul = sh.magnet || 1; p.slowT = 0;
         p.droneMax = Math.max(2, dr.count);
         var doffs = [[-38, 18], [38, 18], [0, 36]];
         for (var i = 0; i < p.drones; i++) { p.dronePos[i].x = p.x + doffs[i][0]; p.dronePos[i].y = p.y + doffs[i][1]; }
@@ -3098,6 +3364,9 @@
           atkMul: 1, spdMul: 1 + 0.03 * (G.sector - 1),
           colRx: BOSS_COL[kind][0], colRy: BOSS_COL[kind][1]
         };
+        if (kind === "dreadnought") { G.boss.plates = []; var poffs = [-64, -24, 24, 64]; for (var pli = 0; pli < 4; pli++) G.boss.plates.push({ off: poffs[pli], hp: Math.round(34 * hpMul()), maxHp: Math.round(34 * hpMul()) }); G.boss.flameT = 0; G.boss.flameTele = 0; G.boss.flameAng = 0; }
+        if (kind === "leviathan") { G.boss.jumpT = 6.5; G.boss.vanish = 0; G.boss.jumped = false; G.boss.jumpOff = 0; }
+        if (kind === "cryowarden") { G.boss.shell = 0; G.boss.shellStage = 0; }
         G.bossSpawned = true; G.bossChip = 1;
         document.getElementById("bosschip").style.width = "100%";
         document.getElementById("bossname").textContent = BOSS_NAMES[kind] + " — WAVE " + G.sector + " BOSS";
@@ -3106,6 +3375,9 @@
         document.getElementById("bc-name").textContent = BOSS_NAMES[kind];
         document.getElementById("bc-epi").textContent = BOSS_EPITHETS[kind];
         document.getElementById("bc-bounty").textContent = "BOUNTY " + BOSS_BOUNTY[kind].toLocaleString("en-US") + " PTS";
+        var abEl = document.getElementById("bc-abilities");
+        if (abEl) { var abl = BOSS_ABILITIES[kind] || [], abh = ""; for (var abi2 = 0; abi2 < abl.length; abi2++) abh += "<div class=\"bc-ab\"><b>" + (abi2 + 1) + "</b>" + abl[abi2] + "</div>"; abEl.innerHTML = abh; }
+        paintBossCard(kind);
         bc.classList.remove("show"); void bc.offsetWidth; bc.classList.add("show");
         if (!G.seenHint.boss) { G.seenHint.boss = 1; showHint("HIT THE GLOWING CORE — DOUBLE DAMAGE"); }
         showBossBar(true); Sfx.bossWarn();
@@ -3272,10 +3544,14 @@
         }
         if (G.boss && !G.boss.dead && G.boss.state !== "enter" && Math.abs(p.x - G.boss.x) < G.boss.colRx && p.y > G.boss.y) {
           var bb = G.boss, coreHit = Math.abs(p.x - bb.x) < 24;
+          if (bb.vanish > 0 || bossShieldAbsorb(bb, dmg * (coreHit ? 2 : 1), null)) { G.hits++; G.shots++; }
+          else {
           bb.hp -= dmg * (coreHit ? 2 : 1); bb.flash = 0.06; G.hits++; G.shots++;
           if (coreHit) { G.coreHits++; if (G.time - G.lastCritPop > 0.5) { G.lastCritPop = G.time; addPopup(p.x, bb.y + 20, "CORE HIT ×2", "#ffd23d"); } }
           checkBossEnrage();
+          cryoShellCheck(bb);
           if (bb.hp <= 0) killBoss(); else syncBossBar();
+          }
         }
         Sfx.tone(1350, 0.07, "sawtooth", 0.045, 880);
       }
@@ -3283,6 +3559,7 @@
       /* Charge shot — hold to build power, release to fire one heavy piercing bolt */
       function fireCharged(k) {
         var p = G.player;
+        p._chFull = false; COACH.charge = true;
         var dmg = 3 + Math.round(k * 4); // DMG 4 at a tap-charge, DMG 7 fully charged
         G.bullets.push({ id: ++G.bulletId, x: p.x, y: p.y - 20, vx: 0, vy: -740, dmg: dmg, charged: true, pierce: true, bossHit: false });
         G.shots++;
@@ -3336,9 +3613,11 @@
       }
       function aimAngle(e) { return Math.atan2(G.player.x - e.x, G.player.y - e.y); }
 
-      function damagePlayer() {
+      function damagePlayer(sx, sy) {
         var p = G.player;
         if (p.invuln > 0 || !p.alive) return;
+        buzz(60);
+        if (typeof sx === "number") showDamageDirection(sx, sy);
         G.waveDamage++; // any hit — shielded or not — ends a flawless-wave bid
         G.combo = 0; G.comboT = 0; // taking a hit breaks the chain
         if (p.shield) {
@@ -3387,6 +3666,8 @@
         var bounty = BOSS_BOUNTY[b.kind] || 3000;
         if (G.rushMode) bounty = Math.floor(bounty / 2); // Boss Rush pays half bounty — the kill, stars and Core count in full
         trackBossKill(b.kind, G.sector);
+        buzz([40, 40, 80]);
+        addPopup(b.x, b.y - 54, "+" + (b.kind === "eclipse" ? 2 : 1) + " STAR CORE", "#8fe6ff");
         b.dead = true; G.combo += 5; G.comboT = 2.5;
         if (G.combo > G.comboMax) G.comboMax = G.combo;
         addScore(bounty, b.x, b.y, "#ffb02e");
@@ -3550,10 +3831,11 @@
           }
           p.tx = clamp(p.tx, 22, W - 22); p.ty = clamp(p.ty, 70, H - 34);
           var ease = moved || Input.dragging ? 1 - Math.pow(0.0001, dt) : 1 - Math.pow(0.001, dt);
+          if (p.slowT > 0) ease *= 0.6; // cryo-slowed — the ship answers at 60% speed for 2s (Board B)
           p.x += (p.tx - p.x) * ease; p.y += (p.ty - p.y) * ease;
           var bankTgt = clamp((p.tx - p.x) * 0.005 + G.gyroX * 0.16, -0.42, 0.42); // ship leans into its turns — and with the phone's tilt
           p.bank += (bankTgt - p.bank) * Math.min(1, dt * 9);
-          p.invuln = Math.max(0, p.invuln - dt); p.flash = Math.max(0, p.flash - dt); p.muzzle = Math.max(0, p.muzzle - dt);
+          p.invuln = Math.max(0, p.invuln - dt); p.flash = Math.max(0, p.flash - dt); p.muzzle = Math.max(0, p.muzzle - dt); p.slowT = Math.max(0, (p.slowT || 0) - dt);
           // Engine ribbon trail — recent exhaust points stream backward and fade (drawn in render)
           p.trail.unshift({ x: p.x - Math.sin(p.bank) * 6, y: p.y + 18, t: 0 });
           if (p.trail.length > 16) p.trail.pop();
@@ -3574,7 +3856,7 @@
           if (weaponsOffline()) p.charge = 0;
           else {
             var holding = Input.dragging || !!Input.keys[" "];
-            if (holding) p.charge = Math.min(1, p.charge + dt / 0.85);
+            if (holding) { p.charge = Math.min(1, p.charge + dt / 0.85); if (p.charge >= 1 && !p._chFull) { p._chFull = true; Sfx.tone(1180, 0.1, "sine", 0.12, 1560); addPopup(p.x, p.y - 48, "CHARGED", "#ff5d3d", true); } }
             else if (p.charge >= 0.3) { fireCharged(p.charge); p.charge = 0; }
             else p.charge = Math.max(0, p.charge - dt * 3);
           }
@@ -3679,7 +3961,7 @@
           if (e.y > H + 40 || e.x < -50 || e.x > W + 50) { G.enemies.splice(i, 1); continue; }
           // Collision with player
           if (p.alive && p.invuln <= 0 && dist2(e.x, e.y, p.x, p.y) < Math.pow(e.r + 13, 2)) {
-            killEnemySilent(e, i); damagePlayer(); continue;
+            killEnemySilent(e, i); damagePlayer(e.x, e.y); continue;
           }
         }
 
@@ -3721,6 +4003,10 @@
           if (G.boss && !G.boss.dead && G.boss.state !== "enter" && !(b.pierce && b.bossHit)) {
             var bb = G.boss, dx = (b.x - bb.x) / bb.colRx, dy = (b.y - bb.y) / bb.colRy;
             if (dx * dx + dy * dy < 1) {
+              if (bb.vanish > 0) { /* Rift Leviathan is between worlds — shots pass through */ }
+              else if (bossShieldAbsorb(bb, (b.dmg || 1) * (G.dmgMul || 1), b)) { if (b.pierce) b.bossHit = true; else G.bullets.splice(i, 1); syncBossBar(); }
+              else if (leviathanArmBlock(bb, b)) { G.parts.push({ x: b.x, y: b.y, vx: rand(-40, 40), vy: rand(-40, 40), life: 0.18, t: 0, color: "#2ef2c0", size: 2, drag: 1 }); if (b.pierce) b.bossHit = true; else G.bullets.splice(i, 1); if (G.time - G.lastDmgPop > 0.3) { G.lastDmgPop = G.time; addPopup(b.x, b.y - 8, "BLOCKED", "#2ef2c0", true); } }
+              else {
               // Weak point: the glowing core takes double damage
               var coreHit = dist2(b.x, b.y, bb.x, bb.y + 2) < 24 * 24;
               bb.hp -= (b.dmg || 1) * (G.dmgMul || 1) * (coreHit ? 2 : 1); bb.flash = 0.06; G.hits++;
@@ -3731,7 +4017,9 @@
               if (b.pierce) b.bossHit = true; else G.bullets.splice(i, 1);
               G.parts.push({ x: b.x, y: b.y, vx: rand(-30, 30), vy: rand(-30, 30), life: 0.18, t: 0, color: "#ffd23d", size: 2, drag: 1 });
               if (bb.hp <= 0) killBoss(); else if (Math.random() < 0.3) Sfx.enemyHit();
+              cryoShellCheck(bb);
               syncBossBar();
+              }
             }
           }
         }
@@ -3748,7 +4036,9 @@
             }
           }
           if (p.alive && p.invuln <= 0 && dist2(eb.x, eb.y, p.x, p.y) < Math.pow(eb.r + 11, 2)) {
-            G.ebullets.splice(i, 1); damagePlayer();
+            var wasCryo = !!eb.cryo, ebx = eb.x, eby = eb.y;
+            G.ebullets.splice(i, 1); damagePlayer(ebx, eby);
+            if (wasCryo && p.alive) { p.slowT = 2; addPopup(p.x, p.y - 46, "SLOWED", "#7dd3fc"); }
           }
         }
 
@@ -3758,10 +4048,12 @@
           // Pickup magnet — nearby pickups stream toward the ship instead of drifting past it
           if (p.alive) {
             var pdx = p.x - pk.x, pdy = p.y - pk.y, pd = Math.sqrt(pdx * pdx + pdy * pdy);
-            if (pd < 135 && pd > 1) { var pull = (1 - pd / 135) * 380 + 70; pk.x += pdx / pd * pull * dt; pk.y += pdy / pd * pull * dt; }
+            var mrad = 135 * (p.magnetMul || 1);
+            if (pd < mrad && pd > 1) { var pull = (1 - pd / mrad) * 380 + 70; pk.x += pdx / pd * pull * dt; pk.y += pdy / pd * pull * dt; pk.magnet = true; } else pk.magnet = false;
           }
           if (pk.y > H + 24) { G.pickups.splice(i, 1); continue; }
           if (p.alive && dist2(pk.x, pk.y, p.x, p.y) < 30 * 30) {
+            buzz(15);
             explode(pk.x, pk.y, pk.type === "weapon" ? "#ffb02e" : (pk.type === "drone" ? "#3fd6ff" : "#2ef2c0"), 10, false); // collection burst
             if (pk.type === "weapon") {
               if (p.weapon < 5) { p.weapon++; addPopup(p.x, p.y - 34, "WEAPON UP · LV " + p.weapon, "#ffb02e"); }
@@ -3810,10 +4102,15 @@
         } else if (pd.kind === "boss") {
           var b = G.boss;
           if (!b || b.dead || b !== pd.ref) return;
-          b.hp -= 60; b.flash = 0.22; b.shudT = 0.32; // hit-flash + knock shudder (decays in update, offsets in render)
+          if (b.vanish > 0) return; // rift-vanished — the shockwave finds nothing there
+          var bdmg = 60;
+          if (b.kind === "cryowarden" && b.shell > 0) { b.shell -= bdmg; bdmg = 0; if (b.shell <= 0) { b.shell = 0; addPopup(b.x, b.y + 60, "ICE SHELL BROKEN", "#7dd3fc"); } }
+          else if (b.kind === "dreadnought" && b.plates) { for (var bpi2 = 0; bpi2 < b.plates.length && bdmg > 0; bpi2++) { var bpl = b.plates[bpi2]; if (bpl.hp <= 0) continue; var take = Math.min(bpl.hp, bdmg); bpl.hp -= take; bdmg -= take; if (bpl.hp <= 0) addPopup(b.x + bpl.off, b.y + 44, "PLATE STRIPPED", "#ffb02e"); } }
+          b.hp -= bdmg; b.flash = 0.22; b.shudT = 0.32; // hit-flash + knock shudder (decays in update, offsets in render)
           addPopup(b.x, b.y + 34, "−60", "#ffd23d", false, true);
           explode(b.x, b.y, "#ffd23d", 18, true);
           checkBossEnrage();
+          cryoShellCheck(b);
           if (b.hp <= 0) killBoss(); else syncBossBar();
         }
       }
@@ -3823,7 +4120,7 @@
          delivers it now instead of it landing all at once. */
       function detonateBomb() {
         if (!G || G.mode !== "playing" || G.bombs <= 0 || !G.player.alive) return;
-        G.bombs--; trackBomb();
+        G.bombs--; trackBomb(); COACH.bomb = true;
         var sx = G.player.x, sy = G.player.y, pending = [], i, dx, dy;
         for (i = 0; i < G.ebullets.length; i++) { dx = G.ebullets[i].x - sx; dy = G.ebullets[i].y - sy; pending.push({ kind: "eb", ref: G.ebullets[i], dist: Math.sqrt(dx * dx + dy * dy) }); }
         for (i = 0; i < G.enemies.length; i++) { dx = G.enemies[i].x - sx; dy = G.enemies[i].y - sy; pending.push({ kind: "enemy", ref: G.enemies[i], dist: Math.sqrt(dx * dx + dy * dy) }); }
@@ -3906,10 +4203,13 @@
               G.ebullets.push({ x: b.x, y: b.y + 16, vx: vx, vy: vy + 55, r: 5 });
             }
             Sfx.explosion(false);
-          } else {                                                           // minion spawns
-            for (var m = 0; m < 3; m++)
-              G.enemies.push(createEnemy(m === 1 ? "charger" : "diver", clamp(b.x + (m - 1) * 90, 40, W - 40)));
-            addPopup(b.x, b.y + 56, "REINFORCEMENTS", "#ff4d5e");
+          } else {                                                           // escort launch — 2 drone escorts, never more than 4 alive
+            var room = Math.max(0, 4 - G.enemies.length);
+            for (var m = 0; m < Math.min(2, room); m++) {
+              var esc = createEnemy("diver", clamp(b.x + (m === 0 ? -70 : 70), 40, W - 40));
+              esc.y = b.y + 34; esc.escort = true; G.enemies.push(esc);
+            }
+            if (room > 0) addPopup(b.x, b.y + 56, "ESCORTS LAUNCHED", "#ff4d5e");
           }
         }
         // Contact with player
@@ -3918,7 +4218,7 @@
 
       function bossContact(b, p) {
         var dx = (p.x - b.x) / (b.colRx + 2), dy = (p.y - b.y) / (b.colRy + 2);
-        if (dx * dx + dy * dy < 1) damagePlayer();
+        if (dx * dx + dy * dy < 1) damagePlayer(b.x, b.y);
       }
       function updateBoss(dt) {
         if (!G.boss) return;
@@ -3937,6 +4237,16 @@
           b.y += 58 * dt;
           if (b.y >= 106) { b.y = 106; b.state = "fight"; }
           return;
+        }
+        if (b.flameTele > 0) { b.flameTele -= dt; if (b.flameTele <= 0) { b.flameT = 1.15; b.flameAng = Math.atan2(p.x - b.x, p.y - b.y); Sfx.explosion(false); } }
+        if (b.flameT > 0) {
+          b.flameT -= dt;
+          if (p.alive && p.invuln <= 0) {
+            var fdx = p.x - b.x, fdy = p.y - b.y, fd = Math.sqrt(fdx * fdx + fdy * fdy);
+            var fang = Math.atan2(fdx, fdy), fdiff = Math.atan2(Math.sin(fang - b.flameAng), Math.cos(fang - b.flameAng));
+            if (fd < 265 && Math.abs(fdiff) < 0.38) damagePlayer(p.x, p.y - 30);
+          }
+          if (Math.random() < 0.5) G.parts.push({ x: b.x + rand(-8, 8), y: b.y + 26, vx: Math.sin(b.flameAng) * rand(160, 260), vy: Math.cos(b.flameAng) * rand(160, 260), life: 0.3, t: 0, color: Math.random() < 0.5 ? "#ff7a3d" : "#ffb35c", size: 2.6, drag: 1 });
         }
         b.x += b.dir * 26 * dt;
         if (b.x > W - 112) b.dir = -1; if (b.x < 112) b.dir = 1;
@@ -3958,7 +4268,7 @@
         }
         b.atkT -= dt;
         if (b.atkT <= 0) {
-          var pat = b.pattern % 3; b.pattern++;
+          var pat = b.pattern % 4; b.pattern++;
           b.atkT = Math.max(1.25, 2.2 - 0.18 * (G.run - 1)) * (b.atkMul || 1);
           if (pat === 0) { b.telegraph = 0.55; Sfx.bossWarn(); }              // broadside volley (telegraphed)
           else if (pat === 1) {                                              // heavy shell fan
@@ -3967,6 +4277,9 @@
               G.ebullets.push({ x: b.x, y: b.y + 26, vx: Math.sin(ang) * 178, vy: Math.cos(ang) * 178, r: 7 });
             }
             Sfx.explosion(false);
+          } else if (pat === 2) {                                            // flame cone (telegraphed)
+            b.flameTele = 0.6; Sfx.bossWarn();
+            addPopup(b.x, b.y + 58, "FLAME CONE INBOUND", "#ff7a3d");
           } else {                                                           // escorts
             var kinds = ["charger", "lancer", "charger"];
             for (var m = 0; m < 3; m++) {
@@ -3988,8 +4301,17 @@
           if (b.y >= 134) { b.y = 134; b.state = "fight"; }
           return;
         }
-        b.x = W / 2 + Math.sin(b.t * 0.45) * 56;
+        if (b.vanish > 0) {
+          b.vanish -= dt;
+          if (!b.jumped && b.vanish < 0.28) { b.jumped = true; b.jumpOff = rand(-115, 115); explode(b.x, b.y, "#2ef2c0", 22, false); addPopup(b.x, b.y + 62, "RIFT JUMP", "#2ef2c0"); Sfx.tone(180, 0.3, "sawtooth", 0.10, 720); }
+        } else {
+          b.jumpT -= dt;
+          if (b.jumpT <= 0) { b.jumpT = 8; b.vanish = 0.56; b.jumped = false; explode(b.x, b.y, "#2ef2c0", 18, false); }
+        }
+        b.x = clamp(W / 2 + Math.sin(b.t * 0.45) * 56 + (b.jumpOff || 0), 92, W - 92);
+        if (b.jumpOff) b.jumpOff *= Math.pow(0.35, dt);
         b.y = 134 + Math.sin(b.t * 0.8) * 10;
+        if (b.vanish > 0) return; // between worlds — no fire, no contact
         if (b.spiralT > 0) { // twin-arm bullet spiral
           b.spiralT -= dt; b.spiralAcc += dt;
           while (b.spiralAcc >= 0.075) {
@@ -4029,7 +4351,7 @@
             }
           }
         }
-        if (p.alive && p.invuln <= 0 && dist2(p.x, p.y, b.x, b.y) < Math.pow(72 + 13, 2)) damagePlayer();
+        if (p.alive && p.invuln <= 0 && dist2(p.x, p.y, b.x, b.y) < Math.pow(72 + 13, 2)) damagePlayer(b.x, b.y);
       }
 
       function updateCryowarden(dt) {
@@ -4067,7 +4389,7 @@
           else if (pat === 1) {                                              // ice shard fan
             for (var i = 0; i < 13; i++) {
               var ang = -0.85 + i * 0.142;
-              G.ebullets.push({ x: b.x, y: b.y + 22, vx: Math.sin(ang) * 195, vy: Math.cos(ang) * 195, r: 6 });
+              G.ebullets.push({ x: b.x, y: b.y + 22, vx: Math.sin(ang) * 195, vy: Math.cos(ang) * 195, r: 6, cryo: 1 });
             }
             Sfx.explosion(false);
           } else {                                                           // frozen escorts
@@ -4079,7 +4401,7 @@
             addPopup(b.x, b.y + 62, "THE COLD SENDS MORE", "#7dd3fc");
           }
         }
-        if (p.alive && p.invuln <= 0 && dist2(p.x, p.y, b.x, b.y) < Math.pow(94 + 13, 2)) damagePlayer();
+        if (p.alive && p.invuln <= 0 && dist2(p.x, p.y, b.x, b.y) < Math.pow(94 + 13, 2)) damagePlayer(b.x, b.y);
       }
 
       function updateEclipse(dt) {
@@ -4093,6 +4415,10 @@
         }
         b.x = W / 2 + Math.sin(b.t * 0.38) * 48;
         b.y = 138 + Math.sin(b.t * 0.66) * 9;
+        if (p.alive) { // gravity pull — a constant drift toward the Titan's x; the pilot can steer against it
+          var gdx = b.x - p.x;
+          if (Math.abs(gdx) > 4) p.x += (gdx > 0 ? 1 : -1) * (b.enraged ? 46 : 30) * dt;
+        }
         if (b.spiralT > 0) { // triple-arm gravity spiral
           b.spiralT -= dt; b.spiralAcc += dt;
           while (b.spiralAcc >= 0.085) {
@@ -4131,7 +4457,7 @@
             }
           }
         }
-        if (p.alive && p.invuln <= 0 && dist2(p.x, p.y, b.x, b.y) < Math.pow(100 + 13, 2)) damagePlayer();
+        if (p.alive && p.invuln <= 0 && dist2(p.x, p.y, b.x, b.y) < Math.pow(100 + 13, 2)) damagePlayer(b.x, b.y);
       }
 
       /* ================= 6. RENDERING ================= */
@@ -4339,14 +4665,38 @@
         }
         c.restore();
       }
-      function drawPlanetAt(c, x, y, r, kind) {
+      function drawPlanetAt(c, x, y, r, kind, tNow) {
         var def = PLANET_DEFS[kind] || PLANET_DEFS.deep;
+        var t = (typeof tNow === "number") ? tNow : ((typeof G !== "undefined" && G) ? G.time : 0);
+        var perf = (typeof G !== "undefined" && G && G.perf); // adaptive perf: planet animation is the first thing to calm
         // soft atmosphere halo bleeding into space
         var halo = c.createRadialGradient(x, y, r * 0.7, x, y, r * 1.45);
         halo.addColorStop(0, "rgba(" + def.atmo + ",0.16)"); halo.addColorStop(1, "rgba(" + def.atmo + ",0)");
         c.fillStyle = halo; c.beginPath(); c.arc(x, y, r * 1.45, 0, 6.283); c.fill();
         if (def.ring) drawPlanetRing(c, x, y, r, false); // far half passes behind the sphere
+        c.save();
+        c.beginPath(); c.arc(x, y, Math.max(1, r - 1), 0, 6.283); c.clip();
+        if (def.gas && !perf && !REDUCED) { c.translate(x, y); c.rotate(t * 0.01 + Math.sin(t * 0.05) * 0.05); c.translate(-x, -y); } // gas giant bands slowly turn
         c.drawImage(planetSprite(kind, r > 90 ? 512 : 256), x - r, y - r, r * 2, r * 2);
+        if (!perf && !REDUCED) {
+          var cs9 = cloudSprite(kind, r > 90 ? 512 : 256); // independent cloud deck, sliding and wrapping at the limb
+          if (cs9) { var coff = (t * r * 0.045) % (r * 2); c.globalAlpha = 0.85; c.drawImage(cs9, x - r + coff, y - r, r * 2, r * 2); c.drawImage(cs9, x - r + coff - r * 2, y - r, r * 2, r * 2); c.globalAlpha = 1; }
+          var swx = x + Math.sin(t * 0.11) * r * 0.22; // terminator sweep — the day/night line breathes
+          var tg9 = c.createLinearGradient(swx - r * 0.4, y - r * 0.4, x + r, y + r * 0.9);
+          tg9.addColorStop(0, "rgba(2,4,12,0)"); tg9.addColorStop(1, "rgba(1,2,8,0.30)");
+          c.fillStyle = tg9; c.fillRect(x - r, y - r, r * 2, r * 2);
+          if (kind === "ember" || kind === "eclipse") { // lava / fissure pulse
+            var pu9 = 0.10 + 0.07 * Math.sin(t * 2.3);
+            var pg10 = c.createRadialGradient(x - r * 0.2, y + r * 0.25, 2, x, y, r * 1.05);
+            pg10.addColorStop(0, "rgba(255,130,50," + pu9 + ")"); pg10.addColorStop(1, "rgba(255,130,50,0)");
+            c.fillStyle = pg10; c.fillRect(x - r, y - r, r * 2, r * 2);
+          }
+          if (kind === "cryo") { // frost glints
+            c.fillStyle = "rgba(255,255,255," + (0.10 + 0.08 * Math.sin(t * 3.1)) + ")";
+            c.beginPath(); c.ellipse(x - r * 0.3, y - r * 0.35, r * 0.3, r * 0.1, -0.5, 0, 6.283); c.fill();
+          }
+        }
+        c.restore();
         if (def.ring) drawPlanetRing(c, x, y, r, true); // near half crosses in front
       }
 
@@ -4382,7 +4732,7 @@
         var h = art.hullHalf, flash = !!o.flash;
         var hullC = flash ? "#ffb3ba" : art.hull, wingC = flash ? "#e06a76" : art.wing;
         // engine pods — housings with a lit rim and a dark nozzle bore
-        var pods = art.pods === "single" ? [[-3.5, 7]] : (art.pods === "armor" ? [[-11.5, 6], [5.5, 6]] : [[-8.5, 5.5], [3, 5.5]]);
+        var pods = art.pods === "single" ? [[-3.5, 7]] : (art.pods === "armor" ? [[-11.5, 6], [5.5, 6]] : (art.pods === "quad" ? [[-13, 4.4], [-6.2, 4.4], [0.6, 4.4], [7.4, 4.4]] : [[-8.5, 5.5], [3, 5.5]]));
         for (var pi = 0; pi < pods.length; pi++) {
           var pg = c.createLinearGradient(pods[pi][0], 0, pods[pi][0] + pods[pi][1], 0);
           pg.addColorStop(0, shadeHex(art.podCol, 1.5)); pg.addColorStop(0.5, art.podCol); pg.addColorStop(1, shadeHex(art.podCol, 0.55));
@@ -4460,6 +4810,10 @@
           [0, 4.5, 9].forEach(function (sy2) { c.moveTo(-h - 2.5, sy2); c.lineTo(-h + 1.5, sy2); c.moveTo(h - 1.5, sy2); c.lineTo(h + 2.5, sy2); });
           c.stroke();
           rivets(c, [[-h - 0.5, -2.5], [-h - 0.5, 9.5], [h + 0.5, -2.5], [h + 0.5, 9.5]], "rgba(30,20,4,0.7)", "rgba(255,230,170,0.5)");
+        } else if (art.pods === "quad") {
+          c.fillStyle = shadeHex(art.wing, 0.75); c.fillRect(-2, 11, 4, 7);
+          c.fillStyle = "rgba(63,214,255,0.8)"; c.fillRect(-2, 11, 4, 1.2);
+          rivets(c, [[-h + 2, 12], [h - 2, 12], [0, 14]], "rgba(10,20,32,0.5)", "rgba(255,255,255,0.3)");
         }
         // intake vents — dark recess, slats, a highlight lip under each
         c.fillStyle = "rgba(4,8,14,0.78)";
@@ -4510,7 +4864,7 @@
         }
         // engine flames — flicker with thrust, coloured by the thruster style, white-hot at the nozzle
         var fl = 11 + Math.sin(t * 34) * 3 + Math.random() * 2 + (o.flameBoost || 0);
-        var engines = art.pods === "single" ? [0] : (art.pods === "armor" ? [-8.5, 8.5] : [-5.75, 5.75]);
+        var engines = art.pods === "single" ? [0] : (art.pods === "armor" ? [-8.5, 8.5] : (art.pods === "quad" ? [-10.8, -4, 2.8, 9.6] : [-5.75, 5.75]));
         engines.forEach(function (ex) {
           var grad = c.createLinearGradient(0, 15, 0, 15 + fl + 13);
           grad.addColorStop(0, "#ffffff"); grad.addColorStop(0.22, o.thrust || "#3fd6ff"); grad.addColorStop(1, "rgba(0,0,0,0)");
@@ -4564,6 +4918,15 @@
           }
         }
         ctx.restore();
+        // cryo frost — a pale shell while the Warden's slow holds
+        if (p.slowT > 0) {
+          ctx.save(); ctx.translate(x, y);
+          ctx.strokeStyle = "rgba(160,220,255,0.8)"; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(0, 0, 33, 0, 6.283); ctx.stroke();
+          ctx.fillStyle = "rgba(160,220,255,0.13)";
+          ctx.beginPath(); ctx.arc(0, 0, 33, 0, 6.283); ctx.fill();
+          ctx.restore();
+        }
         // shield bubble
         if (p.shield) {
           ctx.save(); ctx.translate(x, y);
@@ -5020,8 +5383,10 @@
           sg.addColorStop(0, "rgba(255,150,60,0.30)"); sg.addColorStop(1, "rgba(255,150,60,0)");
           ctx.fillStyle = sg; ctx.beginPath(); ctx.arc(plx, ply, 120, 0, 6.283); ctx.fill();
         }
+        var moonA = G.time * 0.22, moonX = plx + Math.cos(moonA) * 88, moonY = ply + Math.sin(moonA) * 30, moonBack = Math.sin(moonA) < 0;
+        if (moonBack) drawPlanetAt(ctx, moonX, moonY, 10, "moon");
         drawPlanetAt(ctx, plx, ply, 50, pKind);
-        drawPlanetAt(ctx, W * 0.16 + gx * 5, 84 + Math.sin(G.time * 0.06) * 3 + gy * 3, 11, "moon");
+        if (!moonBack) drawPlanetAt(ctx, moonX, moonY, 11.5, "moon");
         if (pal.feature === "ice") { // aurora curtains rippling over the Cryo Abyss
           for (var au = 0; au < 3; au++) {
             ctx.beginPath();
@@ -5152,6 +5517,13 @@
           ctx.fillStyle = col;
           ctx.font = "900 13px Orbitron, monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
           ctx.fillText(pk.type === "weapon" ? "W" : (pk.type === "drone" ? "D" : "S"), 0, 1);
+          if (pk.magnet) { // UX05 — the pickup names itself as it streams in, ring shimmering
+            ctx.font = "700 10px Orbitron, monospace";
+            ctx.fillStyle = col;
+            ctx.fillText(pk.type === "weapon" ? "+WEAPON" : (pk.type === "drone" ? "+DRONE" : "+SHIELD"), 0, -23);
+            ctx.strokeStyle = col; ctx.globalAlpha = 0.5 + 0.3 * Math.sin(pk.t * 14); ctx.lineWidth = 1.4;
+            ctx.beginPath(); ctx.arc(0, 0, 16 + Math.sin(pk.t * 10) * 2, 0, 6.283); ctx.stroke(); ctx.globalAlpha = 1;
+          }
           ctx.restore();
         }
 
@@ -5188,6 +5560,7 @@
           }
           var bShX = 0, bShY = 0; // bomb knock shudder — the whole hull jolts while shudT runs down
           if (G.boss.shudT > 0) { var shK = G.boss.shudT / 0.32; bShX = rand(-1, 1) * 7 * shK; bShY = rand(-1, 1) * 5 * shK; }
+          if (G.boss.vanish > 0) ctx.globalAlpha = clamp(Math.abs(G.boss.vanish - 0.28) / 0.28, 0.06, 1); // mid rift-jump — half in this world
           ctx.save(); ctx.translate(G.boss.x + bShX, G.boss.y + bShY); ctx.scale(1.22, 1.22); ctx.translate(-G.boss.x, -G.boss.y);
           if (G.boss.kind === "dreadnought") drawDreadnought(G.boss);
           else if (G.boss.kind === "leviathan") drawLeviathan(G.boss);
@@ -5195,6 +5568,14 @@
           else if (G.boss.kind === "eclipse") drawEclipse(G.boss);
           else drawBoss(G.boss);
           ctx.restore();
+          ctx.globalAlpha = 1;
+          if (G.boss && G.boss.kind === "eclipse") { // gravity well — rings contract endlessly into the Titan
+            for (var gk2 = 0; gk2 < 3; gk2++) {
+              var gr2 = 150 - ((G.time * 46 + gk2 * 50) % 130);
+              ctx.strokeStyle = "rgba(200,120,255," + clamp(gr2 / 300, 0, 0.5) + ")"; ctx.lineWidth = 1.6;
+              ctx.beginPath(); ctx.arc(G.boss.x, G.boss.y, gr2, 0, 6.283); ctx.stroke();
+            }
+          }
           // weak-point marker — a pulsing ring on the boss's glowing core (double damage in there)
           ctx.save();
           ctx.strokeStyle = "rgba(255,210,60," + (0.55 + 0.3 * Math.sin(G.time * 5)) + ")";
@@ -5256,11 +5637,11 @@
         // enemy bullets
         for (i = 0; i < G.ebullets.length; i++) {
           var eb = G.ebullets[i];
-          ctx.fillStyle = "rgba(255,77,94,0.35)";
+          ctx.fillStyle = SETTINGS.colorSafe ? "rgba(255,47,214,0.35)" : "rgba(255,77,94,0.35)";
           ctx.beginPath(); ctx.arc(eb.x, eb.y, eb.r * 1.8, 0, 6.283); ctx.fill();
-          ctx.fillStyle = "#ff5d73";
+          ctx.fillStyle = SETTINGS.colorSafe ? "#ff2fd6" : "#ff5d73";
           ctx.beginPath(); ctx.arc(eb.x, eb.y, eb.r, 0, 6.283); ctx.fill();
-          ctx.fillStyle = "#ffd7dc";
+          ctx.fillStyle = SETTINGS.colorSafe ? "#ffd7fb" : "#ffd7dc";
           ctx.beginPath(); ctx.arc(eb.x, eb.y, eb.r * 0.42, 0, 6.283); ctx.fill();
         }
 
@@ -5461,6 +5842,30 @@
           ctx.fillStyle = "rgba(255,176,46," + (0.6 + 0.4 * Math.sin(G.time * 30)) + ")";
           for (i = 0; i < 4; i++) { ctx.beginPath(); ctx.arc(cxs[i], 31, 4, 0, 6.283); ctx.fill(); }
         }
+        if (b.flameT > 0) { // the cone itself — a burning fan locked on the angle it fired at
+          ctx.save(); ctx.rotate(-b.flameAng);
+          var fg9 = ctx.createLinearGradient(0, 20, 0, 265);
+          fg9.addColorStop(0, "rgba(255,190,90,0.75)"); fg9.addColorStop(0.5, "rgba(255,110,40,0.42)"); fg9.addColorStop(1, "rgba(255,70,20,0)");
+          ctx.fillStyle = fg9;
+          ctx.beginPath(); ctx.moveTo(0, 20); ctx.lineTo(-95, 265); ctx.lineTo(95, 265); ctx.closePath(); ctx.fill();
+          ctx.restore();
+        } else if (b.flameTele > 0) { // telegraph — a faint warning fan tracking the player
+          var ta9 = Math.atan2(G.player.x - b.x, G.player.y - b.y);
+          ctx.save(); ctx.rotate(-ta9);
+          ctx.fillStyle = "rgba(255,120,50," + (0.10 + 0.08 * Math.sin(G.time * 26)) + ")";
+          ctx.beginPath(); ctx.moveTo(0, 20); ctx.lineTo(-95, 265); ctx.lineTo(95, 265); ctx.closePath(); ctx.fill();
+          ctx.restore();
+        }
+        if (b.plates) for (i = 0; i < b.plates.length; i++) { // armour plates — strip them to reach the hull
+          var pl9 = b.plates[i]; if (pl9.hp <= 0) continue;
+          var pk9 = clamp(pl9.hp / pl9.maxHp, 0, 1);
+          var pg9 = ctx.createLinearGradient(pl9.off - 11, 0, pl9.off + 11, 0);
+          pg9.addColorStop(0, "#4a3820"); pg9.addColorStop(0.5, "#8a6a35"); pg9.addColorStop(1, "#33270f");
+          ctx.fillStyle = flash ? "#fff" : pg9;
+          ctx.fillRect(pl9.off - 11, 15, 22, 13);
+          ctx.strokeStyle = "rgba(255,220,150,0.6)"; ctx.lineWidth = 1; ctx.strokeRect(pl9.off - 11, 15, 22, 13);
+          if (pk9 < 1) { ctx.fillStyle = "rgba(255,60,40,0.8)"; ctx.fillRect(pl9.off - 11, 26.5, 22 * (1 - pk9), 1.6); }
+        }
         ctx.restore();
       }
       function drawLeviathan(b) {
@@ -5572,6 +5977,14 @@
         ctx.beginPath(); ctx.arc(0, 0, coreR + 0.5, 0, 6.283); ctx.stroke();
         ctx.fillStyle = "#f2fbff";
         ctx.beginPath(); ctx.arc(0, 0, 4.5, 0, 6.283); ctx.fill();
+        if (b.shell > 0) { // regenerating ice shell — break it before the hull takes damage
+          ctx.strokeStyle = "rgba(170,225,255," + (0.55 + 0.25 * Math.sin(G.time * 5)) + ")"; ctx.lineWidth = 5;
+          ctx.beginPath(); ctx.arc(0, 0, 58, 0, 6.283); ctx.stroke();
+          ctx.strokeStyle = "rgba(240,252,255,0.75)"; ctx.lineWidth = 1.6;
+          ctx.beginPath(); ctx.arc(0, 0, 58, G.time * 1.3, G.time * 1.3 + 4.2); ctx.stroke();
+          ctx.fillStyle = "rgba(220,245,255,0.95)"; ctx.font = "700 10px Orbitron, monospace"; ctx.textAlign = "center";
+          ctx.fillText("ICE SHELL " + Math.ceil(b.shell), 0, -66);
+        }
         ctx.restore();
       }
       function drawEclipse(b) {
@@ -5624,13 +6037,20 @@
       /* ================= 7. UI / FLOW ================= */
       var $ = function (id) { return document.getElementById(id); };
       var screens = { start: $("scr-start"), loadout: $("scr-loadout"), pause: $("scr-pause"), over: $("scr-over"), win: $("scr-win"), settings: $("scr-settings"), quests: $("scr-quests"), campaign: $("scr-campaign") };
+      var SECTION_NAMES = { hangar: 1, arsenal: 1, drones: 1, pilots: 1, engineering: 1, livery: 1 };
       function showScreen(name) {
-        for (var k in screens) screens[k].classList.toggle("on", k === name);
+        var target = null;
+        if (name === null) target = null;
+        else if (SECTION_NAMES[name] || name === "loadout") target = screens.loadout;
+        else target = screens[name];
+        for (var k in screens) screens[k].classList.toggle("on", screens[k] === target && !!target || (target === null ? false : screens[k] === target));
+        if (!target) for (var k2 in screens) screens[k2].classList.remove("on");
         $("hud").classList.toggle("on", name === null || name === "pause");
         if (name === "start") { syncHome(); renderHubMeta(); }
-        if (name === "loadout") { paintLoadoutArt(); renderHangarMeta(); }
+        if (SECTION_NAMES[name] || name === "loadout") { setSection(name === "loadout" ? "hangar" : name); paintLoadoutArt(); renderHangarMeta(); }
         if (name === "quests") renderQuests();
         if (name === "campaign") renderCampaign();
+        refreshNavStates(name === "loadout" ? "hangar" : name);
       }
       /* Home page mirrors the current loadout: hero ship art, ship/cannon/drone names, pilot face + perk */
       function syncHome() {
@@ -5707,6 +6127,12 @@
           var s = Math.min(el.width / (art.span * 2 + 10), el.height / 80);
           c.translate(el.width / 2, el.height / 2 + 4); c.scale(s, s);
           drawShipModel(c, { ship: ship, time: 1.35, tip: art.tip, thrust: "#3fd6ff", blaster: art.tip, flash: false, alpha: 1, flameBoost: 0, noShadow: true });
+          if (!shipUnlocked(ship)) { // locked hulls read as dark silhouettes under their gold lock plates (Board A)
+            c.setTransform(1, 0, 0, 1, 0, 0);
+            c.globalCompositeOperation = "source-atop";
+            c.fillStyle = "rgba(5,9,16,0.88)"; c.fillRect(0, 0, el.width, el.height);
+            c.globalCompositeOperation = "source-over";
+          }
         }
         var dc = document.querySelectorAll(".lo-drone-cv");
         for (var j = 0; j < dc.length; j++) {
@@ -5725,20 +6151,21 @@
          planet sprite (ember world: craters, lava fissures, terminator,
          atmosphere rim), painted once onto its own canvas. The sun beside
          it stays a sun. */
-      function paintHomePlanet() {
+      function paintHomePlanet(t) {
         var cv = document.getElementById("home-planet-cv");
-        if (!cv || cv._painted) return;
-        cv._painted = true;
+        if (!cv) return;
         var c = cv.getContext("2d");
         c.clearRect(0, 0, cv.width, cv.height);
-        drawPlanetAt(c, cv.width / 2, cv.height / 2, cv.width * 0.36, "ember");
+        drawPlanetAt(c, cv.width / 2, cv.height / 2, cv.width * 0.36, "ember", t || 0);
       }
       (function shipRenderLoop() {
         requestAnimationFrame(shipRenderLoop);
         var startScr = $("scr-start"), setScr = $("scr-settings");
         if (!startScr || !setScr) return;
         var t = performance.now() / 1000;
-        if (startScr.classList.contains("on")) { var hc = $("hero-canvas"); if (hc) paintShipCanvas(hc, t, 0.44);  paintHomePlanet(); }
+        if (startScr.classList.contains("on")) { var hc = $("hero-canvas"); if (hc) paintShipCanvas(hc, t, 0.44); paintHomePlanet(t); }
+        var campScr = $("scr-campaign");
+        if (campScr && campScr.classList.contains("on")) paintCampaignPlanets(t);
         var loScr = $("scr-loadout");
         if (loScr && loScr.classList.contains("on")) { var hgc = $("hangar-canvas"); if (hgc) paintShipCanvas(hgc, t, 0.5); }
         if (setScr.classList.contains("on")) { var pc = $("pv-canvas"); if (pc) paintShipCanvas(pc, t, 0.45); }
@@ -5848,6 +6275,10 @@
           fillEl.style.width = (ratio * 100) + "%";
           $("me-hp-text").textContent = Math.max(0, G.player.hp) + "/" + G.player.maxHp;
           hullEl.classList.toggle("low", G.player.hp > 0 && ratio <= 0.34);
+          var crit = G.player.alive && G.player.hp > 0 && ratio <= 0.25;
+          hullEl.classList.toggle("critical", crit);
+          fillEl.style.background = crit ? "#ff2438" : "";
+          var cfEl = $("crit-frame"); if (cfEl) cfEl.classList.toggle("on", crit && G.mode === "playing");
           if (hudPrev.hp >= 0 && G.player.hp < hudPrev.hp && G.mode === "playing") {
             hullEl.classList.add("hit");
             if (hullHitTimer) clearTimeout(hullHitTimer);
@@ -5877,6 +6308,8 @@
         pulseObjectiveToast(3500); // toast at wave start, then it collapses to the sliver
         G.waveState = "announce"; G.waveT = 1.15;
         buildWave(n);
+        G.waveTotal = G.spawnQueue.length;
+        saveCheckpoint(n);
         showBanner(ENVS[n - 1].name, "WAVE " + n + " — " + ENVS[n - 1].sub);
         if (n === 1 && !G.seenHint.drag) { G.seenHint.drag = 1; showHint("DRAG TO FLY — HOLD, THEN RELEASE FOR A CHARGE SHOT"); }
         syncHud();
@@ -5898,6 +6331,7 @@
         if (!skyUnlocked(startAt)) startAt = 1;
         G.rushMode = !!LAUNCH.rush;
         startSector(startAt);
+        maybeStartOnboarding();
         if (G.rushMode) { // Boss Rush — skip the assault phase, straight to the boss
           G.spawnQueue.length = 0; G.enemies.length = 0; G.portals.length = 0;
           G.waveState = "bosswait"; G.waveT = 0;
@@ -5905,6 +6339,7 @@
       }
       function gameOver() {
         G.mode = "over";
+        clearCheckpoint();
         $("weapons-offline").classList.remove("on");
         $("objective-box").classList.remove("on"); $("objective-sliver").classList.remove("vis"); $("wave-results").classList.remove("show");
         fillResults("over", false);
@@ -5915,6 +6350,7 @@
       }
       function victory() {
         G.mode = "win";
+        clearCheckpoint();
         $("weapons-offline").classList.remove("on");
         $("objective-box").classList.remove("on"); $("objective-sliver").classList.remove("vis"); $("wave-results").classList.remove("show");
         fillResults("win", true);
@@ -5997,9 +6433,10 @@
          campaign sky selected on the Campaign table (LAUNCH.sector; Boss Rush if armed).
          No Gyro.request() here either — iOS motion permission is requested only from the TILT tap. */
       var launchSpooling = false;
-      $("btn-play").addEventListener("click", function () {
+      function doLaunchSpool() {
         if (launchSpooling) return;
         Sfx.ensure(); Music.start();
+        hideLaunchConfirm();
         if (REDUCED) { startRun(1); return; }
         launchSpooling = true;
         var btn = $("btn-play"), lbl = $("launch-label");
@@ -6015,6 +6452,12 @@
           launchSpooling = false;
           startRun(1);
         }, 230);
+      }
+      $("btn-play").addEventListener("click", function () {
+        if (launchSpooling) return;
+        Sfx.ensure();
+        if (launchConfirmOpen()) { doLaunchSpool(); return; } // second tap commits
+        openLaunchConfirm(); // UX08 — first tap shows the launch check plate
       });
       /* TILT button — honest states, driven by Gyro.perm / Gyro.blocked: "TILT ON" (and the gold
          armed style the idle-drift check reads) appears only when tilt is enabled AND real sensor
@@ -6064,6 +6507,7 @@
       var cards = document.querySelectorAll(".opt-card");
       for (var ci = 0; ci < cards.length; ci++) cards[ci].addEventListener("click", function () {
         var grp = this.getAttribute("data-group");
+        if (this.classList.contains("locked")) { Sfx.ensure(); Sfx.blip(); return; }
         LOADOUT[grp] = this.getAttribute("data-value");
         var sibs = document.querySelectorAll('.opt-card[data-group="' + grp + '"]');
         for (var si = 0; si < sibs.length; si++) sibs[si].classList.toggle("sel", sibs[si] === this);
@@ -6172,6 +6616,8 @@
         if (key === "shake") { SETTINGS.shake = !SETTINGS.shake; on = SETTINGS.shake; }
         else if (key === "flash") { SETTINGS.flash = !SETTINGS.flash; on = SETTINGS.flash; }
         else if (key === "text") { SETTINGS.largeText = !SETTINGS.largeText; on = SETTINGS.largeText; document.getElementById("stage").classList.toggle("large-text", on); }
+        else if (key === "colorsafe") { SETTINGS.colorSafe = !SETTINGS.colorSafe; on = SETTINGS.colorSafe; }
+        else if (key === "haptics") { SETTINGS.haptics = !SETTINGS.haptics; on = SETTINGS.haptics; if (on) buzz(25); }
         else { // perf — force performance mode on/off (auto-detection still runs while it's off)
           SETTINGS.perfForce = !SETTINGS.perfForce; on = SETTINGS.perfForce;
           if (on) enablePerf(true);
@@ -6184,7 +6630,7 @@
       });
       // Boot: reflect the persisted toggles on every settings copy (home / pause / settings screen)
       (function applySettingsUI() {
-        var map = { shake: SETTINGS.shake, flash: SETTINGS.flash, text: SETTINGS.largeText, perf: SETTINGS.perfForce };
+        var map = { shake: SETTINGS.shake, flash: SETTINGS.flash, text: SETTINGS.largeText, perf: SETTINGS.perfForce, colorsafe: SETTINGS.colorSafe, haptics: SETTINGS.haptics };
         for (var k in map) {
           var bs = document.querySelectorAll('.set-btn[data-set="' + k + '"]');
           for (var i = 0; i < bs.length; i++) bs[i].classList.toggle("on", map[k]);
@@ -6209,9 +6655,9 @@
       });
       (function () { var saved = "gold"; try { saved = localStorage.getItem("starfall-home-theme") || "gold"; } catch (e) {} applyHomeTheme(saved); })();
       // Race The Sun text menu — real navigation into the existing screens
-      $("btn-menu-loadout").addEventListener("click", function () { Sfx.ensure(); Music.start(); showScreen("loadout"); });
-      $("btn-menu-pilots").addEventListener("click", function () { Sfx.ensure(); Music.start(); showScreen("loadout"); });
-      $("btn-menu-settings").addEventListener("click", function () { openSettings("start"); });
+      if ($("btn-menu-loadout")) $("btn-menu-loadout").addEventListener("click", function () { Sfx.ensure(); Music.start(); showScreen("hangar"); });
+      if ($("btn-menu-pilots")) $("btn-menu-pilots").addEventListener("click", function () { Sfx.ensure(); Music.start(); showScreen("pilots"); });
+      if ($("btn-menu-settings")) $("btn-menu-settings").addEventListener("click", function () { openSettings("start"); });
       $("btn-restart-pause").addEventListener("click", function () { startRun(1); });
       $("btn-restart-over").addEventListener("click", function () { startRun(1); });
       $("btn-restart-win").addEventListener("click", function () { startRun(1); });
@@ -6300,6 +6746,7 @@
         // Gyro parallax on the home screen — the planet zone leans with the phone (drag fallback moves it too via Gyro eased values)
         if (heroZoneEl && screens.start.classList.contains("on"))
           heroZoneEl.style.transform = "translate(" + ((G.gyroX || 0) * 9).toFixed(1) + "px," + ((G.gyroY || 0) * 6).toFixed(1) + "px)";
+        tickExtras(dt, now);
         // Live HUD meters — combo value + decay bar, charge bar, bomb count
         if (G.mode === "playing" || G.mode === "paused") {
           var sTxt = G.score.toLocaleString("en-US");
@@ -6347,6 +6794,413 @@
         }
       }
       requestAnimationFrame(loop);
+
+      /* ================= 9. APPROVED EXPANSION — BOARDS A–E + UX 01–17, 19, 20 (UX 18 excluded) ================= */
+      /* Board B kits — the 3 abilities each boss card announces (UX06) */
+      var BOSS_ABILITIES = {
+        mothership: ["ESCORT CARRIER — LAUNCHES DRONE PAIRS", "RADIAL RING BARRAGES", "GLOWING CORE — DOUBLE DAMAGE"],
+        dreadnought: ["FLAME CONES — TELEGRAPHED SWEEPS", "4 ARMOUR PLATES SHIELD THE HULL", "BROADSIDE FAN VOLLEYS"],
+        leviathan: ["RIFT JUMP — VANISHES, RE-EMERGES", "TWIN SPIRAL BARRAGES", "ROTATING ARMS BLOCK SHOTS"],
+        cryowarden: ["CRYO SHARDS SLOW YOUR SHIP", "ICE SHELL REFORMS AT 75 / 50 / 25%", "SHARD FAN VOLLEYS"],
+        eclipse: ["GRAVITY PULL — DRAGS YOUR SHIP IN", "MIXED-PATTERN FINALE", "ENRAGES AT HALF HULL"]
+      };
+      /* UX16 — recommended Combat Power per sky */
+      var REC_POWER = [180, 260, 340, 430, 520];
+
+      /* ---- Haptics (UX20) — silent no-op where unsupported or toggled off ---- */
+      function buzz(pat) {
+        if (!SETTINGS.haptics) return;
+        try { if (navigator && typeof navigator.vibrate === "function") navigator.vibrate(pat); } catch (e) {}
+      }
+
+      /* ---- Board A fleet — unlock progress is pure career math, so it is safe
+         to call from the very first boot frame (initMeta runs before this block) ---- */
+      var SHIP_NAMES = { vanguard: "VANGUARD", phantom: "PHANTOM", aegis: "AEGIS", interceptor: "INTERCEPTOR", bulwark: "BULWARK", spectre: "SPECTRE", tempest: "TEMPEST", nomad: "NOMAD", solaris: "SOLARIS", reaper: "VOID REAPER", starforge: "STARFORGE", sovereign: "ECLIPSE SOVEREIGN" };
+      function shipName(id) { return { vanguard: "VANGUARD", phantom: "PHANTOM", aegis: "AEGIS", interceptor: "INTERCEPTOR", bulwark: "BULWARK", spectre: "SPECTRE", tempest: "TEMPEST", nomad: "NOMAD", solaris: "SOLARIS", reaper: "VOID REAPER", starforge: "STARFORGE", sovereign: "ECLIPSE SOVEREIGN" }[id] || (id ? id.toUpperCase() : ""); } // function form: safe before this block's var assignments run (boot order)
+      var SHIP_ORDER = ["vanguard", "phantom", "aegis", "interceptor", "bulwark", "spectre", "tempest", "nomad", "solaris", "reaper", "starforge", "sovereign"];
+      function fleetOrder() { return ["solaris", "reaper", "starforge", "sovereign"]; } // a function, not a var: initMeta calls these helpers before this block's assignments run
+      var LOCK_TEXT = { solaris: "CLEAR WAVE 5 — BEAT THE ECLIPSE TITAN", reaper: "KILL 15 BOSSES", starforge: "DESTROY 2,000 ENEMIES", sovereign: "EARN 50,000 LIFETIME PTS" };
+      function fleetProg(id) {
+        if (id === "solaris") return { p: (CAREER.victories > 0 || CAREER.skiesCleared.indexOf(5) >= 0) ? 1 : 0, t: 1, unit: "CAMPAIGN VICTORY" };
+        if (id === "reaper") return { p: Math.min(CAREER.bossKills, 15), t: 15, unit: "BOSS KILLS" };
+        if (id === "starforge") return { p: Math.min(CAREER.kills, 2000), t: 2000, unit: "KILLS" };
+        if (id === "sovereign") return { p: Math.min(CAREER.lifetimeScore, 50000), t: 50000, unit: "LIFETIME PTS" };
+        return null;
+      }
+      function shipUnlocked(id) { var f = fleetProg(id); return !f || f.p >= f.t; }
+      var FLEET = null;
+      function fleetNoticed() {
+        if (!FLEET) {
+          FLEET = { noticed: [] };
+          var f = loadJSON("starfall-fleet-v1");
+          if (f && Array.isArray(f.noticed)) FLEET.noticed = f.noticed.filter(function (x) { return !!fleetProg(x); });
+        }
+        return FLEET.noticed;
+      }
+      function pendingUnlockNames() {
+        var n = fleetNoticed(), out = [];
+        var fo1 = fleetOrder();
+        for (var i = 0; i < fo1.length; i++) { var id = fo1[i]; if (shipUnlocked(id) && n.indexOf(id) < 0) out.push(shipName(id)); }
+        return out;
+      }
+      function nearestUnlock() {
+        var best = null;
+        var fo2 = fleetOrder();
+        for (var i = 0; i < fo2.length; i++) {
+          var id = fo2[i], f = fleetProg(id);
+          if (!f || f.p >= f.t) continue;
+          var cand = { id: id, prog: f.p, target: f.t, text: shipName(id) + " — " + fmtN(f.p) + "/" + fmtN(f.t) + " " + f.unit };
+          if (!best || (f.p / f.t) > (best.prog / best.target)) best = cand;
+        }
+        return best;
+      }
+      function checkFleetUnlocks() { renderHubPlates(); }
+      function renderFleetLocks() {
+        if (!shipUnlocked(LOADOUT.ship)) { LOADOUT.ship = "vanguard"; saveLoadout(); }
+        var cards = document.querySelectorAll('.opt-card[data-group="ship"]');
+        for (var i = 0; i < cards.length; i++) {
+          var id = cards[i].getAttribute("data-value"), locked = !shipUnlocked(id);
+          cards[i].classList.toggle("locked", locked);
+          if (locked) {
+            var sm = cards[i].querySelector(".lock-plate small"), f = fleetProg(id);
+            if (sm && f) sm.textContent = LOCK_TEXT[id] + (f.t > 1 ? " — " + fmtN(f.p) + "/" + fmtN(f.t) : "");
+          }
+        }
+      }
+
+      /* ---- Quests: claimable math + Claim All (UX15) ---- */
+      function claimableList() {
+        ensureDaily();
+        var out = [], i, q, pts = questPoints();
+        for (i = 0; i < DAILY_QUESTS.length; i++) { q = DAILY_QUESTS[i]; if (!QUESTS.daily.claimed[q.id] && (QUESTS.daily.prog[q.id] || 0) >= q.target) out.push({ kind: "daily", q: q }); }
+        for (i = 0; i < ACH_QUESTS.length; i++) { q = ACH_QUESTS[i]; if (!QUESTS.achClaimed[q.id] && (CAREER[q.stat] || 0) >= q.target) out.push({ kind: "ach", q: q }); }
+        for (i = 0; i < CHESTS.length; i++) if (QUESTS.chestsClaimed.indexOf(i) < 0 && pts >= CHESTS[i].pts) out.push({ kind: "chest", idx: i, q: CHESTS[i] });
+        return out;
+      }
+      function claimableCount() { return claimableList().length; }
+      function claimableTotal() { var l = claimableList(), s = 0; for (var i = 0; i < l.length; i++) s += l[i].q.reward; return s; }
+      function claimAll() {
+        var l = claimableList(); if (!l.length) return;
+        var tot = 0;
+        for (var i = 0; i < l.length; i++) {
+          var it = l[i]; tot += it.q.reward;
+          if (it.kind === "daily") QUESTS.daily.claimed[it.q.id] = 1;
+          else if (it.kind === "ach") QUESTS.achClaimed[it.q.id] = 1;
+          else QUESTS.chestsClaimed.push(it.idx);
+        }
+        WALLET.credits += tot;
+        saveMeta(); renderQuests(); renderHubMeta();
+        buzz(25); Sfx.ensure(); Sfx.powerup();
+      }
+
+      /* ---- Board B gates — shared by bullets, the lance beam and the bomb ---- */
+      function bossShieldAbsorb(bb, dmg, bullet) {
+        if (!bb || bb.dead) return false;
+        if (bb.kind === "cryowarden" && bb.shell > 0) {           // ice shell eats the hit before the hull can
+          bb.shell -= dmg;
+          if (bb.shell <= 0) { bb.shell = 0; addPopup(bb.x, bb.y + 56, "ICE SHELL BROKEN", "#7dd3fc", true); explode(bb.x, bb.y + 20, "#a8dcff", 10, false); }
+          return true;
+        }
+        if (bb.kind === "dreadnought" && bb.plates) {             // a live plate on the hit column shields the hull
+          var hx = bullet ? bullet.x : (G && G.player ? G.player.x : bb.x), dx = hx - bb.x;
+          for (var i = 0; i < bb.plates.length; i++) {
+            var pl = bb.plates[i];
+            if (pl.hp <= 0) continue;
+            if (Math.abs(dx - pl.off) <= 23) {
+              pl.hp -= dmg;
+              if (pl.hp <= 0) { pl.hp = 0; addPopup(bb.x + pl.off, bb.y + 40, "PLATE STRIPPED", "#ffb02e", true); explode(bb.x + pl.off, bb.y + 26, "#ffb02e", 12, false); }
+              return true;
+            }
+          }
+        }
+        return false;
+      }
+      function leviathanArmBlock(bb, bullet) {
+        if (!bb || !bullet || bb.kind !== "leviathan" || bb.vanish > 0) return false;
+        var dx = bullet.x - bb.x, dy = bullet.y - bb.y, d = Math.sqrt(dx * dx + dy * dy);
+        if (d < 30 || d > 92) return false;                        // arms sweep the 30–92px ring around the core
+        var a = Math.atan2(dy, dx);
+        for (var k = 0; k < 3; k++) {
+          var diff = Math.atan2(Math.sin(a - (bb.rot + k * 2.0944)), Math.cos(a - (bb.rot + k * 2.0944)));
+          if (Math.abs(diff) < 0.17) return true;
+        }
+        return false;
+      }
+      function cryoShellCheck(bb) {
+        if (!bb || bb.kind !== "cryowarden" || bb.dead || bb.shell > 0) return;
+        var frac = bb.hp / bb.maxHp;
+        while (bb.shellStage < 3 && frac <= 0.75 - 0.25 * bb.shellStage) {
+          bb.shellStage++; bb.shell = Math.round(bb.maxHp * 0.16);
+          addPopup(bb.x, bb.y + 58, "ICE SHELL UP", "#7dd3fc"); Sfx.shieldUp();
+        }
+      }
+
+      /* ---- Board D — independent cloud decks (pre-rendered, slid + wrapped by drawPlanetAt) ---- */
+      var CLOUD_CACHE = {};
+      function cloudSprite(kind, size) {
+        if (!CLOUD_CACHE) CLOUD_CACHE = {}; // the render loop's first paint runs during eval, before this block's assignments — build the cache lazily
+        var def = PLANET_DEFS[kind];
+        if (!def || !def.clouds) return null;
+        var key = kind + "|" + size;
+        if (CLOUD_CACHE[key]) return CLOUD_CACHE[key];
+        var cv = document.createElement("canvas"); cv.width = size; cv.height = size;
+        var c = cv.getContext("2d"), rng = seededRand(def.seed * 7 + size);
+        var n = Math.round(26 * def.clouds) + 6;
+        for (var i = 0; i < n; i++) {
+          var cx = rng() * size, cy = size * 0.16 + rng() * size * 0.68, rx = size * (0.05 + rng() * 0.13), ry = rx * (0.34 + rng() * 0.2);
+          var g = c.createRadialGradient(cx, cy, 1, cx, cy, rx);
+          g.addColorStop(0, "rgba(255,255,255," + (0.15 + rng() * 0.2).toFixed(3) + ")"); g.addColorStop(1, "rgba(255,255,255,0)");
+          c.fillStyle = g;
+          c.save(); c.translate(cx, cy); c.scale(1, ry / rx); c.translate(-cx, -cy);
+          c.beginPath(); c.arc(cx, cy, rx, 0, 6.283); c.fill(); c.restore();
+        }
+        CLOUD_CACHE[key] = cv;
+        return cv;
+      }
+
+      /* ---- UX06 — paint the incoming boss into its telegraph card with the real boss renderer ---- */
+      function paintBossCard(kind) {
+        var cv = el("bc-canvas"); if (!cv) return;
+        var c = cv.getContext("2d");
+        c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, cv.width, cv.height);
+        var fake = { kind: kind, x: 0, y: 0, hp: 1, maxHp: 1, flash: 0, telegraph: 0, rot: 0.7, elite: false, spiralT: 0.4, spiralA: 0, state: "enter", enraged: false, plates: null, shell: 0, flameAng: 0.5, flameT: 0, flameTele: 0 };
+        if (kind === "dreadnought") { fake.plates = []; var po = [-64, -24, 24, 64]; for (var i = 0; i < 4; i++) fake.plates.push({ off: po[i], hp: 34, maxHp: 34 }); }
+        var keep = ctx; ctx = c;
+        c.save(); c.translate(150, 96); c.scale(0.72, 0.72);
+        try {
+          if (kind === "dreadnought") drawDreadnought(fake);
+          else if (kind === "leviathan") drawLeviathan(fake);
+          else if (kind === "cryowarden") drawCryowarden(fake);
+          else if (kind === "eclipse") drawEclipse(fake);
+          else drawBoss(fake);
+        } catch (e) {}
+        c.restore(); ctx = keep;
+      }
+      /* ---- Board D on the campaign table — every node world stays alive ---- */
+      function paintCampaignPlanets(t) {
+        var cvs = document.querySelectorAll(".camp-planet");
+        for (var i = 0; i < cvs.length; i++) {
+          var cv = cvs[i], c = cv.getContext("2d");
+          c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, cv.width, cv.height);
+          drawPlanetAt(c, cv.width / 2, cv.height / 2, 30, cv.getAttribute("data-pkind") || "deep", t);
+        }
+      }
+
+      /* ---- UX10 — run checkpoint, written at every wave start ---- */
+      function saveCheckpoint(n) {
+        if (!G || G.mode !== "playing") return;
+        saveJSON("starfall-checkpoint-v1", { sector: n, score: G.score, run: G.run, rush: !!LAUNCH.rush });
+      }
+      function loadCheckpoint() {
+        var cp = loadJSON("starfall-checkpoint-v1");
+        if (!cp || typeof cp.sector !== "number" || cp.sector < 1 || cp.sector > 5 || typeof cp.score !== "number" || cp.score < 0) return null;
+        return cp;
+      }
+      function clearCheckpoint() { try { localStorage.removeItem("starfall-checkpoint-v1"); } catch (e) {} }
+      function resumeRun() {
+        var cp = loadCheckpoint(); if (!cp) return;
+        Sfx.ensure(); Music.start();
+        LAUNCH.sector = cp.sector; LAUNCH.rush = !!cp.rush;
+        startRun(cp.run || 1);
+        G.score = cp.score;
+        if (G.waveStart) G.waveStart.score = cp.score;
+        saveCheckpoint(cp.sector);
+        syncHud(); renderHubPlates();
+      }
+
+      /* ---- UX11 — first win of the day: the first boss kill each day pays +150 CR, once ---- */
+      var FIRSTWIN = null;
+      function firstWinState() {
+        if (!FIRSTWIN) FIRSTWIN = loadJSON("starfall-firstwin-v1") || { date: "", paid: false };
+        return FIRSTWIN;
+      }
+      function firstWinCheck() {
+        var fw = firstWinState();
+        if (fw.date === todayStr()) return;
+        fw.date = todayStr(); fw.paid = true;
+        saveJSON("starfall-firstwin-v1", fw);
+        WALLET.credits += 150;
+        if (typeof G !== "undefined" && G) G.firstWinPaid = true;
+      }
+
+      /* ---- Hub plates (UX07 thumb zone): resume · first win · next unlock · unlock notice ---- */
+      function renderHubPlates() {
+        var rp = el("resume-plate"), cp = loadCheckpoint();
+        if (rp) {
+          var showR = !!cp && (cp.sector > 1 || cp.score > 0) && !(G && (G.mode === "playing" || G.mode === "paused"));
+          rp.hidden = !showR;
+          if (showR && el("resume-txt")) el("resume-txt").textContent = "RESUME — WAVE " + cp.sector + " · " + fmtN(cp.score) + " PTS" + (cp.rush ? " · BOSS RUSH" : "");
+        }
+        if (el("firstwin-txt")) el("firstwin-txt").textContent = firstWinState().date === todayStr() ? "FIRST WIN TODAY: ✓ +150 CR CLAIMED" : "FIRST WIN TODAY: +150 CR — KILL ANY BOSS";
+        if (el("unlock-tracker-txt")) { var nu = nearestUnlock(); el("unlock-tracker-txt").textContent = nu ? "NEXT UNLOCK — " + nu.text : "ALL SHIPS UNLOCKED — FULL FLEET"; }
+        var un = el("unlock-notice"), pend = pendingUnlockNames();
+        if (un) { un.hidden = pend.length === 0; if (pend.length && el("unlock-notice-txt")) el("unlock-notice-txt").textContent = "UNLOCKED — " + pend.join(" · "); }
+      }
+
+      /* ---- UX08 — launch confirm plate ---- */
+      function launchConfirmOpen() { var lc = el("launch-confirm"); return !!lc && !lc.hidden; }
+      function openLaunchConfirm() {
+        var sec = clamp(LAUNCH.sector || 1, 1, 5), kind = BOSS_KINDS[sec - 1];
+        if (el("lc-sky")) el("lc-sky").textContent = "WAVE " + sec + " · " + ENVS[sec - 1].name + (LAUNCH.rush ? " · BOSS RUSH" : "");
+        if (el("lc-boss")) el("lc-boss").textContent = BOSS_NAMES[kind];
+        if (el("lc-ship")) el("lc-ship").textContent = SHIP_NAMES[LOADOUT.ship] || LOADOUT.ship.toUpperCase();
+        if (el("lc-gun")) el("lc-gun").textContent = LOADOUT.gun.toUpperCase();
+        if (el("lc-drone")) el("lc-drone").textContent = LOADOUT.drone.toUpperCase();
+        if (el("lc-pilot")) el("lc-pilot").textContent = LOADOUT.pilot.toUpperCase();
+        var lc = el("launch-confirm"); if (lc) lc.hidden = false;
+        Sfx.blip();
+      }
+      function hideLaunchConfirm() { var lc = el("launch-confirm"); if (lc) lc.hidden = true; }
+
+      /* ---- UX09 — first-run coach marks over live gameplay; shown once, ever ---- */
+      var COACH = { active: false, step: 0, charge: false, bomb: false };
+      var COACH_TEXTS = ["DRAG TO STEER", "HOLD, THEN RELEASE — CHARGE SHOT", "TWO FINGERS — SMART BOMB"];
+      var ONBOARDED = !!loadJSON("starfall-onboarded-v1");
+      function coachSetStep(n) {
+        COACH.step = n;
+        if (el("coach-step")) el("coach-step").textContent = (n + 1) + " / 3";
+        if (el("coach-text")) el("coach-text").textContent = COACH_TEXTS[n];
+      }
+      function maybeStartOnboarding() {
+        if (ONBOARDED || COACH.active) return;
+        COACH.active = true; COACH.charge = false; COACH.bomb = false;
+        coachSetStep(0);
+        var c = el("coach"); if (c) c.classList.add("on");
+      }
+      function finishOnboarding() {
+        COACH.active = false; ONBOARDED = true;
+        saveJSON("starfall-onboarded-v1", { done: 1 });
+        var c = el("coach"); if (c) c.classList.remove("on");
+      }
+
+      /* ---- UX03 — damage direction edge glow ---- */
+      var dmgDirTimer = null;
+      function showDamageDirection(sx, sy) {
+        if (!G || !G.player) return;
+        var dx = sx - G.player.x, dy = sy - G.player.y, id;
+        if (Math.abs(dx) > Math.abs(dy)) id = dx > 0 ? "dmg-e" : "dmg-w";
+        else id = dy > 0 ? "dmg-s" : "dmg-n";
+        var e = el(id); if (!e) return;
+        e.classList.add("show");
+        if (dmgDirTimer) clearTimeout(dmgDirTimer);
+        dmgDirTimer = setTimeout(function () {
+          var ids = ["dmg-n", "dmg-s", "dmg-e", "dmg-w"];
+          for (var i = 0; i < 4; i++) { var x = el(ids[i]); if (x) x.classList.remove("show"); }
+        }, 300);
+      }
+
+      /* ---- Board E — dedicated sections: one screen, one system ---- */
+      var SECTION_TITLES = {
+        hangar: ["HANGAR", "Ships only — pick your hull, compare the fleet"],
+        arsenal: ["ARSENAL", "Cannons only — pick your gun"],
+        drones: ["DRONE BAY", "Drone wings only — pick your escort"],
+        pilots: ["PILOTS", "Nova · Rex · Ivy — pick your co-pilot"],
+        engineering: ["ENGINEERING", "Upgrade tracks + Combat Power"],
+        livery: ["LIVERY", "Ship colour · blaster · thruster"]
+      };
+      function setSection(sec) {
+        var scr = el("scr-loadout"); if (scr) scr.setAttribute("data-sec", sec);
+        var T = SECTION_TITLES[sec];
+        if (T) {
+          if (el("lo-title")) el("lo-title").textContent = T[0];
+          if (el("lo-sub")) el("lo-sub").textContent = T[1];
+        }
+        if (sec === "hangar") renderCompare();
+      }
+      function refreshNavStates(name) {
+        var keys = document.querySelectorAll("[data-nav]");
+        for (var i = 0; i < keys.length; i++) keys[i].classList.toggle("on", keys[i].getAttribute("data-nav") === name);
+      }
+
+      /* ---- UX12 — ship compare: two hulls, bars + ▲/▼ deltas ---- */
+      function shipPower(id) { var keep = LOADOUT.ship; LOADOUT.ship = id; var p = combatPower().ship; LOADOUT.ship = keep; return p; }
+      function cmpRow(label, va, vb, pa, pb, fmt) {
+        var d = vb - va, cls = d > 0.001 ? "up" : d < -0.001 ? "dn" : "eq";
+        var dtxt = cls === "eq" ? "— 0" : (d > 0 ? "▲ +" : "▼ ") + fmt(Math.abs(d));
+        return "<div class=\"cmp-row\"><em>" + label + "</em><div class=\"cmp-bars\"><i><b style=\"width:" + clamp(pa, 0, 100).toFixed(0) + "%;background:#3fd6ff\"></b></i><i><b style=\"width:" + clamp(pb, 0, 100).toFixed(0) + "%;background:#ffb02e\"></b></i></div><span class=\"cmp-delta " + cls + "\">" + dtxt + "</span></div>";
+      }
+      function renderCompare() {
+        var a = el("cmp-a"), b = el("cmp-b"), out = el("cmp-out");
+        if (!a || !b || !out || !a.value) return;
+        var A = SHIPS[a.value] || SHIPS.vanguard, B = SHIPS[b.value] || SHIPS.tempest;
+        var fa = 1 / A.rate, fb = 1 / B.rate;
+        var f2 = function (v) { return (Math.round(v * 100) / 100).toString(); };
+        var f0 = function (v) { return Math.round(v).toString(); };
+        out.innerHTML =
+          "<div class=\"cmp-row\"><em></em><div style=\"flex:1;display:flex;justify-content:space-between;font-family:Orbitron,monospace;font-size:10px;font-weight:700\"><span style=\"color:#3fd6ff\">" + (SHIP_NAMES[a.value] || a.value) + "</span><span style=\"color:#ffb02e\">" + (SHIP_NAMES[b.value] || b.value) + "</span></div><span class=\"cmp-delta eq\"></span></div>" +
+          cmpRow("HULL", A.hp, B.hp, A.hp / 5 * 100, B.hp / 5 * 100, f0) +
+          cmpRow("SPEED", A.move, B.move, A.move / 1.45 * 100, B.move / 1.45 * 100, f2) +
+          cmpRow("FIRE", fa, fb, fa / 1.47 * 100, fb / 1.47 * 100, f2) +
+          cmpRow("POWER", shipPower(a.value), shipPower(b.value), shipPower(a.value) / 210 * 100, shipPower(b.value) / 210 * 100, f0);
+      }
+
+      /* ---- Per-frame extras: wave rail (UX02), heartbeat (UX04), coach advance (UX09), ember drift (Board D) ---- */
+      var lastBeat = 0, emberAcc = 0;
+      function tickExtras(dt, now) {
+        var rail = el("wave-rail");
+        if (rail) {
+          var show = false, fill = 0, label = "", inbound = false;
+          if (G && G.mode === "playing" && G.player && G.player.alive) {
+            if (G.waveState === "active" && G.waveTotal > 0) {
+              var rem = G.spawnQueue.length + G.portals.length + G.enemies.length;
+              var done = clamp(G.waveTotal - rem, 0, G.waveTotal);
+              fill = done / G.waveTotal * 100; label = "ASSAULT · " + done + "/" + G.waveTotal; show = true;
+            } else if (G.waveState === "bosswait") { fill = 100; label = "BOSS INBOUND"; inbound = true; show = true; }
+          }
+          rail.classList.toggle("on", show);
+          rail.classList.toggle("inbound", inbound);
+          if (show) {
+            var f = el("wave-rail-fill"); if (f) f.style.width = fill + "%";
+            var l = el("wave-rail-label"); if (l && l.textContent !== label) l.textContent = label;
+          }
+        }
+        if (G && G.mode === "playing" && G.player && G.player.alive && G.player.maxHp > 0 && G.player.hp / G.player.maxHp <= 0.25) {
+          if (now - lastBeat > 880) { lastBeat = now; Sfx.tone(55, 0.13, "sine", 0.5, 38); setTimeout(function () { Sfx.tone(50, 0.1, "sine", 0.32, 36); }, 170); }
+        }
+        if (COACH.active) {
+          if (COACH.step === 0 && (Input.dragging || Input.usedDrag)) coachSetStep(1);
+          else if (COACH.step === 1 && COACH.charge) coachSetStep(2);
+          else if (COACH.step === 2 && COACH.bomb) finishOnboarding();
+        }
+        if (G && G.mode === "playing" && G.sector === 2 && !G.perf && !REDUCED) {
+          emberAcc += dt;
+          if (emberAcc > 0.14) {
+            emberAcc = 0;
+            var plx = W * 0.79 + Math.sin(G.time * 0.05) * 5, ply = 132 + Math.cos(G.time * 0.043) * 4;
+            G.parts.push({ x: plx + rand(-34, 34), y: ply + rand(6, 30), vx: rand(-6, 6), vy: rand(-34, -18), life: rand(0.7, 1.3), t: 0, color: "#ff9a3d", size: rand(1, 2.2), drag: 1 });
+          }
+        }
+      }
+
+      /* ---- Wiring for the expansion UI ---- */
+      (function wireExpansion() {
+        var b;
+        b = el("btn-claim-all"); if (b) b.addEventListener("click", claimAll);
+        b = el("btn-resume-run"); if (b) b.addEventListener("click", resumeRun);
+        b = el("btn-resume-dismiss"); if (b) b.addEventListener("click", function () { clearCheckpoint(); renderHubPlates(); Sfx.blip(); });
+        b = el("btn-unlock-ok"); if (b) b.addEventListener("click", function () {
+          var n = fleetNoticed();
+          var fo3 = fleetOrder();
+          for (var i = 0; i < fo3.length; i++) if (shipUnlocked(fo3[i]) && n.indexOf(fo3[i]) < 0) n.push(fo3[i]);
+          saveJSON("starfall-fleet-v1", { noticed: n });
+          renderHubPlates(); Sfx.blip();
+        });
+        b = el("btn-lc-go"); if (b) b.addEventListener("click", function () { doLaunchSpool(); });
+        b = el("btn-lc-cancel"); if (b) b.addEventListener("click", function () { hideLaunchConfirm(); Sfx.blip(); });
+        b = el("coach-skip"); if (b) b.addEventListener("click", finishOnboarding);
+        var bc = el("boss-card"); if (bc) bc.addEventListener("click", function () { bc.classList.remove("show"); }); // UX06 — tap skips the telegraph card
+        var ca = el("cmp-a"), cb = el("cmp-b");
+        if (ca && cb) {
+          var oh = "";
+          for (var i = 0; i < SHIP_ORDER.length; i++) oh += "<option value=\"" + SHIP_ORDER[i] + "\">" + SHIP_NAMES[SHIP_ORDER[i]] + "</option>";
+          ca.innerHTML = oh; cb.innerHTML = oh; ca.value = "vanguard"; cb.value = "tempest";
+          ca.addEventListener("change", renderCompare); cb.addEventListener("change", renderCompare);
+        }
+        window.addEventListener("blur", function () { pauseGame(); }); // UX17 — focus loss auto-pauses (visibilitychange already did)
+        renderCompare();
+        renderFleetLocks();
+        renderHubPlates();
+      })();
     </script>
   </body>
 </html>
