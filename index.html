@@ -1799,6 +1799,36 @@
       #scr-start .ck-gkey { background:rgba(0,27,33,.92);border-radius:0; }
       #scr-start .ck-howto,#scr-start .fineprint { color:#d7e6d9;text-shadow:0 1px 4px #001212; }
       @media(max-width:360px) { #scr-start .ck-scroll {padding:8px 10px 16px;gap:9px;} .ref-shortcuts button {min-height:65px;font-size:9px;} .ref-ship-body,#scr-start .ref-ship .ck-stage {min-height:158px;} .ref-card header {padding:7px 10px;} .ref-mission-body {padding:9px;} }
+
+      /* Video reference: live orbital deck, cut-corner modules and crisp actions. */
+      #reference-backdrop { transform:scale(1.04);animation:orbitalDrift 22s ease-in-out infinite alternate; }
+      @keyframes orbitalDrift { from {transform:scale(1.04) translate(-.4%,0);} to {transform:scale(1.07) translate(.4%,.8%);} }
+      .ref-shortcuts button { position:relative;font-size:11px;letter-spacing:.02em;box-shadow:inset 0 1px rgba(190,225,224,.2); }
+      .ref-warp { isolation:isolate; }
+      .ref-warp::before { content:"";position:absolute;z-index:-1;width:100px;height:100px;left:calc(50% - 50px);top:-9px;
+        background:repeating-conic-gradient(from 13deg,transparent 0deg 9deg,rgba(172,175,255,.5) 10deg,transparent 12deg 24deg);
+        mask-image:radial-gradient(circle,transparent 5%,#000 12%,transparent 62%);animation:gateCorona 12s linear infinite; }
+      @keyframes gateCorona { to {transform:rotate(360deg);} }
+      .ref-shortcuts button:active { filter:brightness(1.25);transform:scale(.97); }
+      .ref-ship-info .glance-cell:first-child .glance-v { font-size:23px;letter-spacing:.03em; }
+      .ref-card header { background:linear-gradient(110deg,rgba(0,17,24,.9),rgba(0,29,37,.65)); }
+      .ref-ship-info .ref-upgrade { background:linear-gradient(110deg,#a3ce5d,#547f36);color:#f8fff1;min-height:36px; }
+      .equipment-preview { width:52px;height:64px;flex:0 0 52px;object-fit:contain;background:radial-gradient(ellipse,rgba(82,198,215,.13),transparent 70%); }
+      .upg-row { border-radius:0;border:1px solid rgba(113,167,171,.24);background:rgba(0,31,40,.94);padding:10px 8px;gap:8px; }
+      .upg-row .upg-name { font:700 15px "Rajdhani",sans-serif;letter-spacing:.02em; }
+      .upg-row .upg-fx { font-size:11px;line-height:1.35; }
+      .upg-btn { border-radius:0;min-height:44px;min-width:72px;padding:11px 6px;background:#759f3d;color:#fff;border:0;box-shadow:none;font-family:"Rajdhani",sans-serif; }
+      #scr-loadout .meta-key,#scr-settings .meta-key,.camp-tab { border-radius:0; }
+      #scr-loadout .opt-card { border-radius:3px;background:linear-gradient(140deg,rgba(12,48,58,.94),rgba(0,21,29,.97));border-color:rgba(119,184,187,.2); }
+      #scr-loadout .opt-card.sel { border-color:#ff3157;box-shadow:inset 0 -2px #ff3157; }
+      .lo-drone-cv { width:54px;height:54px; }
+      #scr-loadout[data-sec="hangar"] .hg-stage { border-radius:2px;background:radial-gradient(ellipse at 50% 25%,rgba(82,148,204,.3),rgba(0,22,39,.95) 70%); }
+      .hg-ring { opacity:.45; }
+      .screen .meta-nav { gap:4px; }
+      .screen .btn.ghost { border-radius:1px; }
+      @media(max-width:360px) { .equipment-preview {width:40px;flex-basis:40px;} .upg-row{gap:6px;} .upg-btn{min-width:66px;} }
+      @media(prefers-reduced-motion:reduce) { #reference-backdrop,.ref-warp::before {animation:none;transform:none;} }
+      .gun-preview {width:54px;height:54px;object-fit:contain;}
     </style>
   </head>
   <body>
@@ -2204,6 +2234,7 @@
         <div class="lo-group sec-block" data-sec="engineering">
           <div class="lo-label">UPGRADES — ENGINEERING</div>
           <div class="upg-row">
+            <canvas class="equipment-preview" data-equipment="power" width="192" height="192" aria-hidden="true"></canvas>
             <div class="upg-meta">
               <div class="upg-name">POWER <span id="upg-power-lv" style="color:var(--amber)">LV 0</span></div>
               <div class="upg-fx">+4% bullet damage per level — live in every shot you fire</div>
@@ -2212,6 +2243,7 @@
             <button class="upg-btn" id="upg-power-btn">300 CR</button>
           </div>
           <div class="upg-row">
+            <canvas class="equipment-preview" data-equipment="cannon" width="192" height="192" aria-hidden="true"></canvas>
             <div class="upg-meta">
               <div class="upg-name">CANNON <span id="upg-cannon-lv" style="color:var(--amber)">LV 0</span></div>
               <div class="upg-fx">+3% fire rate per level — your cannon cycles faster</div>
@@ -3448,6 +3480,7 @@
         o.charged = charged;
         o.pierce = pierce;
         o.bossHit = bossHit;
+        o.material = null; // Reset pooled visual state; each bolt resolves its texture only once.
         if (o.hitEnemies) o.hitEnemies.length = 0;
         G.bullets.push(o);
       }
@@ -4956,7 +4989,7 @@
          ship+livery into an offscreen sprite at 3x and blitted each frame;
          only flames, nav-light blink and glows stay dynamic. */
       var SHIP_SPRITE_CACHE = {};
-      var SHIP_SPRITE_SS = 3, SHIP_SPRITE_W = 80, SHIP_SPRITE_H = 68, SHIP_SPRITE_OX = 40, SHIP_SPRITE_OY = 38;
+      var SHIP_SPRITE_SS = 5, SHIP_SPRITE_W = 80, SHIP_SPRITE_H = 68, SHIP_SPRITE_OX = 40, SHIP_SPRITE_OY = 38;
       function getShipSprite(shipId, art, o) {
         var key = shipId + "|" + (o.tip || art.tip) + "|" + (o.blaster || art.tip) + "|" + (o.flash ? 1 : 0);
         var hit = SHIP_SPRITE_CACHE[key];
@@ -4970,154 +5003,745 @@
         SHIP_SPRITE_CACHE[key] = hit;
         return hit;
       }
-      function drawShipHullStatic(c, art, o) {
-        var h = art.hullHalf, flash = !!o.flash;
-        var hullC = flash ? "#ffb3ba" : art.hull, wingC = flash ? "#e06a76" : art.wing;
-        // engine pods — housings with a lit rim and a dark nozzle bore
-        var pods = art.pods === "single" ? [[-3.5, 7]] : (art.pods === "armor" ? [[-11.5, 6], [5.5, 6]] : (art.pods === "quad" ? [[-13, 4.4], [-6.2, 4.4], [0.6, 4.4], [7.4, 4.4]] : [[-8.5, 5.5], [3, 5.5]]));
-        for (var pi = 0; pi < pods.length; pi++) {
-          var pg = c.createLinearGradient(pods[pi][0], 0, pods[pi][0] + pods[pi][1], 0);
-          pg.addColorStop(0, shadeHex(art.podCol, 1.5)); pg.addColorStop(0.5, art.podCol); pg.addColorStop(1, shadeHex(art.podCol, 0.55));
-          c.fillStyle = pg; c.fillRect(pods[pi][0], 11, pods[pi][1], 9);
-          c.fillStyle = "rgba(0,0,0,0.72)"; c.fillRect(pods[pi][0] + 1, 17.5, pods[pi][1] - 2, 2.5);
-          c.fillStyle = "rgba(160,220,255,0.5)"; c.fillRect(pods[pi][0] + 1.6, 18.1, pods[pi][1] - 3.2, 0.8);
+      /* Video-reference material library. Geometry/detail is baked into bounded caches;
+               flight only blits textures. Independent seeds never consume combat randomness. */
+      var MATERIAL_CACHE = {
+        station: {},
+        enemy: {},
+        boss: {},
+        upgrade: {},
+        bolt: {},
+      };
+      function materialPath(c, points, ox, oy) {
+        c.beginPath();
+        for (var i = 0; i < points.length; i++) {
+          if (!i) c.moveTo(points[i][0] + ox, points[i][1] + oy);
+          else c.lineTo(points[i][0] + ox, points[i][1] + oy);
         }
-        // wings — cylindrical metal: lit root, mid hull tone, dark tip, bright leading edge
-        var wg = c.createLinearGradient(-art.span, 0, art.span, 0);
-        wg.addColorStop(0, shadeHex(wingC, 0.6)); wg.addColorStop(0.28, wingC); wg.addColorStop(0.5, shadeHex(hullC, 1.06)); wg.addColorStop(0.72, wingC); wg.addColorStop(1, shadeHex(wingC, 0.6));
-        c.fillStyle = wg;
-        c.beginPath(); c.moveTo(-4, 0); c.lineTo(-art.span, 17); c.lineTo(-(art.span - 3), 5); c.lineTo(-7, -4); c.closePath(); c.fill();
-        c.beginPath(); c.moveTo(4, 0); c.lineTo(art.span, 17); c.lineTo(art.span - 3, 5); c.lineTo(7, -4); c.closePath(); c.fill();
-        c.strokeStyle = "rgba(255,255,255,0.4)"; c.lineWidth = 0.8;
-        c.beginPath(); c.moveTo(-7, -4); c.lineTo(-(art.span - 3), 5); c.moveTo(7, -4); c.lineTo(art.span - 3, 5); c.stroke();
-        c.strokeStyle = "rgba(0,0,0,0.4)"; c.lineWidth = 1;
-        c.beginPath(); c.moveTo(-8, 2); c.lineTo(-(art.span - 4), 12); c.moveTo(8, 2); c.lineTo(art.span - 4, 12); c.moveTo(-6, -1); c.lineTo(-(art.span - 7), 8); c.moveTo(6, -1); c.lineTo(art.span - 7, 8); c.stroke();
-        // livery stripes + wing rivets
-        c.fillStyle = art.tip; c.globalAlpha = 0.9;
-        c.fillRect(-art.span + 5, 8.5, 6, 1.8); c.fillRect(art.span - 11, 8.5, 6, 1.8); c.globalAlpha = 1;
-        rivets(c, [[-art.span + 4, 13.5], [-10, 4.5], [art.span - 4, 13.5], [10, 4.5]], "rgba(8,16,26,0.55)", "rgba(255,255,255,0.35)");
-        // hull path — kept in a helper so shading layers can clip to the same silhouette
-        function hullPath() {
+        c.closePath();
+      }
+      function armorPlate(c, points, height, color, seed) {
+        var minX = Infinity,
+          maxX = -Infinity,
+          minY = Infinity,
+          maxY = -Infinity,
+          cx = 0,
+          cy = 0;
+        for (var i = 0; i < points.length; i++) {
+          var p = points[i];
+          minX = Math.min(minX, p[0]);
+          maxX = Math.max(maxX, p[0]);
+          minY = Math.min(minY, p[1]);
+          maxY = Math.max(maxY, p[1]);
+          cx += p[0];
+          cy += p[1];
+        }
+        cx /= points.length;
+        cy /= points.length;
+        // Cast shadow, extruded side walls, then a beveled top surface.
+        materialPath(c, points, height * 0.65, height * 1.3);
+        c.fillStyle = "rgba(0,5,12,.6)";
+        c.fill();
+        for (var j = 0; j < points.length; j++) {
+          var a = points[j],
+            b = points[(j + 1) % points.length],
+            dx = b[0] - a[0],
+            dy = b[1] - a[1];
+          var light = 0.25 + 0.28 * (1 + (dy - dx) / (Math.hypot(dx, dy) || 1));
+          materialPath(
+            c,
+            [
+              a,
+              b,
+              [b[0] + height * 0.3, b[1] + height],
+              [a[0] + height * 0.3, a[1] + height],
+            ],
+            0,
+            0,
+          );
+          c.fillStyle = shadeHex(color, light);
+          c.fill();
+        }
+        var g = c.createLinearGradient(minX, minY, maxX, maxY);
+        g.addColorStop(0, shadeHex(color, 1.12));
+        g.addColorStop(0.23, shadeHex(color, 1.5));
+        g.addColorStop(0.48, shadeHex(color, 1.05));
+        g.addColorStop(0.7, shadeHex(color, 0.82));
+        g.addColorStop(1, shadeHex(color, 0.48));
+        materialPath(c, points, 0, 0);
+        c.fillStyle = g;
+        c.fill();
+        c.strokeStyle = "rgba(223,242,249,.42)";
+        c.lineWidth = 0.65;
+        c.stroke();
+        c.save();
+        c.clip();
+        var rng = seededRand(seed || 31),
+          step = Math.max(3, (maxY - minY) / 8);
+        for (var y = minY + step; y < maxY; y += step) {
+          c.strokeStyle = "rgba(0,7,15,.28)";
+          c.lineWidth = 0.7;
           c.beginPath();
-          c.moveTo(0, art.nose); c.lineTo(h * 0.62, -10); c.lineTo(h, 8); c.lineTo(h * 0.75, 17); c.lineTo(-h * 0.75, 17); c.lineTo(-h, 8); c.lineTo(-h * 0.62, -10);
-          c.closePath();
-        }
-        // hull base — five-stop metal: dark flank, lit shoulder, bright spine, lit shoulder, dark flank
-        var hg = c.createLinearGradient(-h, 0, h, 0);
-        if (flash) { hg.addColorStop(0, "#e06a76"); hg.addColorStop(0.5, "#ffb3ba"); hg.addColorStop(1, "#e06a76"); }
-        else { hg.addColorStop(0, shadeHex(art.wing, 0.72)); hg.addColorStop(0.3, art.hull); hg.addColorStop(0.5, shadeHex(art.hull, 1.22)); hg.addColorStop(0.7, art.hull); hg.addColorStop(1, shadeHex(art.wing, 0.72)); }
-        c.fillStyle = hg; hullPath(); c.fill();
-        // top light wash (nose catches the light) + dark keel recess
-        c.save(); hullPath(); c.clip();
-        var tl = c.createLinearGradient(0, art.nose, 0, 18);
-        tl.addColorStop(0, "rgba(255,255,255,0.30)"); tl.addColorStop(0.5, "rgba(255,255,255,0)"); tl.addColorStop(1, "rgba(0,0,0,0.20)");
-        c.fillStyle = tl; c.fillRect(-h, art.nose, h * 2, 18 - art.nose);
-        var coat = c.createLinearGradient(-h, art.nose, h, 18);
-        coat.addColorStop(0, "rgba(175,227,255,0.02)"); coat.addColorStop(0.28, "rgba(217,243,255,0.26)");
-        coat.addColorStop(0.38, "rgba(255,255,255,0.48)"); coat.addColorStop(0.46, "rgba(184,225,255,0.03)");
-        coat.addColorStop(1, "rgba(0,5,16,0.24)");
-        c.fillStyle = coat; c.fillRect(-h, art.nose, h * 2, 18 - art.nose);
-        c.strokeStyle = "rgba(194,234,255,0.45)"; c.lineWidth = 0.55;
-        c.beginPath(); c.moveTo(-h * 0.52, -11); c.lineTo(-h * 0.82, 7); c.lineTo(-h * 0.6, 14); c.stroke();
-        for (var panelY = 0; panelY < 12; panelY += 4) {
-          c.fillStyle = "rgba(3,13,24,0.48)"; c.fillRect(h * 0.44, panelY, h * 0.35, 1.1);
-          c.fillStyle = "rgba(206,239,255,0.32)"; c.fillRect(h * 0.44, panelY + 1.1, h * 0.35, 0.5);
-        }
-        // Machined armour tiles and edge illumination, baked in the shared hull cache.
-        for (var tileY = -22; tileY < 16; tileY += 4) {
-          for (var tileSide = -1; tileSide <= 1; tileSide += 2) {
-            var tileX = tileSide < 0 ? -h + 1 : 2.4;
-            var tileW = Math.max(1, h - 3.4);
-            c.fillStyle = tileSide < 0 ? "rgba(200,231,245,.14)" : "rgba(0,8,20,.25)";
-            c.fillRect(tileX,tileY,tileW,3.3);
-            c.strokeStyle="rgba(229,247,255,.28)";c.lineWidth=.3;
-            c.strokeRect(tileX,tileY,tileW,3.3);
-            c.fillStyle="rgba(2,12,23,.7)";c.fillRect(tileX+.6,tileY+.7,.5,.5);
+          c.moveTo(minX, y);
+          c.lineTo(maxX, y);
+          c.stroke();
+          c.strokeStyle = "rgba(218,241,248,.16)";
+          c.lineWidth = 0.35;
+          c.beginPath();
+          c.moveTo(minX, y + 0.8);
+          c.lineTo(maxX, y + 0.8);
+          c.stroke();
+          if (rng() > 0.4) {
+            var vx = minX + (maxX - minX) * (0.15 + rng() * 0.5);
+            c.fillStyle = "rgba(0,7,16,.65)";
+            c.fillRect(
+              vx,
+              y + 1.6,
+              Math.max(0.6, (maxX - minX) * 0.18),
+              Math.max(0.5, step * 0.25),
+            );
           }
         }
-        c.strokeStyle="rgba(212,242,255,.72)";c.lineWidth=.45;
-        c.beginPath();c.moveTo(-h*.2,art.nose+5);c.lineTo(-h*.35,14);c.stroke();
-        // panel tone variation + seeded weathering scuffs — same marks every frame
-        var wr = seededRand(art.decal === "07" ? 707 : art.decal === "13" ? 1313 : 303);
-        for (var wi = 0; wi < 5; wi++) {
-          c.fillStyle = wi % 2 ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.07)";
-          c.beginPath(); c.ellipse((wr() - 0.5) * h * 1.3, art.nose + 8 + wr() * 26, 1.6 + wr() * 2.6, 3 + wr() * 6, 0, 0, 6.283); c.fill();
+        for (var k = 0; k < 10; k++) {
+          c.fillStyle = k % 2 ? "rgba(230,246,255,.16)" : "rgba(0,0,0,.3)";
+          c.fillRect(
+            minX + rng() * (maxX - minX),
+            minY + rng() * (maxY - minY),
+            0.35 + rng() * 2,
+            0.4,
+          );
         }
-        c.strokeStyle = "rgba(20,26,34,0.20)"; c.lineWidth = 0.6;
-        for (var si = 0; si < 4; si++) {
-          var sx = (wr() - 0.5) * h * 1.5, sy = art.nose + 10 + wr() * 24;
-          c.beginPath(); c.moveTo(sx, sy); c.lineTo(sx + 2 + wr() * 3, sy + 1 + wr() * 2); c.stroke();
-        }
-        c.fillStyle = "rgba(0,0,0,0.22)";
-        c.beginPath(); c.moveTo(-h * 0.75, 17); c.lineTo(h * 0.75, 17); c.lineTo(h * 0.5, 10); c.lineTo(-h * 0.5, 10); c.closePath(); c.fill();
         c.restore();
-        // panel seams + rivet rows along the seams
-        c.strokeStyle = art.panel; c.lineWidth = 0.9;
-        c.beginPath(); c.moveTo(-h + 1, 4); c.lineTo(h - 1, 4); c.moveTo(-h * 0.8, -6); c.lineTo(h * 0.8, -6); c.stroke();
-        c.strokeStyle = "rgba(255,255,255,0.35)"; c.lineWidth = 0.9;
-        c.beginPath(); c.moveTo(0, art.nose + 2); c.lineTo(0, 8); c.stroke();
-        rivets(c, [[-h + 1.6, -2], [h - 1.6, -2], [-h + 1.6, 6.5], [h - 1.6, 6.5], [-h + 1.6, 1.8], [h - 1.6, 1.8]], "rgba(10,20,32,0.5)", "rgba(255,255,255,0.3)");
-        // per-ship greebles — Vanguard sensor fins, Phantom stealth facets, Aegis flank armour
-        if (art.pods === "twin") {
-          c.fillStyle = shadeHex(art.wing, 0.8); c.fillRect(-h - 1.6, -2, 2.4, 8); c.fillRect(h - 0.8, -2, 2.4, 8);
-          c.fillStyle = "rgba(63,214,255,0.85)"; c.fillRect(-h - 1.6, -2, 2.4, 1.4); c.fillRect(h - 0.8, -2, 2.4, 1.4);
-        } else if (art.pods === "single") {
-          c.strokeStyle = "rgba(6,2,20,0.6)"; c.lineWidth = 0.8;
-          c.beginPath(); c.moveTo(-h * 0.7, -12); c.lineTo(0, 2); c.lineTo(h * 0.7, -12); c.moveTo(-h * 0.55, 6); c.lineTo(h * 0.55, 6); c.stroke();
-          c.fillStyle = "rgba(177,140,255,0.30)"; c.beginPath(); c.moveTo(0, art.nose + 3); c.lineTo(h * 0.4, -8); c.lineTo(-h * 0.4, -8); c.closePath(); c.fill();
-        } else if (art.pods === "armor") {
-          var ag = c.createLinearGradient(-h - 2.5, 0, -h + 1.5, 0);
-          ag.addColorStop(0, "#6e5626"); ag.addColorStop(1, "#a5854c");
-          c.fillStyle = ag; c.fillRect(-h - 2.5, -4, 4, 15);
-          var ag2 = c.createLinearGradient(h - 1.5, 0, h + 2.5, 0);
-          ag2.addColorStop(0, "#a5854c"); ag2.addColorStop(1, "#6e5626");
-          c.fillStyle = ag2; c.fillRect(h - 1.5, -4, 4, 15);
-          c.strokeStyle = "rgba(255,220,150,0.45)"; c.lineWidth = 0.8;
-          c.beginPath();
-          [0, 4.5, 9].forEach(function (sy2) { c.moveTo(-h - 2.5, sy2); c.lineTo(-h + 1.5, sy2); c.moveTo(h - 1.5, sy2); c.lineTo(h + 2.5, sy2); });
-          c.stroke();
-          rivets(c, [[-h - 0.5, -2.5], [-h - 0.5, 9.5], [h + 0.5, -2.5], [h + 0.5, 9.5]], "rgba(30,20,4,0.7)", "rgba(255,230,170,0.5)");
-        } else if (art.pods === "quad") {
-          c.fillStyle = shadeHex(art.wing, 0.75); c.fillRect(-2, 11, 4, 7);
-          c.fillStyle = "rgba(63,214,255,0.8)"; c.fillRect(-2, 11, 4, 1.2);
-          rivets(c, [[-h + 2, 12], [h - 2, 12], [0, 14]], "rgba(10,20,32,0.5)", "rgba(255,255,255,0.3)");
+        c.strokeStyle = "rgba(239,251,255,.64)";
+        c.lineWidth = 0.45;
+        c.beginPath();
+        for (var e = 0; e < points.length; e++) {
+          var pa = points[e],
+            pb = points[(e + 1) % points.length];
+          if (pb[0] - pa[0] + pb[1] - pa[1] > 0) {
+            c.moveTo(pa[0], pa[1]);
+            c.lineTo(pb[0], pb[1]);
+          }
         }
-        // intake vents — dark recess, slats, a highlight lip under each
-        c.fillStyle = "rgba(4,8,14,0.78)";
-        c.fillRect(-h + 0.5, 8, 3.4, 7); c.fillRect(h - 3.9, 8, 3.4, 7);
-        c.strokeStyle = "rgba(200,225,245,0.45)"; c.lineWidth = 0.7;
-        c.beginPath(); c.moveTo(-h + 0.5, 10.5); c.lineTo(-h + 3.9, 10.5); c.moveTo(-h + 0.5, 13); c.lineTo(-h + 3.9, 13); c.moveTo(h - 3.9, 10.5); c.lineTo(h - 0.5, 10.5); c.moveTo(h - 3.9, 13); c.lineTo(h - 0.5, 13); c.stroke();
-        c.fillStyle = "rgba(255,255,255,0.20)"; c.fillRect(-h + 0.5, 15, 3.4, 0.7); c.fillRect(h - 3.9, 15, 3.4, 0.7);
-        // canopy — glass dome: deep base, sky gradient, pilot inside, hard reflection streak
-        var cg2 = c.createLinearGradient(-4, -15, 4, 3);
-        cg2.addColorStop(0, "#eafaff"); cg2.addColorStop(0.32, art.canopy); cg2.addColorStop(0.75, shadeHex(art.canopy, 0.45)); cg2.addColorStop(1, "#030b14");
-        c.fillStyle = cg2;
-        c.beginPath(); c.ellipse(0, -7, 3.6, 7.5, 0, 0, 6.283); c.fill();
-        c.fillStyle = "rgba(4,10,18,0.9)";
-        c.beginPath(); c.arc(0, -8.5, 2.3, 0, 6.283); c.fill();
-        c.beginPath(); c.ellipse(0, -3.2, 2.9, 1.9, 0, 0, 6.283); c.fill();
-        c.fillStyle = "rgba(170,230,255,0.8)";
-        c.beginPath(); c.ellipse(0.4, -9.4, 1.2, 0.75, 0.3, 0, 6.283); c.fill();
-        c.fillStyle = "rgba(255,255,255,0.92)";
-        c.beginPath(); c.ellipse(-1.25, -10.2, 1.0, 3.1, -0.2, 0, 6.283); c.fill();
-        c.fillStyle = "rgba(255,255,255,0.35)";
-        c.beginPath(); c.ellipse(1.5, -4.5, 0.6, 2.2, 0.25, 0, 6.283); c.fill();
-        c.strokeStyle = "rgba(10,18,28,0.65)"; c.lineWidth = 0.8;
-        c.beginPath(); c.ellipse(0, -7, 3.6, 7.5, 0, 0, 6.283); c.stroke();
-        // decal plate — a small painted plate behind the hull number
-        c.fillStyle = "rgba(8,14,22,0.35)"; c.fillRect(-art.span + 3.4, 2.6, 9.4, 5.6);
-        c.font = "700 4.5px Orbitron, monospace"; c.textAlign = "center";
-        c.fillStyle = "rgba(235,246,255,0.88)";
-        c.fillText(art.decal, -art.span + 8.1, 6.8);
-        // nose cannon — shaded barrel, muzzle ring, tip in the blaster colour
-        var ng = c.createLinearGradient(-1.4, 0, 1.4, 0);
-        ng.addColorStop(0, "#0c141f"); ng.addColorStop(0.5, "#3d5269"); ng.addColorStop(1, "#0c141f");
-        c.fillStyle = ng; c.fillRect(-1.4, art.nose - 3, 2.8, 5);
-        c.fillStyle = o.blaster || art.tip;
-        c.fillRect(-1, art.nose - 4.4, 2, 2);
-        // wing-tip light housings in the livery colour
-        c.fillStyle = shadeHex(art.tip, 0.7); c.fillRect(-art.span - 0.5, 12.6, 3, 4.6); c.fillRect(art.span - 2.5, 12.6, 3, 4.6);
-        c.fillStyle = art.tip; c.fillRect(-art.span - 0.5, 13.4, 3, 1.6); c.fillRect(art.span - 2.5, 13.4, 3, 1.6);
+        c.stroke();
+      }
+      function emissiveStrip(c, x, y, w, h, color) {
+        c.fillStyle = "#020b13";
+        c.fillRect(x - 1, y - 1, w + 2, h + 2);
+        c.fillStyle = color;
+        c.fillRect(x, y, w, h);
+        c.fillStyle = "rgba(245,255,255,.85)";
+        c.fillRect(x, y, w, Math.min(0.7, h));
+      }
+      function drawShipHullStatic(c, art, o) {
+        var h = art.hullHalf,
+          s = art.span,
+          n = art.nose,
+          col = o.flash ? "#dcafb5" : art.hull;
+        // Original fleet proportions and livery; layered wings, independent nacelles,
+        // raised spine and a recessed optical cockpit give the shared model volume.
+        armorPlate(
+          c,
+          [
+            [-5, -8],
+            [-s, 5],
+            [-s + 2, 17],
+            [-h, 11],
+          ],
+          2.2,
+          art.wing,
+          12,
+        );
+        armorPlate(
+          c,
+          [
+            [5, -8],
+            [s, 5],
+            [s - 2, 17],
+            [h, 11],
+          ],
+          2.2,
+          art.wing,
+          13,
+        );
+        var engines = ENGINE_LAYOUTS[art.pods] || ENGINE_LAYOUTS.twin;
+        for (var i = 0; i < engines.length; i++) {
+          var ex = engines[i];
+          armorPlate(
+            c,
+            [
+              [ex - 3, -1],
+              [ex + 3, -1],
+              [ex + 3.4, 19],
+              [ex - 3.4, 19],
+            ],
+            2.2,
+            art.podCol,
+            41 + i,
+          );
+          emissiveStrip(c, ex - 2, 18, 4, 1.8, o.thrust || "#3fd6ff");
+        }
+        armorPlate(
+          c,
+          [
+            [0, n],
+            [h * 0.7, -11],
+            [h, 8],
+            [h * 0.72, 17],
+            [-h * 0.72, 17],
+            [-h, 8],
+            [-h * 0.7, -11],
+          ],
+          3,
+          col,
+          71,
+        );
+        armorPlate(
+          c,
+          [
+            [-h * 0.48, -13],
+            [-h * 0.8, 10],
+            [-h * 0.3, 14],
+            [-1, -14],
+          ],
+          1.5,
+          shadeHex(col, 1.16),
+          81,
+        );
+        armorPlate(
+          c,
+          [
+            [h * 0.48, -13],
+            [h * 0.8, 10],
+            [h * 0.3, 14],
+            [1, -14],
+          ],
+          1.5,
+          shadeHex(col, 0.75),
+          82,
+        );
+        c.fillStyle = art.tip;
+        c.fillRect(-s + 4, 9, 5, 1.3);
+        c.fillRect(s - 9, 9, 5, 1.3);
+        c.fillStyle = "#07121e";
+        c.beginPath();
+        c.ellipse(0, -8, 4.1, 9, 0, 0, 6.283);
+        c.fill();
+        var glass = c.createLinearGradient(-3, -15, 3, 1);
+        glass.addColorStop(0, "#e4fdff");
+        glass.addColorStop(0.22, art.canopy);
+        glass.addColorStop(0.5, "#134259");
+        glass.addColorStop(1, "#02070f");
+        c.fillStyle = glass;
+        c.beginPath();
+        c.ellipse(0, -8, 3.25, 7.8, 0, 0, 6.283);
+        c.fill();
+        c.strokeStyle = "rgba(231,254,255,.8)";
+        c.lineWidth = 0.55;
+        c.beginPath();
+        c.ellipse(-0.7, -9, 2.5, 6.3, 0, 3, 4.9);
+        c.stroke();
+        emissiveStrip(c, -0.9, n - 2, 1.8, 4, o.blaster || art.tip);
+        c.fillStyle = "rgba(244,249,246,.8)";
+        c.font = "700 3.4px Rajdhani,sans-serif";
+        c.fillText(art.decal, -s + 3, 7);
+      }
+      function stationSprite(sector) {
+        if (MATERIAL_CACHE.station[sector]) return MATERIAL_CACHE.station[sector];
+        var cv = document.createElement("canvas");
+        cv.width = 768;
+        cv.height = 1024;
+        var c = cv.getContext("2d");
+        c.translate(384, 500);
+        c.rotate(-0.32 + (sector - 1) * 0.16);
+        var accent = BOSS_VISUALS[BOSS_KINDS[sector - 1]].color;
+        var steel = sector === 2 ? "#716556" : sector === 4 ? "#79939d" : "#526a73";
+        // Asymmetric orbital shipyard below the playable plane. No collision geometry.
+        for (var side = -1; side <= 1; side += 2) {
+          c.save();
+          c.scale(side, 1);
+          armorPlate(
+            c,
+            [
+              [38, -100],
+              [315, -290],
+              [340, -245],
+              [104, 12],
+              [40, 35],
+            ],
+            18,
+            steel,
+            sector * 12,
+          );
+          armorPlate(
+            c,
+            [
+              [35, 100],
+              [295, 240],
+              [315, 315],
+              [80, 170],
+              [25, 140],
+            ],
+            16,
+            steel,
+            sector * 13,
+          );
+          for (var p = 0; p < 4; p++) {
+            var x = 96 + p * 44,
+              y = -140 - p * 31;
+            armorPlate(
+              c,
+              [
+                [x, y],
+                [x + 37, y - 22],
+                [x + 47, y + 13],
+                [x + 9, y + 35],
+              ],
+              7,
+              "#91a3a4",
+              81 + p,
+            );
+            emissiveStrip(c, x + 10, y + 9, 22, 3, accent);
+          }
+          c.restore();
+        }
+        armorPlate(
+          c,
+          [
+            [-50, -390],
+            [50, -390],
+            [72, -240],
+            [60, 290],
+            [0, 365],
+            [-60, 290],
+            [-72, -240],
+          ],
+          28,
+          "#637d85",
+          117,
+        );
+        armorPlate(
+          c,
+          [
+            [-37, -310],
+            [37, -310],
+            [37, -90],
+            [-37, -90],
+          ],
+          13,
+          "#bac6c2",
+          119,
+        );
+        for (var k = 0; k < 12; k++)
+          emissiveStrip(c, -19, -282 + k * 14, 38, 3, accent);
+        c.fillStyle = "#07141b";
+        c.beginPath();
+        c.ellipse(0, 80, 94, 120, 0, 0, 6.283);
+        c.fill();
+        c.strokeStyle = "#bed1d2";
+        c.lineWidth = 13;
+        c.stroke();
+        c.strokeStyle = accent;
+        c.lineWidth = 3;
+        c.stroke();
+        for (var a = 0; a < 8; a++) {
+          c.save();
+          c.translate(Math.sin(a * 0.785) * 85, 80 + Math.cos(a * 0.785) * 110);
+          c.rotate(-a * 0.785);
+          armorPlate(
+            c,
+            [
+              [-12, -16],
+              [12, -16],
+              [14, 16],
+              [-14, 16],
+            ],
+            5,
+            steel,
+            30 + a,
+          );
+          emissiveStrip(c, -8, -7, 16, 4, accent);
+          c.restore();
+        }
+        armorPlate(
+          c,
+          [
+            [-24, 38],
+            [24, 38],
+            [30, 123],
+            [0, 151],
+            [-30, 123],
+          ],
+          15,
+          "#a7b8b7",
+          180,
+        );
+        emissiveStrip(c, -9, 64, 18, 51, accent);
+        c.fillStyle = "rgba(235,247,243,.65)";
+        c.font = "700 17px Rajdhani,sans-serif";
+        c.fillText("SF / 0" + sector, -38, 252);
+        return (MATERIAL_CACHE.station[sector] = cv);
+      }
+      function drawStationDepth(c, time, sector, alpha, parallax) {
+        var sprite = stationSprite(sector),
+          h = 600,
+          w = 450;
+        var y = ((time * 13 + 370) % 1340) - 600;
+        c.save();
+        c.globalAlpha = alpha;
+        c.translate(W * 0.46 - parallax * 15, y + h * 0.5);
+
+        c.drawImage(sprite, -w * 0.5, -h * 0.5, w, h);
+        c.restore();
+      }
+      var ENEMY_MATERIALS = {
+        diver: { color: "#a34751", accent: "#ff697e", span: 15, nose: 18 },
+        charger: { color: "#9f7652", accent: "#ffbb65", span: 14, nose: 19 },
+        weaver: { color: "#528d87", accent: "#67ffd3", span: 21, nose: 17 },
+        sentinel: { color: "#668696", accent: "#a7eaff", span: 23, nose: 19 },
+        lancer: { color: "#9c536e", accent: "#ff83bb", span: 11, nose: 24 },
+        bulwark: { color: "#8b7766", accent: "#ffb77d", span: 29, nose: 21 },
+      };
+      function equipmentSprite(kind) {
+        if (MATERIAL_CACHE.upgrade[kind]) return MATERIAL_CACHE.upgrade[kind];
+        var cv = document.createElement("canvas");
+        cv.width = cv.height = 192;
+        var c = cv.getContext("2d");
+        c.scale(3, 3);
+        c.translate(32, 32);
+        if (kind === "power") {
+          var hex = [];
+          for (var i = 0; i < 6; i++)
+            hex.push([Math.sin(i * 1.047) * 21, Math.cos(i * 1.047) * 21]);
+          armorPlate(c, hex, 5, "#97aeb1", 51);
+          c.fillStyle = "#071d2c";
+          c.beginPath();
+          c.arc(0, 0, 12, 0, 6.283);
+          c.fill();
+          c.drawImage(lightSprite("#81f2ed"), -17, -17, 34, 34);
+          for (var j = -1; j <= 1; j++) emissiveStrip(c, -7, j * 4, 14, 2, "#adfff4");
+        } else {
+          armorPlate(
+            c,
+            [
+              [-18, -12],
+              [18, -12],
+              [23, 17],
+              [-23, 17],
+            ],
+            5,
+            "#748f9f",
+            60,
+          );
+          for (var side = -1; side <= 1; side += 2) {
+            c.save();
+            c.translate(
+              side *
+                (kind.indexOf("scatter") >= 0
+                  ? 15
+                  : kind.indexOf("lance") >= 0
+                    ? 4
+                    : 10),
+              -9,
+            );
+            if (kind.indexOf("scatter") >= 0) c.rotate(side * 0.18);
+            armorPlate(
+              c,
+              [
+                [-4, -17],
+                [4, -17],
+                [5, 13],
+                [-5, 13],
+              ],
+              4,
+              "#c6d5d5",
+              63,
+            );
+            emissiveStrip(c, -3, -16, 6, 3, "#a0d9ff");
+            c.restore();
+          }
+        }
+        return (MATERIAL_CACHE.upgrade[kind] = cv);
+      }
+      function playerBoltSprite(color, radius, pellet, charged) {
+        var key =
+          color + "|" + radius + "|" + (pellet ? 1 : 0) + "|" + (charged ? 1 : 0);
+        if (MATERIAL_CACHE.bolt[key]) return MATERIAL_CACHE.bolt[key];
+        var cv = document.createElement("canvas");
+        cv.width = 64;
+        cv.height = 112;
+        var c = cv.getContext("2d");
+        c.scale(2, 2);
+        c.translate(16, 28);
+        var r = charged ? 4 : radius,
+          length = charged ? 17 : pellet ? r * 1.8 : r * 4;
+        c.globalAlpha = 0.24;
+        c.drawImage(lightSprite(color), -r * 4, -length * 1.5, r * 8, length * 3);
+        c.globalAlpha = 1;
+        var tail = c.createLinearGradient(0, -length, 0, length);
+        tail.addColorStop(0, "rgba(0,0,0,0)");
+        tail.addColorStop(0.4, color);
+        tail.addColorStop(0.7, "#f3ffff");
+        tail.addColorStop(1, "rgba(0,0,0,0)");
+        c.fillStyle = tail;
+        c.beginPath();
+        c.ellipse(0, 0, r * 0.85, length, 0, 0, 6.283);
+        c.fill();
+        c.fillStyle = "#f3ffff";
+        c.beginPath();
+        c.ellipse(0, -1, r * 0.32, length * 0.55, 0, 0, 6.283);
+        c.fill();
+        return (MATERIAL_CACHE.bolt[key] = cv);
+      }
+      function warmFlightMaterials(sector) {
+        stationSprite(sector);
+        bossArmorSprite(BOSS_KINDS[sector - 1]);
+        playerBoltSprite(blasterHex(), 2.4, false, false);
+        playerBoltSprite("#ffcf7a", 4, false, true);
+        for (var type in ENEMY_MATERIALS) enemyMaterial(type);
+        for (var drone in DRONE_ART) getDroneSprite(drone);
+        equipmentSprite("power");
+        equipmentSprite("cannon");
+      }
+      function enemyMaterial(type) {
+        if (MATERIAL_CACHE.enemy[type]) return MATERIAL_CACHE.enemy[type];
+        var m = ENEMY_MATERIALS[type],
+          cv = document.createElement("canvas");
+        cv.width = cv.height = 192;
+        var c = cv.getContext("2d");
+        c.scale(3, 3);
+        c.translate(32, 32);
+        var s = m.span,
+          n = m.nose;
+        if (type === "sentinel") {
+          var ring = [];
+          for (var k = 0; k < 8; k++)
+            ring.push([Math.sin(k * 0.785) * s, Math.cos(k * 0.785) * s]);
+          armorPlate(c, ring, 3, m.color, 91);
+        } else {
+          armorPlate(
+            c,
+            [
+              [-4, -9],
+              [-s, -16],
+              [-s + 2, 7],
+              [-5, 10],
+            ],
+            3,
+            m.color,
+            22,
+          );
+          armorPlate(
+            c,
+            [
+              [4, -9],
+              [s, -16],
+              [s - 2, 7],
+              [5, 10],
+            ],
+            3,
+            m.color,
+            23,
+          );
+        }
+        armorPlate(
+          c,
+          [
+            [0, n],
+            [7, 5],
+            [7, -13],
+            [0, -20],
+            [-7, -13],
+            [-7, 5],
+          ],
+          3,
+          m.color,
+          51,
+        );
+        for (var side = -1; side <= 1; side += 2) {
+          armorPlate(
+            c,
+            [
+              [side * 8, -13],
+              [side * (s - 1), -13],
+              [side * (s - 1), 2],
+              [side * 8, 2],
+            ],
+            2,
+            "#afb8b4",
+            33,
+          );
+          emissiveStrip(c, side < 0 ? -s + 3 : s - 6, -9, 3, 8, m.accent);
+        }
+        c.fillStyle = m.accent;
+        c.beginPath();
+        c.ellipse(0, 0, 2.8, 5, 0, 0, 6.283);
+        c.fill();
+        c.fillStyle = "#efffff";
+        c.fillRect(-0.6, -3, 1.2, 4);
+        return (MATERIAL_CACHE.enemy[type] = cv);
+      }
+      function drawMaterialEnemy(e) {
+        var m = ENEMY_MATERIALS[e.type];
+        ctx.save();
+        ctx.translate(e.x, e.y);
+        if (e.type === "sentinel") ctx.rotate(e.rot * 0.16);
+        ctx.drawImage(enemyMaterial(e.type), -32, -32, 64, 64);
+        ctx.globalAlpha *= 0.6;
+        ctx.drawImage(
+          flameSprite(m.accent),
+          -3,
+          -27,
+          6,
+          -(8 + Math.sin(G.time * 26) * 2),
+        );
+        if (e.flash > 0 && SETTINGS.flash && !REDUCED) {
+          ctx.globalAlpha = 0.5;
+          ctx.drawImage(lightSprite(m.accent), -18, -18, 36, 36);
+        }
+        ctx.restore();
+        if (e.type === "weaver" || e.type === "sentinel" || e.type === "bulwark")
+          drawMiniHp(e, m.accent);
+      }
+      function bossArmorSprite(kind) {
+        if (MATERIAL_CACHE.boss[kind]) return MATERIAL_CACHE.boss[kind];
+        var cv = document.createElement("canvas");
+        cv.width = 640;
+        cv.height = 480;
+        var c = cv.getContext("2d");
+        c.scale(2, 2);
+        c.translate(160, 120);
+        var color =
+          kind === "dreadnought"
+            ? "#827765"
+            : kind === "cryowarden"
+              ? "#a7c9d6"
+              : kind === "eclipse"
+                ? "#494562"
+                : "#657f86";
+        var accent = BOSS_VISUALS[kind].color;
+        if (kind === "mothership") {
+          for (var j = -2; j <= 2; j++) {
+            var x = j * 27,
+              y = -34 + Math.abs(j) * 4;
+            armorPlate(
+              c,
+              [
+                [x - 11, y + 5],
+                [x, y],
+                [x + 11, y + 5],
+                [x + 9, y + 18],
+                [x - 9, y + 18],
+              ],
+              3,
+              "#9cbdc2",
+              22 + j,
+            );
+            emissiveStrip(c, x - 6, y + 15, 12, 1.5, accent);
+          }
+          for (var side = -1; side <= 1; side += 2) {
+            c.save();
+            c.translate(side * 75, 0);
+            armorPlate(
+              c,
+              [
+                [-9, -9],
+                [8, -14],
+                [14, -2],
+                [8, 12],
+                [-9, 8],
+              ],
+              4,
+              color,
+              55,
+            );
+            emissiveStrip(c, -3, -5, 5, 10, accent);
+            c.restore();
+          }
+        } else if (kind === "dreadnought") {
+          for (var side = -1; side <= 1; side += 2) {
+            c.save();
+            c.scale(side, 1);
+            armorPlate(
+              c,
+              [
+                [27, -20],
+                [65, -25],
+                [94, -8],
+                [86, 18],
+                [32, 22],
+              ],
+              5,
+              color,
+              39,
+            );
+            armorPlate(
+              c,
+              [
+                [33, -9],
+                [62, -15],
+                [77, -2],
+                [68, 10],
+                [34, 10],
+              ],
+              3,
+              "#9fafae",
+              41,
+            );
+            for (var k = 0; k < 4; k++)
+              emissiveStrip(c, 39 + k * 8, 13, 4, 2, accent);
+            c.restore();
+          }
+        } else if (kind === "leviathan") {
+          for (var a = 0; a < 3; a++) {
+            c.save();
+            c.rotate(a * 2.094);
+            armorPlate(
+              c,
+              [
+                [-6, -33],
+                [6, -37],
+                [8, -60],
+                [3, -65],
+                [-6, -60],
+              ],
+              4,
+              color,
+              62 + a,
+            );
+            emissiveStrip(c, -3, -59, 5, 17, accent);
+            c.restore();
+          }
+        } else {
+          var count = kind === "eclipse" ? 12 : 8,
+            r = kind === "eclipse" ? 59 : 42;
+          for (var j = 0; j < count; j++) {
+            c.save();
+            c.rotate((j * Math.PI * 2) / count);
+            armorPlate(
+              c,
+              [
+                [-8, -r],
+                [8, -r],
+                [6, -r + 17],
+                [-6, -r + 17],
+              ],
+              3,
+              color,
+              73 + j,
+            );
+            emissiveStrip(c, -3, -r + 2, 6, 2, accent);
+            c.restore();
+          }
+        }
+        return (MATERIAL_CACHE.boss[kind] = cv);
+      }
+      function drawBossMaterial(b) {
+        ctx.save();ctx.translate(b.x,b.y);
+        // The Leviathan's three arm plates follow the same phase as its blocking arms.
+        if(b.kind === "leviathan") ctx.rotate(b.rot);
+        ctx.drawImage(bossArmorSprite(b.kind),-160,-120,320,240);
+        ctx.restore();
       }
       function drawShipModel(c, o) {
         var base = SHIP_ART[o.ship || "vanguard"] || SHIP_ART.vanguard;
@@ -5390,6 +6014,11 @@
             c.beginPath(); c.moveTo(-3, r * 0.55); c.lineTo(0, r * 0.3); c.lineTo(3, r * 0.55); c.lineTo(3, r * 0.75); c.lineTo(0, r * 0.52); c.lineTo(-3, r * 0.75); c.closePath(); c.fill();
           }
         }
+        for(var side=-1;side<=1;side+=2) {
+          c.save();c.scale(side,1);
+          armorPlate(c,[[r*.38,-r*.75],[r*.9,-r*.4],[r*.9,r*.65],[r*.35,r*.8]],1.5,"#8dadae",35);
+          emissiveStrip(c,r*.55,-r*.35,1,r*.65,art.ring);c.restore();
+        }
         // sensor eye — glass dome with a hot core, baked into the sprite
         var eg = c.createRadialGradient(-1, -2, 0.3, 0, -1, 4.6);
         eg.addColorStop(0, "#ffffff"); eg.addColorStop(0.45, art.core); eg.addColorStop(1, "rgba(0,0,0,0.15)");
@@ -5408,11 +6037,7 @@
         ctx.fillStyle = "rgba(0,0,0,0.28)";
         ctx.beginPath(); ctx.ellipse(1, 3, r + 2, r * 0.8, 0, 0, 6.283); ctx.fill();
         // engine flame — flickers live under the cached body
-        var fg = ctx.createLinearGradient(0, r * 0.6, 0, r * 0.6 + 11);
-        fg.addColorStop(0, "#ffffff"); fg.addColorStop(0.3, art.ring); fg.addColorStop(1, "rgba(0,0,0,0)");
-        ctx.fillStyle = fg;
-        ctx.beginPath(); ctx.moveTo(-2.8, r * 0.6); ctx.lineTo(2.8, r * 0.6); ctx.lineTo(0, r * 0.6 + 8 + Math.sin(G.time * 30 + idx * 2) * 2.2); ctx.closePath(); ctx.fill();
-        // the body — one cached sprite per wing, identical in the loadout cards
+        ctx.drawImage(flameSprite(art.ring),-3.5,r*.6,7,10+Math.sin(G.time*30+idx*2)*2.2);
         var spr = getDroneSprite(type);
         ctx.drawImage(spr.cv, -spr.sz / 2, -spr.sz / 2, spr.sz, spr.sz);
         // rotating sensor arc + blinking beacon stay live
@@ -5732,6 +6357,8 @@
           ctx.drawImage(skyTex, nx - diameter / 2, ny - diameter / 2, diameter, diameter);
         }
         ctx.globalAlpha = 1;
+        if (G.envPrev && G.envBlend < 1) drawStationDepth(ctx,G.time,ENVS.indexOf(G.envPrev)+1,.48*(1-G.envBlend),gx+flightX);
+        drawStationDepth(ctx,G.time,G.sector,.48*G.envBlend,gx+flightX);
         // distant planet + moon — REALISTIC WORLDS: pre-rendered spherical sprites with
         // surface detail, a day/night terminator and an atmosphere rim (buildPlanetSprite).
         // One world per sky: ocean, ember, ringed gas giant, ice, eclipse-dark.
@@ -5915,7 +6542,7 @@
             ctx.save(); ctx.translate(e.x, e.y); ctx.scale(0.4 + 0.6 * esk, 0.4 + 0.6 * esk); ctx.translate(-e.x, -e.y);
             ctx.globalAlpha = 0.45 + 0.55 * esk;
           }
-          if (e.type === "diver") drawDiver(e); else if (e.type === "charger") drawCharger(e); else if (e.type === "lancer") drawLancer(e); else if (e.type === "bulwark") drawBulwark(e); else if (e.type === "sentinel") drawSentinel(e); else drawWeaver(e);
+          drawMaterialEnemy(e);
           if (e.spawnT > 0) { ctx.restore(); ctx.globalAlpha = 1; }
         }
         if (G.boss) {
@@ -5935,6 +6562,7 @@
           else if (G.boss.kind === "cryowarden") drawCryowarden(G.boss);
           else if (G.boss.kind === "eclipse") drawEclipse(G.boss);
           else drawBoss(G.boss);
+          drawBossMaterial(G.boss);
           ctx.restore();
           ctx.globalAlpha = 1;
           if (G.boss && G.boss.kind === "eclipse") { // gravity well — rings contract endlessly into the Titan
@@ -5960,29 +6588,12 @@
         // player bullets — colour, size and shape come from the gun/drone that fired them
         for (i = 0; i < G.bullets.length; i++) {
           var b = G.bullets[i];
-          if (b.charged) { // charge bolts: hot white core inside an orange halo
-            ctx.fillStyle = "rgba(255,150,60,0.35)";
-            ctx.beginPath(); ctx.arc(b.x, b.y, 10, 0, 6.283); ctx.fill();
-            ctx.fillStyle = "#ffcf7a";
-            ctx.beginPath(); ctx.ellipse(b.x, b.y, 4.6, 13, 0, 0, 6.283); ctx.fill();
-            ctx.fillStyle = "#fff8ea";
-            ctx.beginPath(); ctx.ellipse(b.x, b.y, 2.1, 8, 0, 0, 6.283); ctx.fill();
-            continue;
-          }
-          var bc = b.col || "#ffe98a", br = b.r || 2.4;
-          ctx.fillStyle = bc; ctx.globalAlpha = 0.28; // soft glow halo
-          ctx.beginPath(); ctx.arc(b.x, b.y, br * 2.1, 0, 6.283); ctx.fill(); ctx.globalAlpha = 1;
-          if (b.kind === "scatter" || b.kind === "ping") { // round pellets & micro pings
-            ctx.fillStyle = bc;
-            ctx.beginPath(); ctx.arc(b.x, b.y, br, 0, 6.283); ctx.fill();
-            ctx.fillStyle = "rgba(255,255,255,0.9)";
-            ctx.beginPath(); ctx.arc(b.x - br * 0.3, b.y - br * 0.3, br * 0.38, 0, 6.283); ctx.fill();
-          } else { // bolts — elongated energy rounds with a white core
-            ctx.fillStyle = bc;
-            ctx.beginPath(); ctx.ellipse(b.x, b.y, br, br * 3.1, Math.atan2(b.vx, -b.vy) * 0.35, 0, 6.283); ctx.fill();
-            ctx.fillStyle = "rgba(255,255,255,0.92)";
-            ctx.beginPath(); ctx.ellipse(b.x, b.y, br * 0.45, br * 1.7, Math.atan2(b.vx, -b.vy) * 0.35, 0, 6.283); ctx.fill();
-          }
+          var pellet=b.kind==="scatter"||b.kind==="ping";
+          var shotArt=b.material || (b.material=playerBoltSprite(b.charged?"#ffcf7a":(b.col||"#ffe98a"),b.charged?4:(b.r||2.4),pellet,!!b.charged));
+          if(b.vx) {
+            ctx.save();ctx.translate(b.x,b.y);ctx.rotate(Math.atan2(b.vx,-b.vy)*.35);
+            ctx.drawImage(shotArt,-12,-20,24,40);ctx.restore();
+          } else ctx.drawImage(shotArt,b.x-12,b.y-20,24,40);
         }
         // Lance beam — layered core + glow with an impact flare where it lands
         if (G.player.beamOn && G.player.alive && G.mode === "playing") {
@@ -6507,6 +7118,17 @@
          what you fly. Painted once at boot and whenever Loadout opens.
          ============================================================ */
       function paintLoadoutArt() {
+        var equipment=document.querySelectorAll(".equipment-preview");
+        for(var ep=0;ep<equipment.length;ep++) {
+          var ec=equipment[ep].getContext("2d");ec.clearRect(0,0,192,192);
+          ec.drawImage(equipmentSprite(equipment[ep].dataset.equipment),0,0);
+        }
+        var guns=document.querySelectorAll('.opt-card[data-group="gun"]');
+        for(var gi=0;gi<guns.length;gi++) {
+          var old=guns[gi].querySelector("svg"),gunCanvas=guns[gi].querySelector(".gun-preview");
+          if(!gunCanvas){gunCanvas=document.createElement("canvas");gunCanvas.width=gunCanvas.height=192;gunCanvas.className="gun-preview";gunCanvas.setAttribute("aria-hidden","true");if(old)old.replaceWith(gunCanvas);else guns[gi].prepend(gunCanvas);}
+          gunCanvas.getContext("2d").drawImage(equipmentSprite("gun:"+guns[gi].dataset.value),0,0);
+        }
         var sc = document.querySelectorAll(".lo-ship-cv");
         for (var i = 0; i < sc.length; i++) {
           var el = sc[i], ship = el.getAttribute("data-ship"), art = SHIP_ART[ship] || SHIP_ART.vanguard;
@@ -6551,6 +7173,7 @@
         c.fillStyle=g; c.fillRect(0,0,768,1280);
         c.globalAlpha=.6; c.drawImage(nebulaSprite(ENVS[1]),-260,-100,1350,1450); c.globalAlpha=1;
         drawPlanetAt(c,690,180,330,"ember",0);
+        c.save();c.translate(384,640);c.rotate(-.4);c.globalAlpha=.85;c.drawImage(stationSprite(1),-460,-620,920,1240);c.restore();
         c.save(); c.translate(310,660); c.rotate(-.6); c.scale(13,13);
         drawShipModel(c,{ship:LOADOUT.ship,time:1.4,tip:shipColorHex(),thrust:thrusterHex(),blaster:blasterHex(),noShadow:true}); c.restore();
         var shade=c.createLinearGradient(0,0,0,1280); shade.addColorStop(0,"rgba(0,15,18,.1)"); shade.addColorStop(1,"rgba(0,12,18,.55)");
@@ -6708,6 +7331,7 @@
       function startSector(n) {
         if (n > 1) { G.envPrev = ENVS[G.sector - 1]; G.envBlend = 0; }
         G.sector = n; G.wave = n;
+        warmFlightMaterials(n); // Cache construction occurs at the existing announce boundary, never during combat.
         G.nebula = makeNebula();
         G.bossSpawned = false; G.ebullets.length = 0;
         G.portals.length = 0; G.bossChip = 1; G.coreHits = 0; G.comboMax = 0; G.waveDamage = 0;
@@ -7392,6 +8016,7 @@
           else if (kind === "cryowarden") drawCryowarden(fake);
           else if (kind === "eclipse") drawEclipse(fake);
           else drawBoss(fake);
+          drawBossMaterial(fake);
         } catch (e) {}
         c.restore(); ctx = keep;
       }
