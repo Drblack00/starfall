@@ -5583,11 +5583,59 @@
       }
       function drawMaterialEnemy(e) {
         var m = ENEMY_MATERIALS[e.type];
+        var sprite = enemyMaterial(e.type);
         ctx.save();
         ctx.translate(e.x, e.y);
-        if (e.type === "sentinel") ctx.rotate(e.rot * 0.16);
-        ctx.drawImage(enemyMaterial(e.type), -32, -32, 64, 64);
-        ctx.globalAlpha *= 0.6;
+        var alpha = ctx.globalAlpha; // Preserve the portal's entrance fade on every cue.
+        if (e.type === "charger") {
+          if (e.elite) ctx.scale(1.28, 1.28);
+          if (e.state === "rush") ctx.rotate(Math.atan2(e.vx, -e.vy) * 0.4);
+        } else if (e.type === "sentinel") ctx.rotate(e.rot * 0.16);
+        ctx.drawImage(sprite, -32, -32, 64, 64);
+        if (e.elite) {
+          if (e.type === "charger") {
+            // Heavy armour and flank spikes remain readable between warning pulses.
+            ctx.fillStyle = "rgba(24,12,2,0.8)";
+            ctx.fillRect(-8.5, -4, 17, 2.6);
+            ctx.fillRect(-6, 3, 12, 2.4);
+            ctx.fillStyle = "#2c1a06";
+            ctx.strokeStyle = "#ffd077";
+            ctx.lineWidth = 0.7;
+            ctx.beginPath();
+            ctx.moveTo(-12, -6); ctx.lineTo(-17, 1); ctx.lineTo(-10, 2);
+            ctx.closePath(); ctx.fill(); ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(12, -6); ctx.lineTo(17, 1); ctx.lineTo(10, 2);
+            ctx.closePath(); ctx.fill(); ctx.stroke();
+          } else {
+            // Gilded fins and spine distinguish elite weavers without changing size.
+            ctx.fillStyle = "rgba(220,172,47,0.82)";
+            ctx.fillRect(-m.span + 2, -12, m.span - 10, 13);
+            ctx.fillRect(8, -12, m.span - 10, 13);
+            ctx.fillRect(-2, -14, 4, 12);
+            ctx.strokeStyle = "#ffe99a";
+            ctx.lineWidth = 0.8;
+            ctx.strokeRect(-m.span + 2, -12, m.span - 10, 13);
+            ctx.strokeRect(8, -12, m.span - 10, 13);
+          }
+        }
+        if (e.type === "charger" && e.state === "aim") {
+          // Match the original 10-Hz phase. Flash-disabled/reduced-motion players
+          // get a steady warning instead of losing this essential combat cue.
+          if (REDUCED || !SETTINGS.flash || Math.floor(G.time * 10) % 2 === 0) {
+            ctx.save();
+            ctx.globalCompositeOperation = "screen";
+            ctx.globalAlpha = alpha * 0.85;
+            ctx.drawImage(sprite, -32, -32, 64, 64);
+            ctx.restore();
+            ctx.strokeStyle = "#fff0a6";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(-8, 8); ctx.lineTo(0, 18); ctx.lineTo(8, 8);
+            ctx.stroke();
+          }
+        }
+        ctx.globalAlpha = alpha * 0.6;
         ctx.drawImage(
           flameSprite(m.accent),
           -3,
@@ -5596,12 +5644,12 @@
           -(8 + Math.sin(G.time * 26) * 2),
         );
         if (e.flash > 0 && SETTINGS.flash && !REDUCED) {
-          ctx.globalAlpha = 0.5;
+          ctx.globalAlpha = alpha * 0.5;
           ctx.drawImage(lightSprite(m.accent), -18, -18, 36, 36);
         }
         ctx.restore();
         if (e.type === "weaver" || e.type === "sentinel" || e.type === "bulwark")
-          drawMiniHp(e, m.accent);
+          drawMiniHp(e, e.elite ? "#ffe99a" : m.accent);
       }
       function bossArmorSprite(kind) {
         if (MATERIAL_CACHE.boss[kind]) return MATERIAL_CACHE.boss[kind];
