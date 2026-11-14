@@ -633,8 +633,6 @@
       #objective-box.done #hud-objective { color: #2ef2c0; }
       #objective-box.failed { opacity: .55; }
       #objective-box.failed #hud-objective { color: #ff8b96; text-decoration: line-through; }
-      #combo-box.pop #hud-combo { animation: comboPop .22s cubic-bezier(.34,1.6,.64,1); }
-      @keyframes comboPop { 0% { transform: scale(1); } 45% { transform: scale(1.28); } 100% { transform: scale(1); } }
       #hud-combo { display: inline-block; }
       #wave-results {
         position: absolute; left: 50%; top: 30%; transform: translate(-50%,-50%) scale(.94);
@@ -3705,13 +3703,24 @@
         syncHud();
       }
 
+      // One compositor animation, restarted for every kill (including rapid kills).
+      // No class toggle, forced layout, or new animation object on the hot path.
+      var comboPopAnimation = null;
+      function popCombo() {
+        if (REDUCED) return;
+        if (!comboPopAnimation) comboPopAnimation = document.getElementById("hud-combo").animate(
+          [{ transform: "scale(1)" }, { transform: "scale(1.28)", offset: 0.45 }, { transform: "scale(1)" }],
+          { duration: 220, easing: "cubic-bezier(.34,1.6,.64,1)" }
+        );
+        comboPopAnimation.currentTime = 0;
+        comboPopAnimation.play();
+      }
       function killEnemy(e, idx) {
         e.dead = true;
         G.kills++; trackKill(e);
         G.combo++; G.comboT = 2.5; // chain link — the combo window refreshes on every kill
         if (G.combo > G.comboMax) G.comboMax = G.combo;
-        var cbEl = document.getElementById("combo-box");
-        if (cbEl && !REDUCED) { cbEl.classList.add("pop"); }
+        popCombo();
         addScore(e.score, e.x, e.y, e.type === "weaver" ? "#2ef2c0" : "#eaf6ff");
         var colors = { diver: "#ff4d5e", charger: "#ffb02e", weaver: "#2ef2c0", lancer: "#ff5da2", bulwark: "#ff7a3d", sentinel: "#7dd3fc" };
         explode(e.x, e.y, colors[e.type], e.type === "weaver" || e.type === "bulwark" || e.type === "sentinel" ? 26 : 16, e.type === "weaver" || e.type === "bulwark" || e.type === "sentinel");

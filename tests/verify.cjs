@@ -18,7 +18,7 @@ const fs = require("fs");
   const end = src.lastIndexOf("})();");
   src =
     src.slice(0, end) +
-    `window.t={get g(){return G},startRun,startSector,spawnBoss,update,render,emitBullets,emitParts,emitEbullets,resolveBombHit,updateBoss,createEnemy,showScreen,drawShipModel};` +
+    `window.t={get g(){return G},startRun,startSector,spawnBoss,update,render,emitBullets,emitParts,emitEbullets,resolveBombHit,updateBoss,createEnemy,killEnemy,showScreen,drawShipModel};` +
     src.slice(end);
   await p.route("**/test.html", (r) =>
     r.fulfill({ body: src, contentType: "text/html" }),
@@ -166,6 +166,29 @@ const fs = require("fs");
       return checks;
     }),
   );
+  console.log(await p.evaluate(async () => {
+    t.startRun(1);
+    t.g.waveState = "idle";
+    const counter = document.getElementById("hud-combo");
+    function kill() {
+      const enemy = t.createEnemy("diver", 200);
+      t.g.enemies.push(enemy);
+      t.killEnemy(enemy, t.g.enemies.length - 1);
+    }
+    kill();
+    const animation = counter.getAnimations()[0];
+    if (!animation) throw Error("First kill did not animate combo");
+    await new Promise(resolve => setTimeout(resolve, 90));
+    if (animation.currentTime < 30) throw Error("Combo animation did not advance");
+    kill();
+    if (counter.getAnimations()[0] !== animation || animation.currentTime > 20)
+      throw Error("Rapid kill did not restart the existing combo animation");
+    await animation.finished;
+    kill();
+    if (animation.playState !== "running" || animation.currentTime > 20)
+      throw Error("Kill after completion did not restart combo");
+    return "Combo pop restarts during and after animation without allocating another animation";
+  }));
   if (errors.length) throw Error(errors.join("\n"));
   console.log("No browser runtime errors");
   await b.close();
