@@ -86,3 +86,53 @@ static sky grain and enemy bolt art are cached, meter/heart DOM writes are
 suppressed when unchanged, and the FPS watchdog now measures real elapsed time
 rather than the clamped simulation delta. Manual play under shared-host load
 also triggered the existing automatic performance mode.
+
+## Follow-up: graphics and console UI
+
+The combo regression is fixed in a separate commit: every kill restarts one
+reusable Web Animation, including rapid kills while it is running and kills
+after it finishes. The hot path has no forced layout read or animation allocation.
+
+The presentation pass adds textured, cached nebula layers with flight/gyro
+parallax, luminous near stars, cached atmosphere light, stronger shared ship
+specular/panel shading, cached engine flames and glow, and pooled explosion
+cores/afterglows and sparks. The five original bosses retain their materials
+under sustained hit feedback, gain entrance lighting/brackets, and each has a
+separate health-bar signature, accent and segmentation treatment. An expired
+intro card now releases touch input instead of leaving an invisible hit target.
+
+Flight HUD and menus share dark console panels, restrained cyan/amber lighting,
+refined type, distinct score/objective/boss lanes, larger touch targets and
+hover/press/focus states. Screen, confirmation and meter transitions fade/slide;
+rapid navigation cancels stale exit timers. Reduced-motion and flash settings
+remain respected. All production graphics stay inline in `index.html`, using
+the existing assets; no new runtime dependencies or media assets were added.
+
+**Balance remains frozen.** All 21 inspected combat/spawning/damage functions
+and the weapon, boss HP/bounty, collision-radius and campaign-size tables match
+the revision before this presentation pass. The campaign is still five waves,
+with five different bosses and all existing equipment/features.
+
+Verification for the follow-up:
+
+- `tests/verify.cjs` passes: previous collision/pooling/boss checks plus rapid
+  combo retriggering, delayed pooled afterglow/reset, shared cached hull identity
+  through the actual home/flight paths for all 12 ships, five HUD signatures,
+  transition races, intro-card touch release, reduced motion, and HUD/touch
+  checks at 320/375/430px (also checking large-text spacing).
+- Served the actual page at port 8765 and used a Playwright-driven pilot with
+  real pointer/keyboard input and read-only game-state observations: home,
+  hangar/back, launch, a complete first assault and Mothership defeat,
+  smart bomb and charged shots, pause/resume. Wave 1 cleared in about 103s with
+  3 hull remaining; no health/damage/spawn fixtures were applied to this play
+  session and no browser runtime errors occurred. All five boss presentations
+  were also rendered and visually inspected in phone-sized screenshots.
+- The 600-frame seeded stress benchmark compared the combo-fix revision to
+  this presentation pass, with the same 120-frame warm-up and workload described
+  above. RAF median/p95: **16.7/16.7ms before → 16.7/16.8ms after**;
+  maximum: **16.8 → 33.4ms**. Update/render CPU median/p95:
+  **0.8/1.7ms → 1.0/2.0ms**. This is additional presentation cost, not a speedup.
+  The full UI/play/capture session also had a 16.7ms median and 16.8ms p95,
+  but an approximately 500ms maximum across startup, screenshots and shared-host
+  load; automatic performance mode activated. A locked 60fps on all hardware
+  is not established. Physical mobile hardware/gyro was not verified.

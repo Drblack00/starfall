@@ -1592,6 +1592,149 @@
       .camp-orb { position: relative; overflow: hidden; background: radial-gradient(circle at 34% 30%, #12303f, #050b14 70%); }
       .camp-planet { position: absolute; inset: 0; width: 100%; height: 100%; }
       .camp-num { position: relative; z-index: 1; text-shadow: 0 1px 7px rgba(0,0,0,.75); }
+      /* STARFALL flight console — one material language across flight and the hangar. */
+      :root { --console-edge: rgba(138,203,232,.26); --console-surface: rgba(5,15,27,.91); --console-light: #bcecff; }
+      .screen { background: radial-gradient(ellipse at 48% 22%, rgba(24,52,75,.92), rgba(3,9,18,.97) 72%); }
+      .screen.on { animation: consoleEnter .38s cubic-bezier(.22,1,.36,1) both; }
+      .screen.leaving { animation: consoleExit .22s ease-out both; }
+      @keyframes consoleEnter { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes consoleExit { to { opacity: 0; transform: translateY(-8px); } }
+      .btn, .ck-gkey, .icon-btn, .hub-seg, .hp-btn, .theme-btn, .set-btn, .camp-tab {
+        border-radius: 8px; border-color: var(--console-edge);
+        background-image: linear-gradient(180deg, rgba(145,208,239,.09), rgba(7,18,32,.15));
+        box-shadow: inset 0 1px 0 rgba(218,242,255,.09), 0 5px 15px rgba(0,0,0,.23);
+        transition: transform .16s ease, border-color .18s ease, background-color .18s ease, box-shadow .18s ease;
+        -webkit-tap-highlight-color: transparent;
+      }
+      button:focus-visible, .opt-card:focus-visible { outline: 2px solid #9ae6ff; outline-offset: 3px; }
+      @media (hover: hover) {
+        .btn:hover, .ck-gkey:hover, .icon-btn:hover, .hub-seg:hover, .hp-btn:hover, .set-btn:hover {
+          border-color: #83d6f4; background-color: rgba(36,85,113,.42);
+          box-shadow: inset 0 1px 0 rgba(225,248,255,.18), 0 0 18px rgba(69,180,227,.13);
+          transform: translateY(-2px);
+        }
+        .opt-card:hover { border-color: #83d6f4; }
+      }
+      .btn:active, .ck-gkey:active, .icon-btn:active, .hub-seg:active, .hp-btn:active { transform: translateY(1px) scale(.98); }
+      .set-panel, .res-cell, .lo-summary, .opt-card, .lc-card, #coach, #wave-results {
+        border: 1px solid var(--console-edge); border-radius: 10px;
+        background: linear-gradient(140deg, rgba(26,48,66,.96), rgba(5,14,26,.96));
+        box-shadow: inset 0 1px 0 rgba(224,246,255,.08), 0 16px 40px rgba(0,0,0,.35);
+      }
+      .opt-card.sel { border-color: #83ddf2; box-shadow: inset 3px 0 0 #83ddf2, 0 0 16px rgba(57,202,238,.1); }
+      .screen h2 { font-size: clamp(25px, 7vw, 38px); letter-spacing: .14em; text-shadow: 0 2px 20px rgba(112,200,239,.18); }
+      .ck-console, .ck-hudrow, .ck-topbar .icon-btn, .ck-topbar .hub-seg, .ck-wal, .hub-plate, .ck-bossplate {
+        border-color: var(--console-edge); border-radius: 8px;
+        background: linear-gradient(145deg, rgba(23,44,61,.92), rgba(4,13,23,.94));
+        box-shadow: inset 0 1px 0 rgba(221,243,255,.08), 0 6px 20px rgba(0,0,0,.24);
+      }
+      .ck-bossplate { border-left: 2px solid #ff9e77; }
+      .ck-bossplate .bp-k { color: #b0c5d0; letter-spacing: .12em; }
+      .ck-bossplate .bp-v { color: #fff0df; }
+      .ck-console .ck-con-title, .ck-hudrow small { color: #9db9c9; }
+      .ck-console .ck-sysrow b { color: #d6edf6; }
+      #stage #scr-start::after { content: "STARFALL / FLIGHT COMMAND"; display: flex; align-items: center; justify-content: center; font: 700 9px "Orbitron",monospace; letter-spacing: .25em; color: #a7c9d9; }
+      .ck-scroll { min-height: 0; }
+      .ck-scroll > * { flex-shrink: 0; }
+      .ck-keygrid { gap: 7px; }
+      .ck-gkey { min-height: 44px; font-size: 10px; letter-spacing: .08em; }
+      #stage #scr-start #btn-play {
+        background: linear-gradient(145deg, #fff0c5, #efb656 70%, #c48032); color: #24190b;
+        border: 1px solid #ffe5a7; border-radius: 9px; text-shadow: 0 1px rgba(255,255,255,.25);
+        box-shadow: inset 0 1px 0 #fff7e1, 0 8px 28px rgba(239,182,86,.2); letter-spacing: .2em;
+        animation: none;
+      }
+      .ck-guard { opacity: .55; height: 4px; background: repeating-linear-gradient(120deg,#d8af69 0 8px,#132330 8px 16px); }
+      #scr-start .hero-glow { background: radial-gradient(ellipse,rgba(112,196,234,.19),transparent 65%); }
+      .ck-stage { background: radial-gradient(ellipse at 50% 38%,rgba(63,140,181,.14),transparent 68%); }
+      .hub-plate .hp-txt { color: #b5c9d6; letter-spacing: .06em; }
+      .ck-statbar .track, .sb i { background: #08131f; box-shadow: inset 0 1px 3px rgba(0,0,0,.7); }
+      .ck-statbar .fill { background: linear-gradient(90deg,#3595b9,#a0f3ff); box-shadow: 0 0 7px rgba(112,218,255,.3); }
+      .ck-statbar .fill.amber { background: linear-gradient(90deg,#ad7b39,#ffe2a4); }
+      #hud [hidden] { display: none !important; }
+      /* Clear HUD hierarchy: score row, then the shared objective / boss lane. */
+      .me-top { align-items: center; min-height: 44px; gap: 10px; }
+      .me-scorewrap { padding: 7px 11px 7px 12px; border-left: 2px solid #8edff6; background: linear-gradient(90deg,rgba(4,14,25,.9),rgba(4,14,25,0)); border-radius: 0 8px 8px 0; }
+      #hud-score { font-variant-numeric: tabular-nums; font-size: 20px; letter-spacing: .07em; color: #f3faff; }
+      #hud-wave-v { font-size: 11px; letter-spacing: .16em; color: #a6c4d3; margin-top: 5px; }
+      #btn-pause { width: 44px; height: 44px; border-radius: 9px; background: var(--console-surface); border-color: var(--console-edge); backdrop-filter: none; -webkit-backdrop-filter: none; }
+      #perf-ind { top: calc(59px + env(safe-area-inset-top)); font-size: 7px; letter-spacing: .08em; }
+      #me-hull { width: min(38%, 152px); bottom: calc(16px + env(safe-area-inset-bottom)); padding: 10px 12px; border: 1px solid var(--console-edge); border-radius: 8px; background: var(--console-surface); }
+      #me-hull::before { content: "HULL INTEGRITY"; display: block; margin-bottom: 6px; font: 700 8px "Rajdhani",sans-serif; letter-spacing: .2em; color: #a5c6d7; }
+      #me-hull-row { font-size: 11px; gap: 6px; }
+      #me-hull-track { height: 5px; background: #0b1c2b; }
+      #me-hull-fill { background: linear-gradient(90deg,#3c9cb9,#a8f1ed); box-shadow: 0 0 10px rgba(123,240,241,.35); }
+      #btn-bomb { width: 56px; height: 56px; bottom: calc(17px + env(safe-area-inset-bottom)); border-radius: 12px; background: var(--console-surface); border-color: rgba(255,208,133,.55); backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: inset 0 1px rgba(255,237,191,.12),0 5px 18px rgba(0,0,0,.4); }
+      #btn-bomb::after { content: "SPECIAL"; position: absolute; bottom: 5px; font: 700 7px "Rajdhani",sans-serif; letter-spacing: .08em; }
+      #btn-bomb svg { margin-top: -7px; }
+      #combo-box { padding: 5px 9px 6px; border: 1px solid rgba(133,222,243,.32); border-radius: 6px; background: rgba(4,16,29,.82); }
+      #hud-combo { color: #c8f4ff; font-size: 15px; font-variant-numeric: tabular-nums; text-shadow: 0 0 12px rgba(85,212,255,.35); }
+      #combo-track { width: 40px; height: 2px; background: #17313f; }
+      #combo-fill { background: #8ce6ff; box-shadow: 0 0 5px #53bad9; }
+      #chargebar { bottom: calc(94px + env(safe-area-inset-bottom)); width: 112px; height: 5px; border: 1px solid rgba(255,217,143,.4); background: rgba(4,14,25,.92); border-radius: 4px; overflow: visible; }
+      #chargebar::before { content: "CAPACITOR"; position: absolute; bottom: 10px; width: 100%; text-align: center; color: #ffe5b0; font: 700 8px "Rajdhani",sans-serif; letter-spacing: .16em; }
+      #charge-fill { border-radius: 3px; background: linear-gradient(90deg,#c38b40,#fff0b1); box-shadow: 0 0 9px rgba(255,205,112,.5); }
+      #objective-box { top: calc(77px + env(safe-area-inset-top)); max-width: calc(100% - 44px); padding: 8px 13px; border: 1px solid rgba(186,220,232,.2); border-radius: 6px; background: rgba(4,14,25,.87); }
+      #hud-objective { font: 600 12px "Rajdhani",sans-serif; letter-spacing: .08em; color: #e9d6ac; }
+      #objective-sliver { top: calc(78px + env(safe-area-inset-top)); width: 78px; }
+      #weapons-offline { top: calc(103px + env(safe-area-inset-top)); font-size: 9px; letter-spacing: .16em; }
+      #launch-confirm:not([hidden]) { animation: confirmIn .24s ease-out both; }
+      #launch-confirm.closing { animation: confirmOut .2s ease-out both; pointer-events: none; }
+      @keyframes confirmIn { from { opacity: 0; } to { opacity: 1; } }
+      @keyframes confirmOut { to { opacity: 0; } }
+      #chargebar { display: block; opacity: 0; visibility: hidden; transform: translateX(-50%) translateY(5px); transition: opacity .2s ease, transform .2s ease, visibility .2s; }
+      #chargebar.on { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+      #objective-box { transition: opacity .3s ease, transform .3s ease, visibility .3s; }
+      #stage.large-text #bossbar { top: calc(82px + env(safe-area-inset-top)); }
+      #stage.large-text #objective-box, #stage.large-text #objective-sliver { top: calc(91px + env(safe-area-inset-top)); }
+      /* Five boss signatures share the console hierarchy, each with its own accent and meter. */
+      #bossbar { --boss-accent: #71dfff; top: calc(64px + env(safe-area-inset-top)); width: calc(100% - 32px); max-width: 420px; padding: 6px 10px 7px; background: rgba(4,12,23,.92); border: 1px solid var(--console-edge); border-top: 2px solid var(--boss-accent); border-radius: 7px; box-shadow: 0 8px 24px rgba(0,0,0,.3); display: block; visibility: hidden; opacity: 0; transition: opacity .3s ease, visibility .3s; pointer-events: none; }
+      #bossbar.on { visibility: visible; opacity: 1; }
+      #bossbar::before { content: attr(data-signal); display: block; color: var(--boss-accent); font: 700 8px "Rajdhani",sans-serif; letter-spacing: .2em; margin-bottom: 3px; }
+      .boss-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+      #bossbar .blabel { color: #e7f4fa; text-align: left; font: 700 10px "Rajdhani",sans-serif; letter-spacing: .08em; margin: 0; }
+      #boss-health { flex: 0 0 auto; color: var(--boss-accent); font: 700 10px "Orbitron",monospace; font-variant-numeric: tabular-nums; }
+      #bossbar .track { height: 6px; background: #152532; border-radius: 2px; overflow: hidden; }
+      #bossfill { background: linear-gradient(90deg,#23536c,var(--boss-accent)); box-shadow: 0 0 10px var(--boss-accent); }
+      #bosschip { background: #f4dbb4; opacity: .6; }
+      #bossbar .phase-mark { width: 1px; background: #ecf7ff; box-shadow: none; }
+      #bossbar .segs { background: repeating-linear-gradient(90deg,transparent 0 calc(20% - 2px),#071524 calc(20% - 2px) 20%); }
+      #bossbar[data-kind="dreadnought"] { --boss-accent: #ff985c; border-radius: 2px; }
+      #bossbar[data-kind="dreadnought"] .segs { background: repeating-linear-gradient(90deg,transparent 0 calc(25% - 3px),#1d110c calc(25% - 3px) 25%); }
+      #bossbar[data-kind="leviathan"] { --boss-accent: #57f2cd; border-left: 2px solid var(--boss-accent); border-right: 2px solid var(--boss-accent); }
+      #bossbar[data-kind="leviathan"] .track { border-radius: 10px; }
+      #bossbar[data-kind="leviathan"] .segs { background: repeating-linear-gradient(115deg,transparent 0 14px,rgba(2,19,20,.55) 14px 16px); }
+      #bossbar[data-kind="cryowarden"] { --boss-accent: #b3e7ff; background: linear-gradient(125deg,rgba(26,54,72,.96),rgba(4,16,29,.94)); }
+      #bossbar[data-kind="cryowarden"] .track { clip-path: polygon(3% 0,100% 0,97% 100%,0 100%); height: 7px; }
+      #bossbar[data-kind="eclipse"] { --boss-accent: #c89bff; border-top-width: 1px; border-bottom: 2px solid #a77ce7; }
+      #bossbar[data-kind="eclipse"] .segs { background: repeating-linear-gradient(90deg,transparent 0 calc(10% - 1px),#160c25 calc(10% - 1px) 10%); }
+      #bossbar.enraged { border-color: #ee7ab0; }
+      #bossbar.enraged::before { content: "SIGNAL ESCALATION / ENRAGED"; color: #ffabd2; }
+      #bossbar.enraged #bossfill { background: linear-gradient(90deg,#a83b7d,#ff9acb); }
+      #boss-card { border: 1px solid var(--boss-accent,#71dfff); border-top-width: 3px; border-radius: 8px; background: linear-gradient(150deg,rgba(20,42,59,.97),rgba(4,12,24,.97)); box-shadow: 0 20px 55px rgba(0,0,0,.55); }
+      #boss-card { visibility: hidden; pointer-events: none; transition: opacity .2s ease, transform .2s ease, visibility .2s; }
+      #boss-card.show { visibility: visible; pointer-events: auto; }
+      #bc-name, #bc-epi, .bc-ab b { color: var(--boss-accent,#71dfff); }
+      #bc-name { letter-spacing: .1em; }
+      .bc-ab { color: #d6e3ec; font-family: "Rajdhani",sans-serif; font-size: 13px; letter-spacing: .04em; line-height: 1.35; }
+      #hint { border-radius: 6px; border-color: var(--console-edge); background: rgba(4,14,25,.92); padding: 8px 12px; max-width: 72%; font: 600 12px "Rajdhani",sans-serif; letter-spacing: .08em; }
+      #wave-results { border-top: 2px solid #9eeadd; }
+      #wr-rank { text-shadow: 0 0 24px rgba(105,218,237,.3); }
+      @media (max-width: 380px) {
+        #hud-score { font-size: 18px; } #hud-wave-v { font-size: 10px; }
+        #bossbar .blabel { font-size: 9px; letter-spacing: .04em; }
+        #boss-health { font-size: 9px; } #bossbar { padding: 8px 10px; }
+        #me-hull { padding: 8px; width: 39%; } #shield-ind { font-size: 8px; letter-spacing: .04em; }
+        .ck-gkey { font-size: 9px; letter-spacing: .03em; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .screen.on, .screen.leaving { animation: none; }
+        .screen.leaving { opacity: 0; }
+        #bossbar, #chargebar, #objective-box, .btn, .ck-gkey { transition: none; }
+        #launch-confirm:not([hidden]), #launch-confirm.closing { animation: none; }
+        #boss-card { transition: none; }
+        #boss-card.show { animation: none; opacity: 1; }
+      }
     </style>
   </head>
   <body>
@@ -1629,7 +1772,7 @@
 
       <!-- Boss health -->
       <div id="bossbar">
-        <div class="blabel" id="bossname">VOID MOTHERSHIP</div>
+        <div class="boss-heading"><div class="blabel" id="bossname">VOID MOTHERSHIP</div><span id="boss-health" aria-hidden="true">100%</span></div>
         <div class="track"><div id="bosschip"></div><div id="bossfill"></div><div class="segs"></div><div class="phase-mark"></div></div>
       </div>
       <div id="boss-alert"></div>
@@ -3193,7 +3336,7 @@
       function retire(list, index, pool) {
         pool.push(list[index]); list[index] = list[list.length - 1]; list.pop();
       }
-      function emitParts(x, y, vx, vy, life, t, color, size, drag, ring, r, vr, spark) {
+      function emitParts(x, y, vx, vy, life, t, color, size, drag, ring, r, vr, spark, bloom) {
         var o = G.partsPool.pop() || {};
         o.x = x;
         o.y = y;
@@ -3208,6 +3351,7 @@
         o.r = r;
         o.vr = vr;
         o.spark = spark;
+        o.bloom = bloom;
         G.parts.push(o);
       }
       function emitBullets(x, y, vx, vy, dmg, kind, col, r, range, sx, sy, id, charged, pierce, bossHit) {
@@ -3430,6 +3574,10 @@
         if (kind === "dreadnought") { G.boss.plates = []; var poffs = [-64, -24, 24, 64]; for (var pli = 0; pli < 4; pli++) G.boss.plates.push({ off: poffs[pli], hp: Math.round(34 * hpMul()), maxHp: Math.round(34 * hpMul()) }); G.boss.flameT = 0; G.boss.flameTele = 0; G.boss.flameAng = 0; }
         if (kind === "leviathan") { G.boss.jumpT = 6.5; G.boss.vanish = 0; G.boss.jumped = false; G.boss.jumpOff = 0; }
         if (kind === "cryowarden") { G.boss.shell = 0; G.boss.shellStage = 0; }
+        var presentation = BOSS_VISUALS[kind], bar = document.getElementById("bossbar");
+        bar.dataset.kind = kind; bar.dataset.signal = presentation.signal;
+        document.getElementById("boss-card").dataset.kind = kind;
+        document.getElementById("boss-card").style.setProperty("--boss-accent", presentation.color);
         G.bossSpawned = true; G.bossChip = 1;
         document.getElementById("bosschip").style.width = "100%";
         document.getElementById("bossname").textContent = BOSS_NAMES[kind] + " — WAVE " + G.sector + " BOSS";
@@ -3441,9 +3589,12 @@
         var abEl = document.getElementById("bc-abilities");
         if (abEl) { var abl = BOSS_ABILITIES[kind] || [], abh = ""; for (var abi2 = 0; abi2 < abl.length; abi2++) abh += "<div class=\"bc-ab\"><b>" + (abi2 + 1) + "</b>" + abl[abi2] + "</div>"; abEl.innerHTML = abh; }
         paintBossCard(kind);
+        clearTimeout(bc._hideTimer);
         bc.classList.remove("show"); void bc.offsetWidth; bc.classList.add("show");
+        // Release the touch surface when the entrance card finishes, including reduced motion.
+        bc._hideTimer = setTimeout(function () { bc.classList.remove("show"); }, 2400);
         if (!G.seenHint.boss) { G.seenHint.boss = 1; showHint("HIT THE GLOWING CORE — DOUBLE DAMAGE"); }
-        showBossBar(true); Sfx.bossWarn();
+        syncBossBar(); showBossBar(true); Sfx.bossWarn();
         var ba = document.getElementById("boss-alert");
         ba.classList.remove("show"); void ba.offsetWidth; if (!REDUCED) ba.classList.add("show");
         showBanner("WARNING", BOSS_NAMES[kind] + " INBOUND");
@@ -3518,9 +3669,14 @@
         if (G && G.parts.length > (G.perf ? 200 : 340)) n = Math.min(n, 4); // hard cap — effects never tank the frame rate
         for (var i = 0; i < n; i++) {
           var a = rand(0, 6.283), sp = rand(40, big ? 330 : 220);
-          emitParts(x, y, Math.cos(a) * sp, Math.sin(a) * sp, rand(0.3, big ? 0.95 : 0.6), 0, color, rand(1.6, big ? 4.6 : 3.2), 2.2);
+          emitParts(x, y, Math.cos(a) * sp, Math.sin(a) * sp, rand(0.3, big ? 0.95 : 0.6), 0, i % 5 === 0 ? "#fff1d4" : color, rand(1.6, big ? 4.6 : 3.2), 2.2, false, undefined, undefined, i % 3 === 0);
         }
         emitParts(x, y, 0, 0, 0.32, 0, color, 2, undefined, true, 4, big ? 340 : 210);
+        if (!REDUCED && SETTINGS.flash && G.parts.length < (G.perf ? 200 : 340)) {
+          // A short hot core, then a slower expanding afterglow; no timers or new emitters.
+          emitParts(x, y, 0, 0, 0.18, 0, color, big ? 48 : 26, 0, false, undefined, undefined, false, true);
+          if (big && !G.perf) emitParts(x, y, 0, 0, 0.65, -0.08, color, 48, 0, false, undefined, undefined, false, true);
+        }
       }
 
       function dropPickup(x, y, forceType) {
@@ -4721,6 +4877,8 @@
         c.shadowColor = "rgba(" + def.atmo + ",0.9)"; c.shadowBlur = size * 0.05;
         c.beginPath(); c.arc(R, R, R - c.lineWidth * 0.7, 2.35, 5.65); c.stroke();
         c.shadowBlur = 0;
+        c.strokeStyle = "rgba(224,246,255,0.7)"; c.lineWidth = Math.max(0.7, size * 0.004);
+        c.beginPath(); c.arc(R, R, R - 2, 3.4, 4.9); c.stroke();
         c.strokeStyle = "rgba(" + def.atmo + ",0.28)"; c.lineWidth = Math.max(1, size * 0.006);
         c.beginPath(); c.arc(R, R, R - 1, 5.65, 2.35); c.stroke();
         return cv;
@@ -4749,9 +4907,9 @@
         var t = (typeof tNow === "number") ? tNow : ((typeof G !== "undefined" && G) ? G.time : 0);
         var perf = (typeof G !== "undefined" && G && G.perf); // adaptive perf: planet animation is the first thing to calm
         // soft atmosphere halo bleeding into space
-        var halo = c.createRadialGradient(x, y, r * 0.7, x, y, r * 1.45);
-        halo.addColorStop(0, "rgba(" + def.atmo + ",0.16)"); halo.addColorStop(1, "rgba(" + def.atmo + ",0)");
-        c.fillStyle = halo; c.beginPath(); c.arc(x, y, r * 1.45, 0, 6.283); c.fill();
+        c.save(); c.globalAlpha *= 0.16;
+        c.drawImage(lightSprite("rgb(" + def.atmo + ")"), x - r * 1.45, y - r * 1.45, r * 2.9, r * 2.9);
+        c.restore();
         if (def.ring) drawPlanetRing(c, x, y, r, false); // far half passes behind the sphere
         c.save();
         c.beginPath(); c.arc(x, y, Math.max(1, r - 1), 0, 6.283); c.clip();
@@ -4849,6 +5007,17 @@
         var tl = c.createLinearGradient(0, art.nose, 0, 18);
         tl.addColorStop(0, "rgba(255,255,255,0.30)"); tl.addColorStop(0.5, "rgba(255,255,255,0)"); tl.addColorStop(1, "rgba(0,0,0,0.20)");
         c.fillStyle = tl; c.fillRect(-h, art.nose, h * 2, 18 - art.nose);
+        var coat = c.createLinearGradient(-h, art.nose, h, 18);
+        coat.addColorStop(0, "rgba(175,227,255,0.02)"); coat.addColorStop(0.28, "rgba(217,243,255,0.26)");
+        coat.addColorStop(0.38, "rgba(255,255,255,0.48)"); coat.addColorStop(0.46, "rgba(184,225,255,0.03)");
+        coat.addColorStop(1, "rgba(0,5,16,0.24)");
+        c.fillStyle = coat; c.fillRect(-h, art.nose, h * 2, 18 - art.nose);
+        c.strokeStyle = "rgba(194,234,255,0.45)"; c.lineWidth = 0.55;
+        c.beginPath(); c.moveTo(-h * 0.52, -11); c.lineTo(-h * 0.82, 7); c.lineTo(-h * 0.6, 14); c.stroke();
+        for (var panelY = 0; panelY < 12; panelY += 4) {
+          c.fillStyle = "rgba(3,13,24,0.48)"; c.fillRect(h * 0.44, panelY, h * 0.35, 1.1);
+          c.fillStyle = "rgba(206,239,255,0.32)"; c.fillRect(h * 0.44, panelY + 1.1, h * 0.35, 0.5);
+        }
         // panel tone variation + seeded weathering scuffs — same marks every frame
         var wr = seededRand(art.decal === "07" ? 707 : art.decal === "13" ? 1313 : 303);
         for (var wi = 0; wi < 5; wi++) {
@@ -4933,7 +5102,9 @@
       }
       function drawShipModel(c, o) {
         var base = SHIP_ART[o.ship || "vanguard"] || SHIP_ART.vanguard;
-        var art = { hull: base.hull, wing: base.wing, canopy: base.canopy, podCol: base.podCol, tip: o.tip || base.tip, panel: base.panel, span: base.span, hullHalf: base.hullHalf, nose: base.nose, pods: base.pods, decal: base.decal };
+        var materialKey = (o.ship || "vanguard") + "|" + (o.tip || base.tip);
+        var art = SHIP_MATERIAL_CACHE[materialKey];
+        if (!art) art = SHIP_MATERIAL_CACHE[materialKey] = { hull: base.hull, wing: base.wing, canopy: base.canopy, podCol: base.podCol, tip: o.tip || base.tip, panel: base.panel, span: base.span, hullHalf: base.hullHalf, nose: base.nose, pods: base.pods, decal: base.decal };
         var t = o.time || 0;
         var baseA = (o.alpha === undefined || o.alpha === null) ? 1 : o.alpha;
         c.globalAlpha = baseA;
@@ -4942,16 +5113,13 @@
           c.beginPath(); c.ellipse(2, 6, art.span + 4, 20, 0, 0, 6.283); c.fill();
         }
         // engine flames — flicker with thrust, coloured by the thruster style, white-hot at the nozzle
-        var fl = 11 + Math.sin(t * 34) * 3 + Math.random() * 2 + (o.flameBoost || 0);
-        var engines = art.pods === "single" ? [0] : (art.pods === "armor" ? [-8.5, 8.5] : (art.pods === "quad" ? [-10.8, -4, 2.8, 9.6] : [-5.75, 5.75]));
-        engines.forEach(function (ex) {
-          var grad = c.createLinearGradient(0, 15, 0, 15 + fl + 13);
-          grad.addColorStop(0, "#ffffff"); grad.addColorStop(0.22, o.thrust || "#3fd6ff"); grad.addColorStop(1, "rgba(0,0,0,0)");
-          c.fillStyle = grad;
-          c.beginPath(); c.moveTo(ex - 3, 15); c.lineTo(ex + 3, 15); c.lineTo(ex, 15 + fl + 13); c.closePath(); c.fill();
-          c.fillStyle = "rgba(255,255,255,0.85)";
-          c.beginPath(); c.moveTo(ex - 1.2, 15); c.lineTo(ex + 1.2, 15); c.lineTo(ex, 15 + (fl + 13) * 0.45); c.closePath(); c.fill();
-        });
+        var fl = 11 + Math.sin(t * 34) * 3 + Math.sin(t * 57) + 1 + (o.flameBoost || 0);
+        var engines = ENGINE_LAYOUTS[art.pods] || ENGINE_LAYOUTS.twin, thrust = o.thrust || "#3fd6ff";
+        c.globalAlpha = baseA * 0.22;
+        c.drawImage(lightSprite(thrust), -24, 1, 48, 58);
+        c.globalAlpha = baseA;
+        var flame = flameSprite(thrust);
+        for (var ei = 0; ei < engines.length; ei++) c.drawImage(flame, engines[ei] - 4, 15, 8, fl + 13);
         // the hull itself — one cached sprite, identical at home, in Settings and in flight
         var spr = getShipSprite(o.ship || "vanguard", art, o);
         c.drawImage(spr.cv, -SHIP_SPRITE_OX, -SHIP_SPRITE_OY, SHIP_SPRITE_W, SHIP_SPRITE_H);
@@ -4979,6 +5147,11 @@
         // muzzle flash at the nose cannon
         if (p.muzzle > 0) {
           var my = baseArt.nose - 5;
+          if (SETTINGS.flash && !REDUCED) {
+            ctx.globalAlpha = invA * 0.5;
+            ctx.drawImage(lightSprite(blasterHex()), -14, my - 14, 28, 28);
+            ctx.globalAlpha = invA;
+          }
           ctx.fillStyle = "rgba(255,230,150,0.95)";
           ctx.beginPath(); ctx.arc(0, my, 5.5, 0, 6.283); ctx.fill();
           ctx.fillStyle = "rgba(255,255,255,0.9)";
@@ -5344,7 +5517,7 @@
       }
       function drawBoss(b) {
         ctx.save(); ctx.translate(b.x, b.y);
-        var flash = b.flash > 0;
+        var flash = false /* hit light is composed over the core, preserving hull detail */;
         // VOID MOTHERSHIP — broad crescent carrier: layered plating, lit windows, turrets
         // side pods — shaded domes with reactor lights
         [-72, 72].forEach(function (px) {
@@ -5432,6 +5605,73 @@
         c.beginPath(); c.arc(0, 0, radius * 0.42, 0, 6.283); c.fill();
         return enemyBoltSprites[key] = { cv: cv, pad: pad };
       }
+      /* Presentation textures are built once per existing colour/sky, never per frame.
+         Cosmetic randomness uses an independent seed and cannot affect combat rolls. */
+      var STAR_LAYER_ALPHA = [0.35, 0.6, 1];
+      var LIGHT_CACHE = {}, FLAME_CACHE = {}, NEBULA_CACHE = {}, SHIP_MATERIAL_CACHE = {};
+      var ENGINE_LAYOUTS = { single: [0], armor: [-8.5, 8.5], quad: [-10.8, -4, 2.8, 9.6], twin: [-5.75, 5.75] };
+      function lightSprite(color) {
+        if (LIGHT_CACHE[color]) return LIGHT_CACHE[color];
+        var cv = document.createElement("canvas"); cv.width = cv.height = 128;
+        var c = cv.getContext("2d"), g = c.createRadialGradient(64, 64, 0, 64, 64, 64);
+        g.addColorStop(0, "rgba(255,255,255,0.95)"); g.addColorStop(0.12, color);
+        g.addColorStop(0.35, color); g.addColorStop(1, "rgba(0,0,0,0)");
+        c.fillStyle = g; c.fillRect(0, 0, 128, 128);
+        return LIGHT_CACHE[color] = cv;
+      }
+      function flameSprite(color) {
+        if (FLAME_CACHE[color]) return FLAME_CACHE[color];
+        var cv = document.createElement("canvas"); cv.width = 32; cv.height = 128;
+        var c = cv.getContext("2d"); c.scale(4, 4); c.translate(4, 0);
+        var g = c.createLinearGradient(0, 0, 0, 32);
+        g.addColorStop(0, "#ffffff"); g.addColorStop(0.18, color); g.addColorStop(1, "rgba(0,0,0,0)");
+        c.fillStyle = g; c.beginPath(); c.moveTo(-3, 0); c.lineTo(3, 0); c.lineTo(0, 32); c.fill();
+        c.fillStyle = "rgba(255,255,255,0.85)";
+        c.beginPath(); c.moveTo(-1.2, 0); c.lineTo(1.2, 0); c.lineTo(0, 15); c.fill();
+        return FLAME_CACHE[color] = cv;
+      }
+      function nebulaSprite(env) {
+        var key = env.feature;
+        if (NEBULA_CACHE[key]) return NEBULA_CACHE[key];
+        var cv = document.createElement("canvas"); cv.width = cv.height = 512;
+        var c = cv.getContext("2d"), rng = seededRand(1109 + ENVS.indexOf(env) * 7919);
+        for (var i = 0; i < 30; i++) {
+          var x = 120 + rng() * 272, y = 100 + rng() * 312, r = 35 + rng() * 150;
+          var g = c.createRadialGradient(x, y, 0, x, y, r);
+          g.addColorStop(0, "rgba(" + rgbStr(i % 4 ? env.neb : env.star) + ",0.22)");
+          g.addColorStop(0.45, "rgba(" + rgbStr(env.neb) + ",0.08)"); g.addColorStop(1, "rgba(0,0,0,0)");
+          c.fillStyle = g; c.fillRect(x - r, y - r, r * 2, r * 2);
+        }
+        // Filament shadows add depth without a per-frame blur or filter.
+        c.globalCompositeOperation = "destination-out";
+        for (var j = 0; j < 12; j++) {
+          var dx = 130 + rng() * 250, dy = 120 + rng() * 260, dr = 16 + rng() * 60;
+          var dg = c.createRadialGradient(dx, dy, 0, dx, dy, dr);
+          dg.addColorStop(0, "rgba(0,0,0,0.42)"); dg.addColorStop(1, "rgba(0,0,0,0)");
+          c.fillStyle = dg; c.fillRect(dx - dr, dy - dr, dr * 2, dr * 2);
+        }
+        return NEBULA_CACHE[key] = cv;
+      }
+      var BOSS_VISUALS = {
+        mothership: { color: "#71dfff", signal: "01 / CARRIER SIGNATURE" },
+        dreadnought: { color: "#ff985c", signal: "02 / SIEGE SIGNATURE" },
+        leviathan: { color: "#57f2cd", signal: "03 / RIFT SIGNATURE" },
+        cryowarden: { color: "#b3e7ff", signal: "04 / CRYSTAL SIGNATURE" },
+        eclipse: { color: "#c89bff", signal: "05 / GRAVITY SIGNATURE" }
+      };
+      function drawBossArrival(b) {
+        if (b.state !== "enter" || REDUCED) return;
+        var v = BOSS_VISUALS[b.kind], k = Math.min(1, b.t * 1.4), pulse = 0.65 + Math.sin(b.t * 3) * 0.15;
+        ctx.save(); ctx.translate(b.x, b.y);
+        ctx.globalAlpha = k * 0.20 * pulse;
+        ctx.drawImage(lightSprite(v.color), -170, -110, 340, 220);
+        ctx.globalAlpha = k * 0.55; ctx.strokeStyle = v.color; ctx.lineWidth = 1.3;
+        ctx.beginPath(); ctx.ellipse(0, 28, 138, 25 + Math.sin(b.t * 2) * 5, 0, 0, 6.283); ctx.stroke();
+        for (var i = -1; i <= 1; i += 2) {
+          ctx.beginPath(); ctx.moveTo(i * 147, -30); ctx.lineTo(i * 147, 37); ctx.lineTo(i * 127, 37); ctx.stroke();
+        }
+        ctx.restore();
+      }
       function render() {
         ctx.setTransform(viewScale, 0, 0, viewScale, 0, 0);
         // background — palette cross-fades between sector environments
@@ -5459,15 +5699,20 @@
 
         // gyro parallax — near layers lean furthest with the phone
         var gx = G.gyroX || 0, gy = G.gyroY || 0;
-        // nebula clouds
+        // Textured cloud layers move at different depths; existing sky cross-fade is retained.
+        var sky = ENVS[G.sector - 1], skyTex = nebulaSprite(sky);
+        var oldTex = G.envPrev && G.envBlend < 1 ? nebulaSprite(G.envPrev) : null;
+        var flightX = G.mode === "playing" ? (G.player.x - W / 2) / W : 0;
         for (var ni = 0; ni < G.nebula.length; ni++) {
-          var nb = G.nebula[ni], nx = nb.x + gx * 22, ny = nb.y + gy * 14;
-          var ng = ctx.createRadialGradient(nx, ny, 4, nx, ny, nb.r);
-          ng.addColorStop(0, "rgba(" + pal.neb + "," + (nb.a * (0.7 + (G.bgI || 0.3) * 0.65)).toFixed(3) + ")");
-          ng.addColorStop(1, "rgba(" + pal.neb + ",0)");
-          ctx.fillStyle = ng;
-          ctx.beginPath(); ctx.arc(nx, ny, nb.r, 0, 6.283); ctx.fill();
+          var nb = G.nebula[ni], depth = 0.5 + ni / G.nebula.length;
+          var nx = nb.x + gx * 22 * depth - flightX * 14 * depth + Math.sin(G.time * 0.025 + ni) * 12;
+          var ny = nb.y + gy * 14 * depth, diameter = nb.r * 3.2;
+          var cloudA = nb.a * (0.8 + (G.bgI || 0.3) * 0.55);
+          if (oldTex) { ctx.globalAlpha = cloudA * (1 - G.envBlend); ctx.drawImage(oldTex, nx - diameter / 2, ny - diameter / 2, diameter, diameter); }
+          ctx.globalAlpha = cloudA * (oldTex ? G.envBlend : 1);
+          ctx.drawImage(skyTex, nx - diameter / 2, ny - diameter / 2, diameter, diameter);
         }
+        ctx.globalAlpha = 1;
         // distant planet + moon — REALISTIC WORLDS: pre-rendered spherical sprites with
         // surface detail, a day/night terminator and an atmosphere rim (buildPlanetSprite).
         // One world per sky: ocean, ember, ringed gas giant, ice, eclipse-dark.
@@ -5537,14 +5782,21 @@
         }
 
         // starfield layers
-        var alphas = [0.35, 0.6, 1];
+        var alphas = STAR_LAYER_ALPHA;
         for (var l = 0; l < 3; l++) {
           ctx.fillStyle = "rgba(" + pal.star + "," + alphas[l] + ")";
           for (var i = 0; i < G.stars[l].length; i++) {
-            var s = G.stars[l][i], sx = s.x + gx * (l + 1) * 6, sy = s.y + gy * (l + 1) * 4;
+            var s = G.stars[l][i], sx = s.x + gx * (l + 1) * 6 - flightX * (l + 1) * 4, sy = s.y + gy * (l + 1) * 4;
             var tw = 0.75 + 0.25 * Math.sin(G.time * (2 + l) + s.x); // twinkle
             ctx.globalAlpha = alphas[l] * tw;
-            if (l === 2) ctx.fillRect(sx, sy, 2, 7); // near stars stay points — Sample 01 streaks are the radial warp stars below
+            if (l === 2) {
+              ctx.fillRect(sx - 0.7, sy - 0.7, 1.4, 1.4);
+              if (i % 4 === 0 && !G.perf) {
+                ctx.globalAlpha *= 0.28;
+                ctx.drawImage(lightSprite("#a9dfff"), sx - 6, sy - 6, 12, 12);
+                ctx.fillRect(sx - 3, sy, 6, 0.6); ctx.fillRect(sx, sy - 3, 0.6, 6);
+              }
+            }
             else ctx.fillRect(sx, sy, s.s, s.s);
             ctx.globalAlpha = 1;
           }
@@ -5647,7 +5899,9 @@
           if (e.type === "diver") drawDiver(e); else if (e.type === "charger") drawCharger(e); else if (e.type === "lancer") drawLancer(e); else if (e.type === "bulwark") drawBulwark(e); else if (e.type === "sentinel") drawSentinel(e); else drawWeaver(e);
           if (e.spawnT > 0) { ctx.restore(); ctx.globalAlpha = 1; }
         }
-        if (G.boss) { // ONE BIG BOSS — drawn oversized, ~22% larger than the old warships
+        if (G.boss) {
+          drawBossArrival(G.boss); // Visual only: entry speed and attack timing are unchanged.
+          // ONE BIG BOSS — drawn oversized, ~22% larger than the old warships
           if (G.boss.enraged) { // enrage aura — a pulsing magenta rage-glow behind the hull
             var eg2 = ctx.createRadialGradient(G.boss.x, G.boss.y, 8, G.boss.x, G.boss.y, 130);
             eg2.addColorStop(0, "rgba(255,46,166," + (0.30 + 0.12 * Math.sin(G.time * 7)) + ")"); eg2.addColorStop(1, "rgba(255,46,166,0)");
@@ -5670,6 +5924,11 @@
               ctx.strokeStyle = "rgba(200,120,255," + clamp(gr2 / 300, 0, 0.5) + ")"; ctx.lineWidth = 1.6;
               ctx.beginPath(); ctx.arc(G.boss.x, G.boss.y, gr2, 0, 6.283); ctx.stroke();
             }
+          }
+          if (G.boss.flash > 0 && SETTINGS.flash && !REDUCED) {
+            ctx.globalAlpha = Math.min(0.55, G.boss.flash * 8);
+            ctx.drawImage(lightSprite("#e8faff"), G.boss.x - 30, G.boss.y - 22, 60, 60);
+            ctx.globalAlpha = 1;
           }
           // weak-point marker — a pulsing ring on the boss's glowing core (double damage in there)
           ctx.save();
@@ -5786,7 +6045,13 @@
         // particles
         for (i = 0; i < G.parts.length; i++) {
           var pt = G.parts[i], lifeK = 1 - pt.t / pt.life;
-          if (pt.streak) { // hyperdrive light streak
+          if (pt.t < 0) continue; // delayed cosmetic afterglow, held inside the same pool
+          if (pt.bloom) {
+            var bloomK = pt.t / pt.life, bloomR = pt.size * (0.45 + bloomK * 1.4);
+            ctx.globalAlpha = Math.max(0, lifeK * lifeK) * (pt.life > 0.3 ? 0.28 : 0.65);
+            ctx.drawImage(lightSprite(pt.color), pt.x - bloomR, pt.y - bloomR, bloomR * 2, bloomR * 2);
+            ctx.globalAlpha = 1;
+          } else if (pt.streak) { // hyperdrive light streak
             ctx.globalAlpha = Math.max(0, lifeK) * 0.8;
             ctx.strokeStyle = pt.color; ctx.lineWidth = 2;
             ctx.beginPath(); ctx.moveTo(pt.x, pt.y - 30); ctx.lineTo(pt.x, pt.y); ctx.stroke(); ctx.globalAlpha = 1;
@@ -5867,7 +6132,7 @@
 
       function drawDreadnought(b) {
         ctx.save(); ctx.translate(b.x, b.y);
-        var flash = b.flash > 0, i;
+        var flash = false /* hit light is composed over the core, preserving hull detail */, i;
         // EMBER DREADNOUGHT — long iron battleship: plate segments, scorch, furnace glow
         [-88, 88].forEach(function (px) {
           var pg = ctx.createRadialGradient(px - 5, -3, 2, px, 2, 22);
@@ -5961,7 +6226,7 @@
       }
       function drawLeviathan(b) {
         ctx.save(); ctx.translate(b.x, b.y);
-        var flash = b.flash > 0, k;
+        var flash = false /* hit light is composed over the core, preserving hull detail */, k;
         // RIFT LEVIATHAN — rotating tri-arm fortress: segmented arms, orb turrets, breathing ring
         for (k = 0; k < 3; k++) {
           ctx.save(); ctx.rotate(b.rot + k * 2.094);
@@ -6017,7 +6282,7 @@
       }
       function drawCryowarden(b) {
         ctx.save(); ctx.translate(b.x, b.y);
-        var flash = b.flash > 0, k;
+        var flash = false /* hit light is composed over the core, preserving hull detail */, k;
         // CRYO WARDEN — rotating crystal shards over a frozen octagon fortress
         for (k = 0; k < 6; k++) {
           ctx.save(); ctx.rotate(b.rot + k * 1.047);
@@ -6080,7 +6345,7 @@
       }
       function drawEclipse(b) {
         ctx.save(); ctx.translate(b.x, b.y);
-        var flash = b.flash > 0, k;
+        var flash = false /* hit light is composed over the core, preserving hull detail */, k;
         // ECLIPSE TITAN — black heart with a burning rim, plated violet segments, debris stream
         ctx.save(); ctx.rotate(b.rot * 0.7);
         for (k = 0; k < 3; k++) {
@@ -6337,7 +6602,13 @@
         b.classList.remove("show"); void b.offsetWidth; b.classList.add("show");
       }
       function showBossBar(on) { $("bossbar").classList.toggle("on", on); if (!on) $("bossbar").classList.remove("enraged"); }
-      function syncBossBar() { if (G.boss) $("bossfill").style.width = Math.max(0, (G.boss.hp / G.boss.maxHp) * 100) + "%"; }
+      function syncBossBar() {
+        if (!G.boss) return;
+        var fraction = Math.max(0, G.boss.hp / G.boss.maxHp);
+        setMeter($("bossfill"), fraction);
+        var label = $("boss-health"), text = Math.ceil(fraction * 100) + "%";
+        if (label.textContent !== text) label.textContent = text;
+      }
       /* Minimal Edge HUD state — previous values drive damage flash + transient status flashes */
       var hudPrev = { weapon: -1, drones: -1, hp: -1 };
       var flashTimer = null, hullHitTimer = null;
@@ -7149,7 +7420,7 @@
       }
 
       /* ---- UX08 — launch confirm plate ---- */
-      function launchConfirmOpen() { var lc = el("launch-confirm"); return !!lc && !lc.hidden; }
+      function launchConfirmOpen() { var lc = el("launch-confirm"); return !!lc && !lc.hidden && !lc.classList.contains("closing"); }
       function openLaunchConfirm() {
         var sec = clamp(LAUNCH.sector || 1, 1, 5), kind = BOSS_KINDS[sec - 1];
         if (el("lc-sky")) el("lc-sky").textContent = "WAVE " + sec + " · " + ENVS[sec - 1].name + (LAUNCH.rush ? " · BOSS RUSH" : "");
@@ -7158,10 +7429,17 @@
         if (el("lc-gun")) el("lc-gun").textContent = LOADOUT.gun.toUpperCase();
         if (el("lc-drone")) el("lc-drone").textContent = LOADOUT.drone.toUpperCase();
         if (el("lc-pilot")) el("lc-pilot").textContent = LOADOUT.pilot.toUpperCase();
-        var lc = el("launch-confirm"); if (lc) lc.hidden = false;
+        var lc = el("launch-confirm");
+        if (lc) { clearTimeout(lc._closeTimer); lc.classList.remove("closing"); lc.hidden = false; }
         Sfx.blip();
       }
-      function hideLaunchConfirm() { var lc = el("launch-confirm"); if (lc) lc.hidden = true; }
+      function hideLaunchConfirm() {
+        var lc = el("launch-confirm"); if (!lc || lc.hidden) return;
+        clearTimeout(lc._closeTimer);
+        if (REDUCED) { lc.hidden = true; return; }
+        lc.classList.add("closing");
+        lc._closeTimer = setTimeout(function () { lc.hidden = true; lc.classList.remove("closing"); }, 200);
+      }
 
       /* ---- UX09 — first-run coach marks over live gameplay; shown once, ever ---- */
       var COACH = { active: false, step: 0, charge: false, bomb: false };
