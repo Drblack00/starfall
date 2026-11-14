@@ -136,3 +136,30 @@ Verification for the follow-up:
   but an approximately 500ms maximum across startup, screenshots and shared-host
   load; automatic performance mode activated. A locked 60fps on all hardware
   is not established. Physical mobile hardware/gyro was not verified.
+
+## Reference-led home screen revision
+
+The next presentation revision follows the supplied portrait reference: full-bleed
+world/ship artwork, four angular shortcut tiles, large SHIP and MISSION cards,
+and a prominent red PLAY action. The selected hull, weapon, drone and destination
+use the existing live data and controls. Additional navigation remains available
+below the primary cards; resume/unlock notices still appear when relevant.
+Phone checks ensure the primary cards are not clipped and Play is visible without
+scrolling at 320/375/430px. A stage ResizeObserver refits the gameplay canvas when
+moving between the full-height home layout and the original gameplay aspect ratio.
+
+The full-size background ship and selected-ship portrait use the same shared
+flight renderer. New machined armour detail is baked into its existing hull cache.
+Planet sprites now use a cached spherical material pass with coherent terrain,
+diffuse/ambient lighting, ocean specular, cloud shading, emissive fissures and a
+lit atmosphere rim. Pixel synthesis happens only on a sprite-cache miss, with
+an independent terrain seed; it never runs inside the steady-state render path.
+No production assets, dependencies, gameplay constants, waves or boss kits changed.
+
+Verified this revision with the complete regression suite, phone layouts and touch
+checks, plus a served-page playthrough: first wave and Mothership defeated in
+73 seconds, pause/resume exercised, 3 hull remaining, no browser errors. The
+600-frame warm stress sample measured 16.7ms median / 16.8ms p95 RAF intervals
+(max 50.1ms), and 0.9ms median / 2.4ms p95 update/render CPU time. The broader
+startup/UI/play/capture sample included an 850ms maximum; initial procedural
+sprite construction and shared-host load remain limitations, not locked 60fps.

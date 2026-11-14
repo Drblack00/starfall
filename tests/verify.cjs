@@ -270,7 +270,17 @@ const fs = require("fs");
   // Browser layout checks at phone widths, including touch-sized controls and safe HUD lanes.
   for (const width of [320, 375, 430]) {
     await p.setViewportSize({ width, height: 812 });
-    await p.waitForTimeout(100);
+    await p.evaluate(() => t.showScreen("start"));
+    await p.waitForTimeout(420);
+    await p.evaluate(() => {
+      const play = document.getElementById("btn-play").getBoundingClientRect();
+      const stage = document.getElementById("stage").getBoundingClientRect();
+      if (play.bottom > stage.bottom || play.top < stage.top) throw Error("Home Play button requires scrolling");
+      for (const selector of [".ref-ship", ".ref-mission", ".ref-shortcuts"]) {
+        const rect = document.querySelector(selector).getBoundingClientRect();
+        if (rect.width < 100 || rect.left < stage.left || rect.right > stage.right) throw Error("Reference card is clipped");
+      }
+    });
     await p.evaluate(() => {
       t.showScreen(null);
       const stage = document.getElementById("stage");

@@ -1735,6 +1735,70 @@
         #boss-card { transition: none; }
         #boss-card.show { animation: none; opacity: 1; }
       }
+      #stage:has(#scr-start.on) { width:min(100vw,calc(100dvh * .55));height:100dvh;aspect-ratio:auto; }
+      /* Reference-led command deck: full-bleed world, angular cards, red launch. */
+      #stage #scr-start { background:#514d29; }
+      #reference-backdrop { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; pointer-events:none; }
+      #stage #scr-start::before { border:none; background:linear-gradient(90deg,rgba(0,16,19,.12),transparent); box-shadow:none; }
+      #stage #scr-start::after { display:none; }
+      #scr-start .ck-scroll { padding:12px 14px 20px; gap:12px; }
+      #scr-start .ck-scroll > * { margin-top:0; }
+      #scr-start .ck-topbar { padding:8px 0; border-bottom:2px solid rgba(137,195,180,.45); max-width:none; }
+      #scr-start .ck-topbar .icon-btn { width:34px;height:34px; }
+      #scr-start .ck-topbar .hub-seg { height:34px; }
+      #scr-start .ck-wal { background:rgba(0,23,27,.78);padding:7px; }
+      .ref-brand { width:100%; display:flex;justify-content:space-between;align-items:baseline;color:#fff; text-shadow:0 2px 8px #001719; }
+      .ref-brand > span { font:900 20px "Rajdhani",sans-serif;letter-spacing:.18em; }
+      .ref-brand small { font:700 8px "Rajdhani",sans-serif;letter-spacing:.18em; }
+      .ref-shortcuts { display:grid;grid-template-columns:1fr 1.3fr 1fr .8fr;gap:8px;width:100%; }
+      .ref-shortcuts button { min-height:82px; border:0; border-top:1px solid #719a94; background:rgba(0,29,35,.93);color:#e4f1ec;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);font:700 10px "Rajdhani",sans-serif;cursor:pointer; }
+      .ref-shortcuts button span { display:block;font-size:33px;line-height:1.4; }
+      .ref-shortcuts .ref-warp { background:radial-gradient(ellipse at 50% 40%,#f0fbff 0%,#8167ef 5%,#263e9a 16%,rgba(0,25,38,.96) 55%); }
+      .ref-warp span { text-shadow:0 0 12px #a29bff; }
+      .ref-card { width:100%;color:#eaf7f4;background:linear-gradient(115deg,rgba(0,38,45,.94),rgba(2,29,37,.92));clip-path:polygon(0 0,100% 0,100% calc(100% - 12px),65% calc(100% - 12px),61% 100%,0 100%);border-top:1px solid #63938a; padding-bottom:12px; }
+      .ref-card header { display:flex;align-items:center;justify-content:space-between;background:rgba(0,15,20,.55);padding:10px 12px;border-bottom:1px solid rgba(126,179,165,.18); }
+      #scr-start .ref-card h2 { margin:0;font:700 25px "Rajdhani",sans-serif;letter-spacing:.02em; }
+      .ref-card button { color:#a3c5c4;border:0;background:rgba(0,14,19,.45);font:700 10px "Rajdhani",sans-serif;padding:9px;cursor:pointer; }
+      .ref-card header button { align-self:stretch;margin:-10px -12px -10px 8px;min-width:84px;clip-path:polygon(12px 0,100% 0,100% 100%,0 100%);background:rgba(83,105,111,.3); }
+      .ref-ship-body { display:grid;grid-template-columns:35% 65%;min-height:180px; }
+      #scr-start .ref-ship .ck-stage { min-height:180px;max-width:none;margin:0;background:radial-gradient(ellipse at 50% 45%,rgba(58,144,165,.32),rgba(0,11,26,.8));overflow:hidden; }
+      #scr-start .ref-ship .ck-console,#scr-start .ref-ship #home-planet-cv,#scr-start .ref-ship .ck-pad,#scr-start .ref-ship .ck-haze { display:none; }
+      #scr-start .ref-ship .ck-padwrap { position:absolute;inset:0;width:100%;height:100%;transform:none; }
+      #stage #scr-start .ref-ship .ck-padwrap .hero-zone { width:100%;height:100%; }
+      #stage #scr-start .ref-ship .ck-padwrap .hero { width:145px;height:180px;bottom:-5px; }
+      #scr-start .ref-ship #hero-ship { width:100%;height:100%; }
+      #scr-start .ref-ship .hero-glow { opacity:.5; }
+      .ref-ship-info { padding:14px 10px; min-width:0; }
+      #stage #scr-start .ref-ship-info .home-panel { padding:0;margin:0;border:0;box-shadow:none;background:none; }
+      .ref-ship-info .lo-label,.ref-ship-info .pilot-line { display:none; }
+      .ref-ship-info .glance-grid { display:flex;flex-direction:column;gap:9px; }
+      .ref-ship-info .glance-cell { background:none;border:0;padding:0; }
+      .ref-ship-info .glance-cell:first-child .glance-k { display:none; }
+      .ref-ship-info .glance-cell:first-child .glance-v { font:700 22px "Rajdhani",sans-serif;color:#fff; }
+      .ref-ship-info .glance-k { font-size:8px;color:#94b9ba;letter-spacing:.12em; }
+      .ref-ship-info .glance-v { font:600 13px "Rajdhani",sans-serif;color:#cee4df; }
+      .ref-ship-info .ref-upgrade { width:100%;margin-top:12px;color:#e7ece3;letter-spacing:.12em; }
+      .ref-mission-body { display:grid;grid-template-columns:32% 68%;padding:12px;gap:10px; }
+      .ref-world { position:relative;min-height:118px;border:1px solid #559b9f;background:radial-gradient(circle at 30% 35%,#526e7c,#001923 70%);overflow:hidden; }
+      .ref-world canvas { position:absolute;width:120%;height:auto;left:-10%;top:-22%; }
+      .ref-world span { position:absolute;bottom:8px;left:8px;font:700 11px "Rajdhani",sans-serif;text-shadow:0 2px 4px #000; }
+      .ref-mission-copy { min-width:0;padding-right:8px; }
+      #scr-start .ref-mission .ck-bossplate { display:block;padding:0;margin:0;border:0;box-shadow:none;background:none; }
+      .ref-mission .skull,.ref-mission .bp-bounty { display:none; }
+      .ref-mission .bp-k { display:block;font-size:9px;letter-spacing:.04em; }
+      .ref-mission .bp-v { display:block;font:700 19px "Rajdhani",sans-serif;line-height:1.1;margin-top:5px; }
+      .ref-mission-copy p { font:500 12px/1.4 "Rajdhani",sans-serif;color:#9dbdbc;margin:8px 0; }
+      .ref-mission-copy button { font-size:9px;padding:6px 0;background:none; }
+      #scr-start .ck-launchwrap { width:100%;max-width:none;padding:10px;background:rgba(226,28,56,.62);clip-path:polygon(0 0,94% 0,100% 12px,100% 100%,5% 100%,0 calc(100% - 12px)); }
+      #scr-start .ck-guard { display:none; }
+      #stage #scr-start #btn-play { width:100%;max-width:none;min-height:58px;border:0;border-radius:0;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);background:linear-gradient(110deg,#ff164a,#f0003b);color:#fff;font:900 28px "Rajdhani",sans-serif;letter-spacing:.04em;text-shadow:none;box-shadow:none; }
+      #scr-start .ck-hudrow { display:none; }
+      #scr-start .hub-plate { display:none; }
+      #scr-start #unlock-notice:not([hidden]),#scr-start #resume-plate:not([hidden]) { display:flex; }
+      #scr-start .ck-keygrid { margin-top:2px; }
+      #scr-start .ck-gkey { background:rgba(0,27,33,.92);border-radius:0; }
+      #scr-start .ck-howto,#scr-start .fineprint { color:#d7e6d9;text-shadow:0 1px 4px #001212; }
+      @media(max-width:360px) { #scr-start .ck-scroll {padding:8px 10px 16px;gap:9px;} .ref-shortcuts button {min-height:65px;font-size:9px;} .ref-ship-body,#scr-start .ref-ship .ck-stage {min-height:158px;} .ref-card header {padding:7px 10px;} .ref-mission-body {padding:9px;} }
     </style>
   </head>
   <body>
@@ -1796,7 +1860,7 @@
       <!-- START — TEST RUN 04: Cockpit hub (Sample 04 premium). The selected ship on its
            launch pad is the exact gameplay ship (shared drawShipModel canvas render). -->
       <div class="screen on theme-gold" id="scr-start">
-        <div class="ck-scroll">
+        <canvas id="reference-backdrop" width="768" height="1280" aria-hidden="true"></canvas><div class="ck-scroll">
           <div class="ck-topbar">
             <button class="icon-btn music-btn" aria-label="Toggle music">
               <svg class="ico-mon" viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
@@ -1812,20 +1876,16 @@
             </div>
           </div>
 
-          <div class="ck-hudrow">
-            <div class="ck-reticle" aria-hidden="true"></div>
-            <div class="ck-reads">
-              <span class="ck-read"><small>PWR</small><b id="ck-pwr">0</b></span>
-              <span class="ck-read"><small>TARGET</small><b id="ck-wave">WAVE 1</b></span>
-              <span class="ck-read"><small>BOUNTY</small><b class="gold" id="ck-bnty">3,000</b></span>
-              <span class="ck-read"><small>ALT</small><b id="ck-alt">12,480</b></span>
-              <span class="ck-read"><small>VEL</small><b id="ck-vel">0.42c</b></span>
-              <span class="ck-read"><small>TILT</small><b id="ck-mode">SHIP</b></span>
-            </div>
-            <div class="ck-radar" aria-hidden="true"><span class="sweep"></span><span class="blip" style="left:30%;top:26%"></span><span class="blip" style="left:64%;top:58%;animation-delay:.8s"></span></div>
-          </div>
 
-          <div class="ck-stage">
+          <div class="ref-brand"><span>STARFALL</span><small>COMMANDER / <span class="hp-name" id="home-player-name">PLAYER</span></small></div>
+          <div class="ref-shortcuts">
+            <button data-nav="pilots"><span>◉</span>PILOT</button>
+            <button data-nav="campaign" class="ref-warp"><span>✦</span>WARP GATE</button>
+            <button data-nav="quests"><span>⬡</span>CONTRACTS</button>
+            <button data-nav="settings"><span>⚙</span>SETTINGS</button>
+          </div>
+          <section class="ref-card ref-ship"><header><h2>SHIP</h2><button data-nav="hangar">FLEET</button></header>
+            <div class="ref-ship-body"><div class="ck-stage">
             <canvas id="home-planet-cv" width="144" height="144" aria-hidden="true"></canvas>
             <div class="ck-padwrap">
               <div class="hero-zone" aria-hidden="true">
@@ -1843,7 +1903,7 @@
               <div class="ck-leds" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
               <div class="ck-pilotchip">
                 <span class="hp-ava" id="home-ava"></span>
-                <span class="hp-meta"><span class="hp-name" id="home-player-name">PLAYER</span><span class="hp-sub" id="home-profile-sub">TILT · SHIP</span></span>
+                <span class="hp-meta"><span class="hp-sub" id="home-profile-sub">TILT · SHIP</span></span>
               </div>
               <div class="ck-statbar"><small>HULL <b id="ck-hull-num">3/3</b></small><div class="track"><div class="fill" id="ck-hullbar" style="width:75%"></div></div></div>
               <div class="ck-statbar"><small>POWER <b id="ck-pwr-num">0</b></small><div class="track"><div class="fill amber" id="ck-pwrbar" style="width:20%"></div></div></div>
@@ -1856,24 +1916,53 @@
               <div class="ck-sysrow"><small>PILOT</small><b id="ck-sys-pilot">NOVA</b></div>
               <div class="ck-statbar"><small>QUESTS READY <b id="ck-sys-claim">0</b></small><div class="track"><div class="fill" id="ck-claimbar" style="width:0%"></div></div></div>
             </div>
-          </div>
-
-          <div class="ck-bossplate">
+          </div><div class="ref-ship-info"><div class="home-panel">
+            <div class="lo-label">YOUR LOADOUT</div>
+            <div class="glance-grid">
+              <div class="glance-cell"><span class="glance-k">SHIP</span><span class="glance-v" id="home-ship">Vanguard</span></div>
+              <div class="glance-cell"><span class="glance-k">CANNON</span><span class="glance-v" id="home-gun">Pulse</span></div>
+              <div class="glance-cell"><span class="glance-k">DRONE WING</span><span class="glance-v" id="home-drone">Scout</span></div>
+            </div>
+            <div class="pilot-line">
+              <span class="pilot-face" id="home-pilot-face"></span>
+              <span class="pilot-meta"><span class="pilot-name" id="home-pilot-name">NOVA</span><span class="pilot-perk" id="home-pilot-perk">Ace · +15% score</span></span>
+              <span class="pilot-tag">PILOT</span>
+            </div>
+          </div><button class="ref-upgrade" data-nav="engineering">UPGRADE</button></div></div>
+          </section>
+          <section class="ref-card ref-mission"><header><h2>MISSION</h2><button data-nav="campaign">CAMPAIGN</button></header>
+          <div class="ref-mission-body"><div class="ref-world"><canvas id="mission-world" width="192" height="192"></canvas><span>CAMPAIGN<br>5 WAVES</span></div><div class="ref-mission-copy"><div class="ck-bossplate">
             <svg class="skull" viewBox="0 0 24 24"><path d="M12 2a8 8 0 0 0-8 8c0 2.9 1.6 5 3.5 6.3V20a1.5 1.5 0 0 0 1.5 1.5h6A1.5 1.5 0 0 0 16.5 20v-3.7C18.4 15 20 12.9 20 10a8 8 0 0 0-8-8zM8.5 13.5a2 2 0 1 1 2-2 2 2 0 0 1-2 2zm7 0a2 2 0 1 1 2-2 2 2 0 0 1-2 2z"/></svg>
             <span class="bp-meta"><span class="bp-k">NEXT BOSS — <span id="ck-boss-sky">WAVE 1 · DEEP SPACE</span></span><span class="bp-v" id="home-objective">VOID MOTHERSHIP</span></span>
             <span class="bp-bounty"><span id="ck-boss-bounty">3,000</span><small>PTS BOUNTY</small></span>
+          </div><p>Defend the orbital line.<br>Clear the assault. Break the flagship.</p><button data-nav="campaign">SELECT DESTINATION →</button></div></div></section>
+          <div class="ck-launchwrap">
+            <div class="ck-guard" aria-hidden="true"></div>
+            <button class="btn" id="btn-play"><span id="launch-label">PLAY!</span></button>
+            <div id="run-tag"></div>
+          </div><div class="ck-hudrow">
+            <div class="ck-reticle" aria-hidden="true"></div>
+            <div class="ck-reads">
+              <span class="ck-read"><small>PWR</small><b id="ck-pwr">0</b></span>
+              <span class="ck-read"><small>TARGET</small><b id="ck-wave">WAVE 1</b></span>
+              <span class="ck-read"><small>BOUNTY</small><b class="gold" id="ck-bnty">3,000</b></span>
+              <span class="ck-read"><small>ALT</small><b id="ck-alt">12,480</b></span>
+              <span class="ck-read"><small>VEL</small><b id="ck-vel">0.42c</b></span>
+              <span class="ck-read"><small>TILT</small><b id="ck-mode">SHIP</b></span>
+            </div>
+            <div class="ck-radar" aria-hidden="true"><span class="sweep"></span><span class="blip" style="left:30%;top:26%"></span><span class="blip" style="left:64%;top:58%;animation-delay:.8s"></span></div>
           </div>
+
+
+
+
 
           <div class="hub-plate gold" id="unlock-notice" hidden><span class="hp-txt" id="unlock-notice-txt">UNLOCKED</span><button class="hp-btn" id="btn-unlock-ok">GOT IT</button></div>
           <div class="hub-plate" id="resume-plate" hidden><span class="hp-txt" id="resume-txt">RESUME — WAVE 2</span><span class="hp-btns"><button class="hp-btn go" id="btn-resume-run">RESUME</button><button class="hp-btn" id="btn-resume-dismiss">DISCARD</button></span></div>
           <div class="hub-plate" id="firstwin-plate"><span class="hp-txt" id="firstwin-txt">FIRST WIN TODAY: +150 CR — kill any boss</span></div>
           <div class="hub-plate slim" id="unlock-tracker"><span class="hp-txt" id="unlock-tracker-txt">NEXT UNLOCK — SOLARIS · 0/1 CAMPAIGN VICTORY</span></div>
 
-          <div class="ck-launchwrap">
-            <div class="ck-guard" aria-hidden="true"></div>
-            <button class="btn" id="btn-play"><span id="launch-label">LAUNCH</span></button>
-            <div id="run-tag"></div>
-          </div>
+
 
           <div class="ck-keygrid" role="navigation" aria-label="Cockpit sections">
             <button class="ck-gkey" data-nav="hangar">HANGAR</button>
@@ -1913,19 +2002,7 @@
             </div>
           </div>
 
-          <div class="home-panel">
-            <div class="lo-label">YOUR LOADOUT</div>
-            <div class="glance-grid">
-              <div class="glance-cell"><span class="glance-k">SHIP</span><span class="glance-v" id="home-ship">Vanguard</span></div>
-              <div class="glance-cell"><span class="glance-k">CANNON</span><span class="glance-v" id="home-gun">Pulse</span></div>
-              <div class="glance-cell"><span class="glance-k">DRONE WING</span><span class="glance-v" id="home-drone">Scout</span></div>
-            </div>
-            <div class="pilot-line">
-              <span class="pilot-face" id="home-pilot-face"></span>
-              <span class="pilot-meta"><span class="pilot-name" id="home-pilot-name">NOVA</span><span class="pilot-perk" id="home-pilot-perk">Ace · +15% score</span></span>
-              <span class="pilot-tag">PILOT</span>
-            </div>
-          </div>
+
 
           <div id="pilot-dock" role="group" aria-label="Choose your pilot">
             <button class="dock-pilot sel" data-pilot="nova"><span class="dock-name">NOVA</span></button>
@@ -4707,6 +4784,7 @@
         viewScale = canvas.width / W;
       }
       window.addEventListener("resize", fitCanvas);
+      new ResizeObserver(fitCanvas).observe(canvas.parentElement);
 
       /* Ribbon trail — a fading tapered polyline through recent exhaust points */
       function drawTrail(points, color, maxW, life) {
@@ -4766,121 +4844,48 @@
         moon:    { seed: 6719, atmo: "207,212,220", base: ["#ececef", "#9c9ca6", "#454550"], land: "#7c7c88", land2: "#b9b9c2", ice: 0, clouds: 0, craters: 46 }
       };
       var PLANET_CACHE = {};
+      // Cached spherical material pass: coherent terrain, diffuse/ambient lighting,
+      // ocean specular, cloud relief and a grazing-angle atmosphere. No live pixel work.
       function buildPlanetSprite(kind, size) {
         var def = PLANET_DEFS[kind] || PLANET_DEFS.deep;
-        var cv = document.createElement("canvas"); cv.width = size; cv.height = size;
-        var c = cv.getContext("2d"), R = size / 2, rng = seededRand(def.seed); // seed is size-independent: the sky planet and the world below are the same world at every scale
-        var lx = R - R * 0.36, ly = R - R * 0.40; // light from the upper-left, everywhere in the game
-        c.save();
-        c.beginPath(); c.arc(R, R, R - 1, 0, 6.283); c.clip();
-        // base sphere — radial light falloff already gives the ball its roundness
-        var bg2 = c.createRadialGradient(lx, ly, R * 0.08, R, R, R * 1.18);
-        bg2.addColorStop(0, def.base[0]); bg2.addColorStop(0.52, def.base[1]); bg2.addColorStop(1, def.base[2]);
-        c.fillStyle = bg2; c.fillRect(0, 0, size, size);
-        if (def.gas) { // banded gas giant — wavy latitude bands, one storm spot
-          var y = 0, bi = 0;
-          while (y < size) {
-            var bh = R * (0.16 + rng() * 0.22);
-            c.fillStyle = def.bands[bi % def.bands.length]; c.globalAlpha = 0.85;
-            c.beginPath(); c.moveTo(0, y);
-            for (var bx = 0; bx <= size; bx += size / 8) c.lineTo(bx, y + Math.sin(bx * 0.05 + bi * 2.2) * R * 0.03);
-            c.lineTo(size, y + bh); c.lineTo(0, y + bh); c.closePath(); c.fill();
-            y += bh; bi++;
-          }
-          c.globalAlpha = 0.5; c.fillStyle = "#eafffa";
-          c.beginPath(); c.ellipse(R * 1.28, R * 1.18, R * 0.20, R * 0.10, -0.2, 0, 6.283); c.fill();
-          c.globalAlpha = 1;
-        } else {
-          // continents / maria — clusters of overlapping land blobs, kept translucent
-          // so the ocean shading shows through and the land reads as terrain, not stickers
-          for (var ci = 0; ci < 13; ci++) {
-            var cx0 = R + (rng() - 0.5) * R * 1.5, cy0 = R + (rng() - 0.5) * R * 1.5;
-            c.fillStyle = rng() > 0.45 ? def.land : def.land2; c.globalAlpha = 0.34 + rng() * 0.26;
-            for (var cb = 0; cb < 7; cb++) { c.beginPath(); c.arc(cx0 + (rng() - 0.5) * R * 0.42, cy0 + (rng() - 0.5) * R * 0.34, R * (0.06 + rng() * 0.13), 0, 6.283); c.fill(); }
-          }
-          c.globalAlpha = 1;
-          // fine mottling — a second, darker grain pass breaks the blobs into terrain
-          for (var mi = 0; mi < 26; mi++) {
-            c.fillStyle = mi % 2 ? "rgba(0,0,0,0.07)" : "rgba(255,255,255,0.05)";
-            c.beginPath(); c.ellipse(R + (rng() - 0.5) * R * 1.6, R + (rng() - 0.5) * R * 1.6, R * (0.04 + rng() * 0.09), R * (0.02 + rng() * 0.05), rng() * 3, 0, 6.283); c.fill();
-          }
-          // craters — dark bowl + one lit rim arc
-          for (var ki = 0; ki < (def.craters || 0) * 2; ki++) {
-            var kx = R + (rng() - 0.5) * R * 1.66, ky = R + (rng() - 0.5) * R * 1.66, kr = R * (0.02 + rng() * 0.05);
-            if ((kx - R) * (kx - R) + (ky - R) * (ky - R) > R * R * 0.8) continue;
-            c.fillStyle = "rgba(0,0,0,0.20)"; c.beginPath(); c.arc(kx, ky, kr, 0, 6.283); c.fill();
-            c.strokeStyle = "rgba(255,255,255,0.28)"; c.lineWidth = Math.max(1, kr * 0.22);
-            c.beginPath(); c.arc(kx, ky, kr, 3.6, 5.4); c.stroke();
-          }
-          if (def.lava) { // glowing volcanic fissures
-            c.strokeStyle = "#ffb35c"; c.shadowColor = "#ff7a1f"; c.shadowBlur = size * 0.03; c.lineWidth = Math.max(1.2, size * 0.008);
-            for (var li = 0; li < 7; li++) {
-              var px = R + (rng() - 0.5) * R * 1.3, py = R + (rng() - 0.5) * R * 1.3;
-              c.beginPath(); c.moveTo(px, py);
-              for (var ls = 0; ls < 4; ls++) { px += (rng() - 0.5) * R * 0.3; py += (rng() - 0.5) * R * 0.3; c.lineTo(px, py); }
-              c.stroke();
-            }
-            c.shadowBlur = 0;
-          }
-          if (def.fissures) { // eclipse world — faint violet energy veins
-            c.strokeStyle = "rgba(216,164,255,0.65)"; c.lineWidth = Math.max(1, size * 0.006);
-            for (var fi = 0; fi < 6; fi++) {
-              var fx = R + (rng() - 0.5) * R * 1.2, fy = R + (rng() - 0.5) * R * 1.2;
-              c.beginPath(); c.moveTo(fx, fy);
-              for (var fs = 0; fs < 3; fs++) { fx += (rng() - 0.5) * R * 0.34; fy += (rng() - 0.5) * R * 0.34; c.lineTo(fx, fy); }
-              c.stroke();
-            }
-          }
-          if (def.cracks) { // cryo — bright ice fractures
-            c.strokeStyle = "rgba(240,252,255,0.55)"; c.lineWidth = Math.max(1, size * 0.005);
-            for (var qi = 0; qi < 9; qi++) {
-              var qx = R + (rng() - 0.5) * R * 1.4, qy = R + (rng() - 0.5) * R * 1.4;
-              c.beginPath(); c.moveTo(qx, qy);
-              for (var qs = 0; qs < 3; qs++) { qx += (rng() - 0.5) * R * 0.36; qy += (rng() - 0.5) * R * 0.36; c.lineTo(qx, qy); }
-              c.stroke();
-            }
-          }
-          // polar caps — irregular white, heavier on the cryo world
-          if (def.ice > 0) {
-            c.fillStyle = "rgba(248,252,255,0.92)";
-            for (var pi2 = 0; pi2 < 9; pi2++) { c.beginPath(); c.arc(R + (rng() - 0.5) * R * 1.1, R * 0.06 + rng() * R * 0.07, R * (0.08 + rng() * 0.12) * def.ice + 2, 0, 6.283); c.fill(); }
-            c.globalAlpha = 0.8;
-            for (var pj = 0; pj < 6; pj++) { c.beginPath(); c.arc(R + (rng() - 0.5) * R * 1.0, size - R * 0.03 - rng() * R * 0.04, R * (0.05 + rng() * 0.07) * def.ice + 2, 0, 6.283); c.fill(); }
-            c.globalAlpha = 1;
-          }
-          // cloud swirls — soft white streaks drifting over the surface
-          if (def.clouds > 0) {
-            c.fillStyle = "#ffffff";
-            for (var wi = 0; wi < 12; wi++) {
-              c.globalAlpha = (0.05 + rng() * 0.13) * def.clouds + 0.03;
-              c.beginPath(); c.ellipse(R + (rng() - 0.5) * R * 1.5, R + (rng() - 0.5) * R * 1.5, R * (0.16 + rng() * 0.24), R * (0.035 + rng() * 0.05), (rng() - 0.5) * 0.7, 0, 6.283); c.fill();
-            }
-            c.globalAlpha = 1;
-          }
+        var cv=document.createElement("canvas");cv.width=cv.height=size;
+        var c=cv.getContext("2d"), pixels=c.createImageData(size,size), data=pixels.data;
+        var seed=def.seed, radius=size*.485;
+        function hash(x,y) { var v=Math.imul(x,374761393)^Math.imul(y,668265263)^seed;v=Math.imul(v^(v>>>13),1274126177);return ((v^(v>>>16))>>>0)/4294967295; }
+        function noise(x,y) {
+          var ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy;
+          fx=fx*fx*(3-2*fx);fy=fy*fy*(3-2*fy);
+          var a=hash(ix,iy),b=hash(ix+1,iy),d=hash(ix,iy+1),e=hash(ix+1,iy+1);
+          return a+(b-a)*fx+(d-a)*fy+(a-b-d+e)*fx*fy;
         }
-        // THE TERMINATOR — night falls off toward the lower-right, away from the light
-        var tg = c.createLinearGradient(lx, ly, R + R * 0.95, R + R * 0.9);
-        tg.addColorStop(0.42, "rgba(2,4,12,0)"); tg.addColorStop(0.72, "rgba(2,4,12,0.42)"); tg.addColorStop(1, "rgba(1,2,8,0.88)");
-        c.fillStyle = tg; c.fillRect(0, 0, size, size);
-        var ng2 = c.createRadialGradient(R + R * 0.52, R + R * 0.46, R * 0.1, R + R * 0.52, R + R * 0.46, R * 1.05);
-        ng2.addColorStop(0, "rgba(1,2,8,0.34)"); ng2.addColorStop(1, "rgba(1,2,8,0)");
-        c.fillStyle = ng2; c.fillRect(0, 0, size, size);
-        // ocean / ice specular — a soft glint where the light strikes
-        if (!def.gas) {
-          var sp = c.createRadialGradient(lx, ly, 1, lx, ly, R * 0.55);
-          sp.addColorStop(0, "rgba(255,255,255,0.20)"); sp.addColorStop(1, "rgba(255,255,255,0)");
-          c.fillStyle = sp; c.fillRect(0, 0, size, size);
+        function terrain(x,y) { return noise(x,y)*.52+noise(x*2.03,y*2.03)*.26+noise(x*4.11,y*4.11)*.14+noise(x*8.21,y*8.21)*.08; }
+        var atmo=def.atmo.split(",").map(Number);
+        for(var py=0;py<size;py++)for(var px=0;px<size;px++) {
+          var nx=(px-size/2)/radius,ny=(py-size/2)/radius,q=nx*nx+ny*ny;
+          if(q>=1)continue;
+          var nz=Math.sqrt(1-q),u=Math.atan2(nx,nz)*3+12,v=Math.asin(ny)*4+13;
+          var n=terrain(u,v),fine=noise(u*42,v*42),day=Math.max(0,-nx*.48-ny*.4+nz*.78);
+          var light=.035+Math.pow(day,.85)*.94,r=0,g=0,b=0,ocean=false;
+          if(kind==="deep") {
+            ocean=n<.52;r=ocean?8:44+n*56;g=ocean?30:59+n*70;b=ocean?64:39+n*31;
+            if(Math.abs(ny)>.84+n*.06){r=205;g=227;b=233;}
+          } else if(kind==="ember") {r=75+n*96;g=37+n*48;b=18+n*22;}
+          else if(kind==="cryo") {r=95+n*139;g=139+n*104;b=165+n*85;}
+          else if(kind==="rift") {var bands=Math.sin(ny*30+n*8)*.5+.5;r=24+bands*90;g=76+bands*120;b=87+bands*101;}
+          else if(kind==="eclipse") {r=33+n*63;g=20+n*28;b=54+n*76;}
+          else {r=83+n*119;g=85+n*115;b=94+n*108;}
+          var relief=.84+fine*.26;
+          r*=light*relief;g*=light*relief;b*=light*relief;
+          if(ocean) {var spec=Math.pow(Math.max(0,-nx*.24-ny*.22+nz*.945),70)*day*125;r+=spec;g+=spec;b+=spec;}
+          var cloud=terrain(u*2.2+7,v*2.2+9);
+          if(def.clouds&&cloud>.57){var ca=Math.min(.8,(cloud-.57)*7)*def.clouds*day;r=r*(1-ca)+228*ca;g=g*(1-ca)+238*ca;b=b*(1-ca)+248*ca;}
+          if(kind==="ember"||kind==="eclipse") {var fiss=Math.abs(noise(u*15,v*15)-.5);if(fiss<.018&&n>.52){var lava=(1-fiss/.018)*.85;r+=200*lava;g+=58*lava;b+=12*lava;}}
+          var rim=Math.pow(1-nz,5)*Math.min(1,day*2)*.65;
+          var i=(py*size+px)*4;data[i]=Math.min(255,r+atmo[0]*rim);data[i+1]=Math.min(255,g+atmo[1]*rim);data[i+2]=Math.min(255,b+atmo[2]*rim);data[i+3]=Math.min(1,(1-q)*radius)*255;
         }
-        c.restore();
-        // atmosphere rim — a thin lit edge on the day side only
-        c.strokeStyle = "rgba(" + def.atmo + ",0.85)"; c.lineWidth = Math.max(1.4, size * 0.012);
-        c.shadowColor = "rgba(" + def.atmo + ",0.9)"; c.shadowBlur = size * 0.05;
-        c.beginPath(); c.arc(R, R, R - c.lineWidth * 0.7, 2.35, 5.65); c.stroke();
-        c.shadowBlur = 0;
-        c.strokeStyle = "rgba(224,246,255,0.7)"; c.lineWidth = Math.max(0.7, size * 0.004);
-        c.beginPath(); c.arc(R, R, R - 2, 3.4, 4.9); c.stroke();
-        c.strokeStyle = "rgba(" + def.atmo + ",0.28)"; c.lineWidth = Math.max(1, size * 0.006);
-        c.beginPath(); c.arc(R, R, R - 1, 5.65, 2.35); c.stroke();
+        c.putImageData(pixels,0,0);
+        c.strokeStyle="rgba("+def.atmo+",.5)";c.lineWidth=size*.006;c.shadowColor="rgb("+def.atmo+")";c.shadowBlur=size*.035;
+        c.beginPath();c.arc(size/2,size/2,radius,2.9,5.7);c.stroke();
         return cv;
       }
       function planetSprite(kind, size) {
@@ -5018,6 +5023,20 @@
           c.fillStyle = "rgba(3,13,24,0.48)"; c.fillRect(h * 0.44, panelY, h * 0.35, 1.1);
           c.fillStyle = "rgba(206,239,255,0.32)"; c.fillRect(h * 0.44, panelY + 1.1, h * 0.35, 0.5);
         }
+        // Machined armour tiles and edge illumination, baked in the shared hull cache.
+        for (var tileY = -22; tileY < 16; tileY += 4) {
+          for (var tileSide = -1; tileSide <= 1; tileSide += 2) {
+            var tileX = tileSide < 0 ? -h + 1 : 2.4;
+            var tileW = Math.max(1, h - 3.4);
+            c.fillStyle = tileSide < 0 ? "rgba(200,231,245,.14)" : "rgba(0,8,20,.25)";
+            c.fillRect(tileX,tileY,tileW,3.3);
+            c.strokeStyle="rgba(229,247,255,.28)";c.lineWidth=.3;
+            c.strokeRect(tileX,tileY,tileW,3.3);
+            c.fillStyle="rgba(2,12,23,.7)";c.fillRect(tileX+.6,tileY+.7,.5,.5);
+          }
+        }
+        c.strokeStyle="rgba(212,242,255,.72)";c.lineWidth=.45;
+        c.beginPath();c.moveTo(-h*.2,art.nose+5);c.lineTo(-h*.35,14);c.stroke();
         // panel tone variation + seeded weathering scuffs — same marks every frame
         var wr = seededRand(art.decal === "07" ? 707 : art.decal === "13" ? 1313 : 303);
         for (var wi = 0; wi < 5; wi++) {
@@ -6520,6 +6539,24 @@
          planet sprite (ember world: craters, lava fissures, terminator,
          atmosphere rim), painted once onto its own canvas. The sun beside
          it stays a sun. */
+      var homeBackdropKey = "";
+      function paintReferenceBackdrop() {
+        var key = LOADOUT.ship + shipColorHex() + thrusterHex() + LAUNCH.sector;
+        if (homeBackdropKey === key) return;
+        homeBackdropKey = key;
+        var cv = $("reference-backdrop"), c = cv.getContext("2d");
+        c.setTransform(1,0,0,1,0,0);
+        var g = c.createLinearGradient(0,0,768,1280);
+        g.addColorStop(0,"#142b2d"); g.addColorStop(.3,"#9c8538"); g.addColorStop(1,"#393e29");
+        c.fillStyle=g; c.fillRect(0,0,768,1280);
+        c.globalAlpha=.6; c.drawImage(nebulaSprite(ENVS[1]),-260,-100,1350,1450); c.globalAlpha=1;
+        drawPlanetAt(c,690,180,330,"ember",0);
+        c.save(); c.translate(310,660); c.rotate(-.6); c.scale(13,13);
+        drawShipModel(c,{ship:LOADOUT.ship,time:1.4,tip:shipColorHex(),thrust:thrusterHex(),blaster:blasterHex(),noShadow:true}); c.restore();
+        var shade=c.createLinearGradient(0,0,0,1280); shade.addColorStop(0,"rgba(0,15,18,.1)"); shade.addColorStop(1,"rgba(0,12,18,.55)");
+        c.fillStyle=shade;c.fillRect(0,0,768,1280);
+        var world=$("mission-world");drawPlanetAt(world.getContext("2d"),96,96,78,["deep","ember","rift","cryo","eclipse"][(LAUNCH.sector || 1)-1],0);
+      }
       function paintHomePlanet(t) {
         var cv = document.getElementById("home-planet-cv");
         if (!cv) return;
@@ -6532,7 +6569,7 @@
         var startScr = $("scr-start"), setScr = $("scr-settings");
         if (!startScr || !setScr) return;
         var t = performance.now() / 1000;
-        if (startScr.classList.contains("on")) { var hc = $("hero-canvas"); if (hc) paintShipCanvas(hc, t, 0.44); paintHomePlanet(t); }
+        if (startScr.classList.contains("on")) { var hc = $("hero-canvas"); if (hc) paintShipCanvas(hc, t, 0.44); paintHomePlanet(t); paintReferenceBackdrop(); }
         var campScr = $("scr-campaign");
         if (campScr && campScr.classList.contains("on")) paintCampaignPlanets(t);
         var loScr = $("scr-loadout");
@@ -6824,7 +6861,7 @@
           if (si2 < stages.length) { if (lbl) lbl.textContent = stages[si2] + "…"; return; }
           clearInterval(iv);
           btn.classList.remove("spooling");
-          if (lbl) lbl.textContent = "LAUNCH";
+          if (lbl) lbl.textContent = "PLAY!";
           launchSpooling = false;
           startRun(1);
         }, 230);
