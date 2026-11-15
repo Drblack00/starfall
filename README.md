@@ -14,7 +14,80 @@ STARFALL is an original space shooter by Drblack Ventures: five skies, five boss
 
 The game is a single self-contained HTML file (`index.html`) — no build step. This repo is deployed as a static site on Render (see `render.yaml`).
 
-## Home and combat presentation (build 3D-5)
+## Command deck and equipment bays (build 3D-6)
+
+The home screen has a larger live ship display, a cached astronomical backdrop,
+restrained blue/gold panels and four primary destinations: **Hangar, Blasters,
+Drones and Settings**. It still ends at Play, with no footer modules or links
+below the launch button. Compact layouts keep Play visible at phone widths.
+
+- **Hangar:** ship fleet and comparison; contextual Appearance and Engineering
+  entry points. Appearance owns ship finish and engine trails.
+- **Blasters:** the three existing cannons, their live 3D inspection view, bolt
+  color and smart-bomb information.
+- **Drones:** the six existing escorts, their live 3D inspection view and their
+  attached cannon models.
+- **Settings:** motion/tilt access, audio, display/accessibility and help/credits.
+- **Pilot:** player name/avatar and pilot perks, reached from the home profile.
+  Campaign is reached through Deployment; Contracts through its header.
+
+Each equipment view reuses the same native GPU surface as the ship preview and
+flight player. Static catalogue art is cached; section changes ease into view.
+There are still only two GPU contexts and one animation scheduler. Weapon and
+ship finish controls each have one canonical location; pause retains quick audio
+controls and routes to Settings for preferences.
+
+Three additional Quaternius **Sci-Fi Modular Gun Pack** CC0 barrel models are
+embedded and mounted on the existing drone hulls: Barrel_AR_1 (240 triangles),
+Barrel_Grenade_1 (240) and Barrel_Sniper_1 (239). Pulse-style escorts use the first,
+Guardian the second and Phantom the third. These are visual adaptations of existing
+abilities, not new weapon stats, slots or unlocks. The drone hull and barrel are
+combined once into cached indexed rigs, shared by card art, live inspection and
+combat, with one draw per drone type. Original hull geometry is retained.
+
+Lighting now uses a warmer key, cooler fill and soft sky reflection on textured
+metal; existing hull textures, canopy highlights and rim lighting remain. The
+changes apply to the same real-time mesh renderer across menus and flight. This
+is an optimized top-down mobile renderer; the low-poly assets and current lighting
+are not a photorealistic AAA/PBR pipeline.
+
+**Balance changes: none.** All 34 frozen functions and eight blocks still match
+main; five assault/boss waves, unique boss kits, collision radii, pools and swept
+collisions remain intact. No framework, build step or runtime model downloads.
+Source licenses, modifications and pinned file hashes are documented in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and the embedded metadata.
+
+Optional authoring adds the pinned modular pack directory as the final argument:
+
+```sh
+blender --background --python tools/export-combat.py -- QUATERNIUS_SHIPS KENNEY_PACKS /tmp/combat.json QUATERNIUS_MODULAR_GUNS
+python3 tools/pack-combat.py /tmp/combat.json index.html /tmp/combat-assets.json
+```
+
+Verification: served locally and ran `CHROMIUM_PATH=/usr/bin/chromium node
+tests/verify.cjs`; all checks green, including frozen balance, five boss simulations,
+WebGL1/WebGL2, context recovery, equipment rig/material identity, phone layouts,
+section scroll reset, zero steady preview copies and paused customization.
+
+The input-driven native WebGL1 playthrough cleared an assault and Mothership in
+61.4 seconds with all four hull points, charge/special fire, pause/resume and no
+browser errors. Frame intervals across startup/navigation/screenshots and play:
+16.7 ms median, 33.4 ms p95, 733.3 ms maximum. Final changes after that playthrough
+only corrected live equipment-preview colors and menu scroll reset; flight and
+balance were unchanged and the full suite was rerun.
+
+A 600-frame home sample against main `dda51dc` measured previous/new median
+16.7/16.7 ms, p95 16.8/16.7 ms and maximum 16.8/66.7 ms; both made zero steady
+GPU-to-2D preview copies. The crowded boss/twelve-enemy/maximum-equipment sample
+retains 19 draws and 331 instances at the same adaptive world scale. Two comparison orders produced these baseline/new frame median and p95 values:
+33.3/50.0 vs 33.3/50.1 ms, then 16.7/50.0 vs 16.7/50.0 ms. JS median/p95 was
+0.6/2.1 vs 0.6/2.9 ms, then 0.5/1.2 vs 0.6/1.3 ms. Software-browser variability
+and p95 above 16.7 ms remain; no locked-60fps claim. Detailed maximum timings are
+recorded in the PR.
+Physical iPhone Safari performance and sustained mobile 60fps remain unverified.
+HTML is approximately **4.24 MB raw / 1.88 MB gzip**.
+
+## Home and combat presentation (build 3D-5, historical)
 
 Home now ends at **Play**. Its duplicate lower navigation, pilot strip, decorative
 readouts and footer have been removed. Fleet and Upgrade stay on the ship card;

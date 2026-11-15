@@ -94,3 +94,32 @@ by either creator or mirror maintainer is implied.
 The blaster round is normalized to a unit projectile with a 12-triangle budget,
 emissive material, and reused spark-batch rendering. Mounted weapon geometry is
 combined with the unchanged hull geometry into cached rigs to avoid extra draws.
+
+
+# Drone-mounted cannons (build 3D-6)
+
+**Quaternius — [Sci-Fi Modular Gun Pack](https://quaternius.com/packs/scifimodularguns.html)**,
+licensed [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/).
+The official pack page explicitly permits personal and commercial projects.
+Downloaded from the same pinned [Quaternius showcase mirror](https://github.com/trebeljahr/quaternius-showcase/tree/0128ca510d653bb04d6d1e4885bd8890b5050b4f/public/glb/modular_sci_fi_guns_pack),
+revision `0128ca510d653bb04d6d1e4885bd8890b5050b4f`. Its license inventory also identifies
+this pack as Quaternius CC0. No mirror application code is included.
+
+| Role | Source file | Triangles | Original GLB SHA-256 |
+| --- | --- | ---: | --- |
+| mount:pulse | Barrel_AR_1.glb | 240 | `d31a8aed1067745a8ba7dfd962fd626a2aa9ca55a8f568baac812bcdef09876a` |
+| mount:scatter | Barrel_Grenade_1.glb | 240 | `0c3f2a0865141ebde4571c04beaf144a5592e7fcc4b5e88367b9e334e03af81f` |
+| mount:lance | Barrel_Sniper_1.glb | 239 | `2b4b5bf422215b02cd3c7d56434c3a02120165233ed733f38d4b65423dd2e2a2` |
+
+Modifications: triangulated/decimated to at most 240 triangles, converted source
+materials into neutral metal/colored-panel vertex channels, normalized to a
+10-unit barrel, rotated the original +X barrel to local +Y (craft nose), corrected
+face winding, quantized into indexed 16-bit geometry. Each model is scaled/placed
+on existing drone hulls and combined into cached rigs at load/first use. The same
+rig is shown in catalogue art, live Drone Bay and combat. Drone counts, projectile
+origins, rates, damage and abilities are unchanged. Original hashes and filenames
+also appear in `combat-assets`; model/source credit is in Settings.
+
+Research also rechecked the official Kenney Blaster Kit and Space Kit CC0 pages;
+the existing three ship-mounted cannons and six drone hulls remain from those
+packs. No additional license-restricted or account-gated models were included.
