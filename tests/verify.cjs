@@ -29,7 +29,7 @@ for (const [kind, entries] of Object.entries({
   }
 }
 console.log(
-  "Frozen balance: 34 combat/economy functions and 8 data blocks match main.",
+  "Frozen balance: combat/economy functions and data blocks match documented shipped-byte baselines.",
 );
 (async () => {
   const b = await chromium.launch({
