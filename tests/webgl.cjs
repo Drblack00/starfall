@@ -30,6 +30,8 @@ module.exports = async function verifyWebGL(browser, page, source) {
       t.startSector(i+1);t.spawnBoss();t.g.boss.state='fight';t.g.boss.y=150;t.render();
       const key='boss:'+kinds[i],mesh=w.getGeometry(key);counts.add(mesh.count);
       check(w.renderer.batches[key].source===mesh,'Boss flight uses shared geometry');
+      let front=-Infinity;for(let n=2;n<mesh.vertices.length;n+=12)front=Math.max(front,mesh.vertices[n]*1.22);
+      check(w.renderer.batches.core.records[14]>front,'Boss weak-point marker sits above its hull');
       check(w.thumbnail(key,'#aaffff','#aaffff',1,0),'Boss preview '+key);
     }
     check(counts.size>=4,'Boss meshes remain distinct');
