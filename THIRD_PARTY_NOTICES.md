@@ -5,7 +5,7 @@ Licensed under [Creative Commons Attribution](https://creativecommons.org/licens
 
 The user supplied the OBJ and grill texture in `nitro-blade.zip`. The original OBJ references a material library that was absent from that archive. This adaptation reconstructs metal, glass, and emissive materials using its named material groups, retains the supplied grill texture, normalizes the mesh, and triangulates/decimates it for the browser. Home and flight use the same 5,068-triangle game-ready mesh, with indexed vertices and outward face winding. The older 1,881-triangle mesh remains embedded as source data but is no longer substituted for the player during flight. Vertex channels are linearly packed into 16-bit values for decoding on browsers without stream decompression; position quantization error is below 0.001 rendering units. Both meshes are embedded in `index.html`, along with the texture; the original archive is not required at runtime.
 
-This model is used for the Vanguard visual. Drones and the five bosses use game-authored procedural geometry. The other eleven player ships use the Quaternius models listed below. No endorsement by the original creator is implied.
+This model is used for the Vanguard visual. The five bosses use game-authored procedural geometry. Drones, weapons and ordnance use the Kenney models listed below. The other eleven player ships use the Quaternius models listed below. No endorsement by the original creator is implied.
 
 # Ultimate Spaceships Pack
 
@@ -44,3 +44,53 @@ source color textures to 512×512 JPEG; added shader paint tint, lighting and pe
 engine anchors. Both mesh data and textures are embedded in `index.html`. Model
 names are credited here; existing STARFALL ship names, stats and career unlocks stay
 unchanged. No endorsement by Quaternius or the mirror maintainer is implied.
+
+# Combat models and equipment (build 3D-5)
+
+Six Quaternius hull adaptations supply the enemy fleet, retaining the original
+creator's CC0 license and the pinned source revision above. These adaptations
+have 600 triangles each, outward normals and normalized/packed indexed vertices.
+Their source UVs are remapped into one guttered 1024×512 atlas derived from the
+pack's color textures. Charger/elite cue overlays are game-authored.
+
+Additional models by **Kenney** come from the official
+[Space Kit](https://kenney.nl/assets/space-kit) and
+[Blaster Kit](https://kenney.nl/assets/blaster-kit), both licensed
+[CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/) for personal
+and commercial use. Credit and source links are available in Settings → model credits.
+
+Downloaded from [Hidencod/tge-assets](https://github.com/Hidencod/tge-assets/tree/3ddcc695adbba9fb918cf31b7c139b3f95b76910/packs),
+revision `3ddcc695adbba9fb918cf31b7c139b3f95b76910`. The mirror identifies its model
+library as Kenney CC0 assets; no library/editor application code is included.
+
+| Game role | Source model / creator | Triangles |
+| --- | --- | ---: |
+| enemy:diver | Quaternius / Dispatcher | 600 |
+| enemy:weaver | Quaternius / Spitfire | 600 |
+| enemy:charger | Quaternius / Striker | 600 |
+| enemy:sentinel | Quaternius / Omen | 600 |
+| enemy:lancer | Quaternius / Zenith | 600 |
+| enemy:bulwark | Quaternius / Challenger | 600 |
+| drone:scout | Kenney / craft-speedera | 280 |
+| drone:wasp | Kenney / craft-speederb | 270 |
+| drone:twin | Kenney / craft-speederc | 292 |
+| drone:phantom | Kenney / craft-speederd | 322 |
+| drone:guardian | Kenney / craft-miner | 384 |
+| drone:swarm | Kenney / craft-racer | 280 |
+| equipment:pulse | Kenney / blaster-a | 470 |
+| equipment:scatter | Kenney / blaster-h | 296 |
+| equipment:lance | Kenney / blaster-e | 638 |
+| bomb | Kenney / grenade-a | 96 |
+| round | Kenney / bullet-foam-tip | 12 |
+
+Modifications: applied node transforms, normalized axes and display dimensions,
+triangulated and budgeted geometry, reconstructed vertex/material colors for
+Kenney equipment, mapped colored panels to the game's livery, added weapon mounts
+and ordnance animation, and packed indexed geometry into portable 16-bit data.
+Original GLB SHA-256 hashes, source filenames and revisions are in `combat-assets`.
+No original archives or model downloads are required at runtime. No endorsement
+by either creator or mirror maintainer is implied.
+
+The blaster round is normalized to a unit projectile with a 12-triangle budget,
+emissive material, and reused spark-batch rendering. Mounted weapon geometry is
+combined with the unchanged hull geometry into cached rigs to avoid extra draws.

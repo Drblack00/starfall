@@ -30,7 +30,11 @@ module.exports = async function verifyWebGL(browser, page, source) {
     t.startRun(1);t.g.player.invuln=10000;t.render();
     check(w.metrics.mode==='webgl2','3D flight renderer active');
     const hull=w.foreground.batches['ship:vanguard'];
-    check(hull.source===high,'Flight uses the exact detailed preview hull, not the coarse LOD');
+    check(hull.source.hull===high,'Flight uses the exact detailed preview hull, not the coarse LOD');
+    check(hull.source.hullCount===high.count&&hull.source.weapon===w.getGeometry('equipment:'+t.g.player.gunType),'Combined rig retains the original hull and equipped cannon');
+    for(let n=0;n<high.vertices.length;n+=137)check(hull.source.vertices[n]===high.vertices[n],'Combined rig preserves hull vertex data');
+    for(let n=0;n<high.indices.length;n+=127)check(hull.source.indices[n]===high.indices[n],'Combined rig preserves hull topology');
+    check(w.getRig(t.g.player.ship,t.g.player.gunType)===hull.source,'Steady ship/weapon rig is reused without per-frame rebuilding');
     w.thumbnail('vanguard','#ffffff','#88ddff',1,0);t.render();
     check(w.preview.batches['ship:vanguard'].source===hull.source,'Home and flight share the same indexed geometry');
     check(hull.records[19]>=1,'Invulnerability highlight keeps the hull opaque');
@@ -62,6 +66,7 @@ module.exports = async function verifyWebGL(browser, page, source) {
     t.g.time=.1;t.render();check(w.renderer.batches.glow.count===bright-1,'Charger aim cue blinks at legacy phase');
     charger.state='rush';charger.vx=160;charger.vy=200;t.render();
     check(Math.abs(w.renderer.batches['enemy:charger'].records[1])>.1,'Charger hull rotates during rush');
+    {const a=w.renderer.batches['enemy:charger'].records;check(Math.abs(a[4]/-a[5]-charger.vx/charger.vy)<.001,'Charger nose follows its real rush velocity');}
     charger.state='aim';charger.elite=true;t.render();
     check(Math.abs(Math.abs(w.renderer.batches['enemy:charger'].records[0])-1.28)<.001,'Elite charger keeps enlarged hull');
     check(w.renderer.batches.cube.count>0,'Elite charger armour band rendered');
@@ -112,9 +117,9 @@ module.exports = async function verifyWebGL(browser, page, source) {
       const gpu=w.foreground,draw=gpu.drawInstances,materials=[];
       gpu.drawInstances=function(...args){materials.push(this.gl.getUniform(this.program,this.textured));return draw(...args)};
       t.g.player.ship=asset.ship;t.LOADOUT.ship=asset.ship;t.render();gpu.drawInstances=draw;
-      check(materials[0]===1&&materials.at(-1)===0,'Imported hull takes fast material path and effects reset it '+asset.ship);
+      check(materials.includes(1)&&materials.at(-1)===0,'Imported hull takes fast material path and effects reset it '+asset.ship);
       const batch=w.foreground.batches['ship:'+asset.ship];
-      check(batch.source===mesh&&batch.textureReady&&batch.texture,'Textured imported hull submitted in live flight '+asset.ship);
+      check(batch.source.hull===mesh&&batch.textureReady&&batch.texture,'Textured imported hull submitted in live flight '+asset.ship);
       const gl=w.foreground.gl,pixels=new Uint8Array(gl.drawingBufferWidth*gl.drawingBufferHeight*4);gl.readPixels(0,0,gl.drawingBufferWidth,gl.drawingBufferHeight,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
       let visible=0,hash=2166136261;for(let n=0;n<pixels.length;n+=4){if(pixels[n+3]>80&&pixels[n]+pixels[n+1]+pixels[n+2]>100)visible++;hash=Math.imul(hash^pixels[n],16777619);}
       check(visible>200,'Visible imported model pixels in gameplay '+asset.ship);signatures.add(hash);
@@ -135,6 +140,29 @@ module.exports = async function verifyWebGL(browser, page, source) {
     t.render();
     return 'Imported fleet: eleven unique textured hulls, exact home/flight geometry, visible pixels, reusable buffers/textures passed';
   }));
+  console.log(await page.evaluate(async()=>{
+    const w=t.SF3D,check=(x,message)=>{if(!x)throw Error(message)};await w.ready;
+    check(w.combat.models.length===17&&w.combat.license==='CC0-1.0','Seventeen licensed combat model adaptations');
+    t.startRun(1);t.g.spawnQueue=[];t.g.waveState='active';t.g.player.invuln=1000;
+    const atlas=new Set(),savedGun=t.LOADOUT.gun;
+    for(const asset of w.combat.models){const mesh=w.getGeometry(asset.key);
+      check(mesh.assetId&&mesh.count===asset.triangles*3&&mesh.indices.length===mesh.count,'Imported combat mesh '+asset.key);
+      check(mesh.vertices.every(Number.isFinite)&&mesh.indices.every(i=>i<mesh.uniqueVertices),'Finite valid combat geometry '+asset.key);
+      check(mesh.count<=1920,'Fixed combat triangle budget '+asset.key);
+      const key=asset.key.split(':')[1];
+      if(asset.key.startsWith('enemy:')){t.g.enemies=[];const e=t.createEnemy(key,210);e.y=200;e.spawnT=0;e.elite=true;t.g.enemies.push(e);t.render();const batch=w.renderer.batches[asset.key];check(batch.count===1&&batch.textureReady,'Textured enemy is submitted '+key);atlas.add(batch.texture);}
+      else if(asset.key.startsWith('drone:')){t.g.player.droneType=key;t.g.player.drones=1;t.render();check(w.renderer.batches[asset.key].count===1,'Imported drone in live flight '+key);}
+      else if(asset.key.startsWith('equipment:')){t.g.player.gunType=key;t.LOADOUT.gun=key;t.render();check(w.foreground.batches['ship:'+t.g.player.ship].source.weapon===mesh,'Mounted imported weapon '+key);w.thumbnail('vanguard','#ddf6ff','#77ddff',1,0);check(w.preview.batches['ship:vanguard'].source.weapon===mesh,'Same mounted weapon mesh at home '+key);}
+      check(w.thumbnail(asset.key,'#aaffee','#aaffee',1,0),'Shared combat model preview '+asset.key);
+    }
+    check(atlas.size===1,'Six enemy types share one GPU texture atlas');
+    t.LOADOUT.gun=savedGun;t.g.player.gunType=savedGun;t.g.bombFx={x:210,y:400,t:.1,rings:[]};t.render();
+    const bomb=w.renderer.batches.bomb,records=bomb.records;check(bomb.count===1,'Smart bomb has a live 3D body');
+    t.g.bombFx.t=.5;t.render();check(bomb.count===0&&bomb.records===records,'Bomb body ends smoothly without reallocating storage');t.g.bombFx=null;
+    t.emitBullets(210,400,0,-700,1);t.render();check(w.renderer.batches.spark.count>0&&w.renderer.batches.spark.source===w.getGeometry('round'),'Imported round model is used for player blaster shots');
+    check(w.renderer.gl.getError()===0&&w.foreground.gl.getError()===0,'No combat-material GPU errors');
+    return 'Combat: six textured enemy hulls share one atlas, six drone bodies, three mounted weapons, smart bomb and blaster rounds reuse GPU buffers';
+  }));
   const contextLoss=await page.evaluate(()=>{
     const ext=t.SF3D.renderer.gl.getExtension('WEBGL_lose_context');
     if(!ext)return false;window.testContextExt=ext;ext.loseContext();return true;
@@ -154,9 +182,9 @@ module.exports = async function verifyWebGL(browser, page, source) {
     await t.SF3D.ready;t.startRun(1);t.render();
     if(t.SF3D.metrics.mode!=='webgl1')throw Error('WebGL2-disabled device did not get real-time WebGL1 3D');
     if(t.SF3D.foreground.batches['ship:vanguard'].source.assetId!=='nitro-blade')throw Error('WebGL1 lost supplied mesh');
-    if(t.SF3D.foreground.batches['ship:vanguard'].source!==t.SF3D.getGeometry('ship:vanguard')||!t.SF3D.metrics.nativePlayer)throw Error('WebGL1 did not preserve detailed native-resolution flight');
+    if(t.SF3D.foreground.batches['ship:vanguard'].source.hull!==t.SF3D.getGeometry('ship:vanguard')||!t.SF3D.metrics.nativePlayer)throw Error('WebGL1 did not preserve detailed native-resolution flight');
     if(!t.SF3D.thumbnail('vanguard','#ffffff','#88ddff',1,0)||!t.SF3D.preview.legacy)throw Error('WebGL1 preview did not share backend');
-    for(const asset of t.SF3D.fleet.models){t.g.player.ship=asset.ship;t.render();const batch=t.SF3D.foreground.batches['ship:'+asset.ship];if(batch.source.assetId!=='quaternius:'+asset.name||!batch.textureReady||t.SF3D.foreground.gl.getError())throw Error('WebGL1 imported fleet failed '+asset.ship);}
+    for(const asset of t.SF3D.fleet.models){t.g.player.ship=asset.ship;t.render();const batch=t.SF3D.foreground.batches['ship:'+asset.ship];if(batch.source.hull.assetId!=='quaternius:'+asset.name||!batch.textureReady||t.SF3D.foreground.gl.getError())throw Error('WebGL1 imported fleet failed '+asset.ship);}
     t.g.player.ship='vanguard';t.render();
     for(let wave=1;wave<=5;wave++){t.startSector(wave);t.spawnBoss();t.g.boss.state='fight';t.g.boss.y=150;t.render();}
     const gpu=t.SF3D.renderer,storage=Object.values(gpu.batches).map(b=>[b.records,b.uploadRanges]);
