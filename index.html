@@ -2153,6 +2153,40 @@
       }
       @media(prefers-reduced-motion:reduce) {.ship-inspector,.inspector-controls button {transition:none;}}
 
+
+      /* Cinematic flight deck: quiet surfaces, strong focus and readable combat lanes. */
+      #stage #scr-start {background:#071321;}
+      #reference-backdrop {opacity:.34;}
+      #scr-start .ref-card {background:linear-gradient(135deg,#1c3349f5,#0b1929fa);border-color:#577488;border-radius:16px;box-shadow:0 8px 24px #0005,inset 0 1px #c4e8ff18;}
+      #scr-start .ref-card header {background:#9dc9df0b;border-bottom:1px solid #92b9d22b;}
+      #scr-start .ref-shortcuts button {background:linear-gradient(145deg,#274557,#102338);border:1px solid #638398;border-radius:12px;box-shadow:0 3px 9px #0005,inset 0 1px #d7edff22;}
+      #scr-start .ref-shortcuts button:nth-child(2),#scr-start .ref-shortcuts button:nth-child(3),#scr-start .ref-shortcuts button:nth-child(4) {background:linear-gradient(145deg,#274557,#102338);border-color:#638398;}
+      #scr-start .ref-shortcuts button:hover {background:#33566c;border-color:#b7e5f5;}
+      #scr-start .ref-ship .ck-stage {background:radial-gradient(ellipse at 45% 40%,#75b5d133,#08162533);}
+      #scr-start .ref-ship .ck-stage::before {border:1px solid #b4ddf02e;}
+      #scr-start .ref-upgrade {background:linear-gradient(#37596b,#203b4e);border-color:#779eaf;box-shadow:0 2px #05101e;}
+      #scr-start .ck-wal,#scr-start .ref-brand .deck-profile {background:#11273b;border:1px solid #64869b;box-shadow:inset 0 1px #e4f5ff18;}
+      #scr-loadout,#scr-settings,#scr-quests,#scr-campaign {background:radial-gradient(ellipse at 85% 0%,#28516666,transparent 65%),linear-gradient(155deg,#152c42,#071422);}
+      #scr-loadout .opt-card {background:linear-gradient(145deg,#253e50,#102334);border:1px solid #607f91;box-shadow:0 3px 12px #0004;}
+      #scr-loadout .opt-card.sel {background:linear-gradient(145deg,#305965,#183648);border-color:#b0e9e3;box-shadow:inset 0 0 0 1px #a2e9db44,0 3px 12px #0004;}
+      .meta-nav,.inspector-controls {background:#11273b;}
+      .meta-key {background:#263f54!important;}
+      .ship-inspector {background:radial-gradient(ellipse at 50% 35%,#548ba144,transparent 65%),#0a1b2b;border-color:#638596;box-shadow:0 6px 20px #0005;}
+      #scr-settings .set-panel,#scr-loadout .set-panel,.equipment-viewer,.frame-card,.lo-group,.q-sec {background:#142b3d;border:1px solid #55778a;}
+      .section-actions button,.inspector-controls button,.btn.ghost {background:#244357;border-color:#709bad;}
+      #btn-play,.btn,.opt-card,.meta-key,.ref-shortcuts button {transition:background .18s ease,border-color .18s ease,transform .18s ease,box-shadow .18s ease;}
+      button:focus-visible,[tabindex]:focus-visible {outline:2px solid #d8f4ff;outline-offset:3px;}
+      #bossbar {padding:5px 9px 6px;border:1px solid #789db366;border-top:2px solid var(--boss-accent);border-radius:7px;background:linear-gradient(90deg,#081625dc,#12283bdc);box-shadow:0 3px 9px #0004;}
+      #bossbar::before {display:none;}
+      #bossbar.enraged::before {display:block;font-size:7px;margin-bottom:2px;}
+      #bossbar .boss-heading {margin-bottom:3px;}
+      #bossfill {background:linear-gradient(90deg,#295069,var(--boss-accent));border-radius:3px;}
+      #me-hull,.me-scorewrap,#combo-box {border-color:#7199b34d;background:linear-gradient(130deg,#0d2334ed,#07131fca);box-shadow:inset 0 1px #d9f4ff12;}
+      #me-hull {padding:8px 10px;}
+      #me-hull::before {margin-bottom:4px;}
+      #combo-box {border-radius:8px;}
+      #chargebar {border-color:#ffe6a87d;}
+      @media(prefers-reduced-motion:reduce){#btn-play,.btn,.opt-card,.meta-key,.ref-shortcuts button {transition:none;}}
     </style>
   </head>
   <body>
@@ -2240,7 +2274,7 @@
             <button data-nav="drones"><span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m16 7 7 9-7 9-7-9ZM4 6h5v5H4zm19 0h5v5h-5zM4 22h5v5H4zm19 0h5v5h-5zM9 11l3 3m8 0 3-3M9 22l3-3m8 0 3 3"/></svg></span><b>DRONES</b><small>ESCORT WING</small></button>
             <button data-nav="settings"><span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m13 4 6 0 1 4 4 2 4-1 2 5-3 3 0 4-5 3-3-2-4 0-3 2-5-3 0-4-3-3 2-5 4 1 4-2Z"/><circle cx="16" cy="16" r="5"/></svg></span><b>SETTINGS</b><small>PREFERENCES</small></button>
           </nav>
-          <section class="ref-card ref-ship"><header><h2>READY TO FLY</h2><details class="graphics-panel" id="graphics-panel" data-state="loading"><summary id="graphics-details" aria-controls="graphics-diagnostics"><span id="graphics-status" role="status" aria-live="polite">STARTING 3D…</span><span>GRAPHICS · BUILD 3D-8</span></summary></details><button data-nav="livery">APPEARANCE ↗</button></header>
+          <section class="ref-card ref-ship"><header><h2>READY TO FLY</h2><details class="graphics-panel" id="graphics-panel" data-state="loading"><summary id="graphics-details" aria-controls="graphics-diagnostics"><span id="graphics-status" role="status" aria-live="polite">STARTING 3D…</span><span>GRAPHICS · BUILD 3D-9</span></summary></details><button data-nav="livery">APPEARANCE ↗</button></header>
             <div class="ref-ship-body"><div class="ck-stage">
             <canvas id="home-planet-cv" width="144" height="144" aria-hidden="true"></canvas>
             <div class="ck-padwrap">
@@ -2284,7 +2318,7 @@
               <span class="pilot-meta"><span class="pilot-name" id="home-pilot-name">NOVA</span><span class="pilot-perk" id="home-pilot-perk">Ace · +15% score</span></span>
               <span class="pilot-tag">PILOT</span>
             </div>
-          </div><button class="ref-upgrade" data-nav="engineering">ENGINEERING ↗</button></div></div>
+          </div><button class="ref-upgrade" data-nav="engineering">UPGRADES</button></div></div>
           </section>
           <section class="ref-card ref-mission"><header><h2>DEPLOYMENT</h2><button data-nav="quests">CONTRACTS ↗</button></header>
           <div class="ref-mission-body"><div class="hub-plate" id="resume-plate" hidden><span class="hp-txt" id="resume-txt">RESUME — WAVE 2</span><span class="hp-btns"><button class="hp-btn go" id="btn-resume-run">RESUME</button><button class="hp-btn" id="btn-resume-dismiss">DISCARD</button></span></div><div class="ref-world"><canvas id="mission-world" width="192" height="192"></canvas><span>CAMPAIGN<br>5 WAVES</span></div><div class="ref-mission-copy"><div class="ck-bossplate">
@@ -6592,9 +6626,7 @@
         var cv=document.createElement("canvas");cv.width=512;cv.height=1024;var c=cv.getContext("2d"),env=ENVS[sector-1],palettes=[["#13294e","#43aabd"],["#3b254e","#e6a95a"],["#24234c","#7ae0c1"],["#1e3154","#a9d9ff"],["#211b43","#bc9bdc"]],palette=palettes[sector-1];
         var sky=c.createLinearGradient(0,0,430,1024);sky.addColorStop(0,palette[0]);sky.addColorStop(1,"#0a1430");c.fillStyle=sky;c.fillRect(0,0,512,1024);
         c.globalAlpha=.32;c.drawImage(nebulaSprite(env),-120,-90,850,1120);c.globalAlpha=1;
-        c.save();c.translate(440,140);c.rotate(-.25);c.beginPath();c.arc(0,0,83,0,Math.PI*2);c.clip();
-        var planet=c.createRadialGradient(-32,-36,5,15,13,105);planet.addColorStop(0,"#e2f0d0");planet.addColorStop(.3,palette[1]);planet.addColorStop(1,"#182443");c.fillStyle=planet;c.fillRect(-85,-85,170,170);c.strokeStyle="#e4f6ed";c.globalAlpha=.16;c.lineWidth=14;
-        for(var i=-2;i<=2;i++){c.beginPath();c.ellipse(0,i*26,100,18,.12,0,Math.PI*2);c.stroke();}c.restore();
+        c.drawImage(planetSprite(["deep","ember","rift","cryo","eclipse"][sector-1],256),350,48,180,180);
         c.strokeStyle="#a7cfef";c.globalAlpha=.18;c.lineWidth=3;c.beginPath();c.ellipse(440,145,115,25,-.25,0,Math.PI*2);c.stroke();
         c.save();c.globalAlpha=.12;c.translate(140,710);c.rotate(-.5);c.drawImage(stationSprite(sector),-215,-280,430,560);c.restore();c.globalAlpha=1;
         return SPACE_BACKDROP_CACHE[sector]=cv;
@@ -8246,6 +8278,14 @@
             oval(b,0,0,26,30,28,18,"#0c122c",12,24);oval(b,0,0,44,18,17,7,"#a391e1",12,20);
             for(var side=-1;side<=1;side+=2)b.box(side*37,0,24,7,26,5,"#d3adff",3);
           }
+          var baseMesh=b.finish(key),wide=bossBody?type==="mothership"||type==="dreadnought"?62:25:5,rows=bossBody?3:1;
+          for(var side=-1;side<=1;side+=2)for(var row=0;row<rows;row++){
+            var px=side*wide,py=(row-(rows-1)/2)*(bossBody?10:5),deck=deckHeight(baseMesh,px,py);
+            // Recessed service plates, silver seam edges and dark cooling louvers.
+            b.box(px,py,deck+.15,bossBody?12:3.5,bossBody?7:2.7,.35,"#26343f",12);
+            b.box(px-side*(bossBody?5:1.3),py,deck+.55,.45,bossBody?6:2,.25,"#a9b9bf",12);
+            b.box(px,py,deck+.55,bossBody?6:1.5,.45,.2,"#080f17",12);
+          }
           var mesh=b.finish(key);mesh.assetId="starfall-rift:"+type;mesh.family="rift";mesh.source="STARFALL / original Rift faction";mesh.roof=0;
           for(var vi=2;vi<mesh.vertices.length;vi+=12)mesh.roof=Math.max(mesh.roof,mesh.vertices[vi]);return mesh;
         }
@@ -8296,7 +8336,7 @@
               float h=max(dot(N,normalize(L+V)),0.),h2=h*h,h4=h2*h2,h8=h4*h4,h16=h8*h8;float spec=h16*h16*h4*h2;
               float rim=1.-max(dot(N,V),0.);rim=rim*rim*rim;
               float metal=1.-paint*.4;vec3 environment=mix(vec3(.025,.05,.09),vec3(.18,.3,.43),N.z*.5+.5);
-              vec3 lit=base*(vec3(.18,.22,.29)+vec3(1.,.91,.77)*diffuse*.95+vec3(.42,.7,1.)*fill*.3)+environment*metal*.22+vec3(.85,.95,1.)*spec*(.65+metal*.3)+vec3(.16,.43,.65)*rim;
+              vec3 lit=base*(vec3(.18,.22,.29)+vec3(1.,.91,.77)*diffuse*.95+vec3(.42,.7,1.)*fill*.3)+environment*metal*.22+vec3(.85,.95,1.)*spec*(.8+metal*.4)+vec3(.16,.43,.65)*rim;
               lit=lit/(vec3(.7)+lit);if(vWorld.z< -40.)lit=mix(vec3(.01,.025,.045),lit,clamp((vWorld.z+230.)/230.,.25,1.));
               result=vec4(mix(lit,sqrt(max(lit,vec3(0.))),.3)+vec3(max(0.,vTint.a-1.)*.8),min(vTint.a,1.));return;
             }
@@ -8353,7 +8393,10 @@ precision highp float;in vec2 fxUV;in vec4 fxColor;in float localY;uniform float
 void main(){if(effectType<.5){vec2 p=(fxUV-.5)*2.;float f=max(0.,1.-dot(p,p));result=vec4(fxColor.rgb*1.4,fxColor.a*f*f*f);}else if(effectType<1.5){vec2 p=abs((fxUV-.5)*2.);float s=1.-smoothstep(.12,1.,p.x),c=1.-smoothstep(.7,1.,p.y),h=1.-smoothstep(.04,.26,p.x);result=vec4(mix(fxColor.rgb,vec3(1.),h*.9),fxColor.a*s*s*c);}else if(effectType<2.5){result=vec4(fxColor.rgb*1.6,fxColor.a);}else{float f=clamp(-localY,0.,1.);result=vec4(mix(vec3(1.),fxColor.rgb,smoothstep(0.,.35,f))*1.4,fxColor.a*(1.-smoothstep(.35,1.,f)));}}`,this.legacy);
           this.toonProgram=program(gl,`#version 300 es
 precision highp float;layout(location=0) in vec3 aPosition;layout(location=1) in vec3 aNormal;layout(location=2) in vec4 aMaterial;layout(location=4) in mat4 iModel;layout(location=8) in vec4 iTint;layout(location=9) in vec4 iEngine;uniform vec2 uSize;uniform vec2 uOffset;uniform float uCamera;out mediump vec4 toonColor;
-void main(){vec4 p=iModel*vec4(aPosition,1.);vec3 N=normalize(mat3(iModel)*(aNormal*vec3(iModel[0].w,iModel[1].w,iModel[2].w)));float d=dot(N,vec3(-.408,.408,.816));float band=.42+.28*smoothstep(-.2,-.08,d)+.3*smoothstep(.45,.58,d);float elite=step(.12,dot(abs(iTint.rgb-iEngine.rgb),vec3(1.)));vec3 base=aMaterial.rgb*(aMaterial.a<1.5?iTint.rgb:vec3(1.));vec3 ink=mix(base,iTint.rgb,mix(.18,.75,elite));toonColor=vec4(ink*band+vec3(.08,.14,.2)*(1.-abs(N.z))*.2+vec3(max(0.,iTint.a-1.)*.8),min(iTint.a,1.));float z=p.z-uCamera;gl_Position=vec4(p.x*2.*uCamera/uSize.x+uOffset.x*2.*(-z)/uSize.x,p.y*2.*uCamera/uSize.y+uOffset.y*2.*(-z)/uSize.y,-1.0008*z-2.0008,-z);}`,`#version 300 es
+void main(){vec4 p=iModel*vec4(aPosition,1.);vec3 N=normalize(mat3(iModel)*(aNormal*vec3(iModel[0].w,iModel[1].w,iModel[2].w)));vec3 L=vec3(-.408,.408,.816);float d=max(0.,dot(N,L));float fill=max(0.,dot(N,vec3(.62,-.48,.62)));float h=max(0.,dot(N,vec3(-.22,.23,.948)));float h2=h*h,h4=h2*h2,h8=h4*h4,spec=h8*h8;float rim=1.-abs(N.z);rim=rim*rim;
+float elite=step(.12,dot(abs(iTint.rgb-iEngine.rgb),vec3(1.)));vec3 base=aMaterial.rgb*(aMaterial.a<1.5?iTint.rgb:vec3(1.));float luminance=dot(base,vec3(.2126,.7152,.0722));base=mix(base,vec3(luminance),.32);vec3 ink=mix(base,iTint.rgb,mix(.12,.7,elite));vec3 lit=ink*(vec3(.12,.17,.25)+vec3(1.,.86,.69)*d*1.05+vec3(.22,.46,.72)*fill*.42)+vec3(.7,.85,1.)*spec*.65+vec3(.16,.48,.72)*rim*.25;
+if(aMaterial.a>2.5&&aMaterial.a<3.5)lit=mix(aMaterial.rgb,iEngine.rgb,.35)*1.4;
+toonColor=vec4(sqrt(max(lit,vec3(0.)))*.9+vec3(max(0.,iTint.a-1.)*.8),min(iTint.a,1.));float z=p.z-uCamera;gl_Position=vec4(p.x*2.*uCamera/uSize.x+uOffset.x*2.*(-z)/uSize.x,p.y*2.*uCamera/uSize.y+uOffset.y*2.*(-z)/uSize.y,-1.0008*z-2.0008,-z);}`,`#version 300 es
 precision mediump float;in mediump vec4 toonColor;out vec4 result;void main(){result=toonColor;}`,this.legacy);
           this.toonSize=gl.getUniformLocation(this.toonProgram,"uSize");this.toonOffset=gl.getUniformLocation(this.toonProgram,"uOffset");this.toonCamera=gl.getUniformLocation(this.toonProgram,"uCamera");
           this.effectSize=gl.getUniformLocation(this.effects,"uSize");this.effectOffset=gl.getUniformLocation(this.effects,"uOffset");this.effectCamera=gl.getUniformLocation(this.effects,"uCamera");this.effectType=gl.getUniformLocation(this.effects,"effectType");
@@ -8490,7 +8533,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
           vertices.set(hull.vertices);vertices.set(weapon.vertices,offset);indices.set(hull.indices);
           for(var n=offset;n<vertices.length;n+=12){vertices[n]*=.3;vertices[n+1]=vertices[n+1]*.3+3;vertices[n+2]=vertices[n+2]*.3+deckHeight(hull,0,3)+.3;}
           for(var n=0;n<weapon.count;n++)indices[hull.count+n]=weapon.indices[n]+hull.uniqueVertices;
-          rig=droneRigs[type]={key:hull.key,vertices:vertices,indices:indices,count:indices.length,uniqueVertices:count,source:hull.source,assetId:hull.assetId,image:hull.image||null,hull:hull,weapon:weapon,hullCount:hull.count};return rig;
+          rig=droneRigs[type]={toon:true,key:hull.key,vertices:vertices,indices:indices,count:indices.length,uniqueVertices:count,source:hull.source,assetId:hull.assetId,image:hull.image||null,hull:hull,weapon:weapon,hullCount:hull.count};return rig;
         }
         function craft(g,model,x,y,z,scale,time,yaw,pitch,roll,tint,engine,alpha,gun){
           gun=gun||LOADOUT.gun;var rig=getRig(model,gun);
@@ -8540,7 +8583,13 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
             if(p.shield)g.add("ring",p.x,p.y,12,41,41,30,t*.2,.14,0,"#8affdc","#8affdc",.6,false);
             if(p.charge>.03)g.add("ring",p.x,p.y,13,43,43,20,t,p.charge*.12,0,"#ffb652","#ffb652",p.charge,false);
         }
-        function escortCraft(g){var p=G.player;if(!p.alive)return;for(var d=0;d<p.drones;d++){var dp=p.dronePos[d],dc=DRONE_ART[p.droneType].ring;g.add("drone:"+p.droneType,dp.x,dp.y,3,1,1,1,-dp.bank*.2,.1,dp.bank,dc,dc,1,true,getDroneRig(p.droneType));}}
+        function droneCraft(g,type,x,y,scale,yaw,pitch,roll,accent){
+          var rig=getDroneRig(type),body=g.add("drone:"+type,x,y,3,scale,scale,scale,yaw,pitch,roll,accent,accent,1,true,rig);
+          for(var side=-1;side<=1;side+=2)attached(g,body,side*3,-7,1,"exhaust",1.2*scale,5*scale,1.2*scale,yaw,pitch,roll,accent,accent,.7);
+          return body;
+        }
+        function escortCraft(g){var p=G.player;if(!p.alive)return;for(var d=0;d<p.drones;d++){var dp=p.dronePos[d],dc=DRONE_ART[p.droneType].ring;droneCraft(g,p.droneType,dp.x,dp.y,1,-dp.bank*.2,.1,dp.bank,dc);}}
+
         function scene(g,nativePlayer){
           var t=G.time,p=G.player;
           for(var i=0;i<G.portals.length;i++){var portal=G.portals[i],k=Math.min(1,portal.t/portal.dur);g.add("ring",portal.x,portal.y,0,28*k,11*k,18,t*2,.3,0,"#a9e9ff","#a9e9ff",1-k*.4,false);}
@@ -8569,6 +8618,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
         }
         function warm(g){
           // Build meshes and allocate GPU storage before combat, not on a first hit/spawn.
+          for(var sky=1;sky<=5;sky++)g.skyTexture(sky);
           var key;if(LOADOUT.ship!=="vanguard")g.batch("ship:"+LOADOUT.ship);
           for(key in ENEMY_MATERIALS)g.batch("enemy:"+key);
           for(key in DRONE_ART)g.batch("drone:"+key,getDroneRig(key));
@@ -8591,10 +8641,10 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
             detail="The home-screen ship is a compatibility drawing; its 3D preview could not start. Retry 3D to restore it.";
           } else if(!renderer || !modelReady) {
             label=!renderer?"STARTING 3D…":"3D · LOADING FLEET…";
-            detail="Loading the embedded ship models and textures. Build 3D-8.";
+            detail="Loading the embedded ship models and textures. Build 3D-9.";
           } else {
             state="ready";var selected=geometry["ship:"+LOADOUT.ship];label="3D ACTIVE · "+(selected&&selected.assetId?selected.source.split(" / ")[0].toUpperCase():"FLEET");
-            detail=(renderer.legacy?"WebGL1":"WebGL2")+" scene active. "+(selected?selected.source:"Imported fleet")+" uses the same model, materials and renderer in home and flight. Build 3D-8.";
+            detail=(renderer.legacy?"WebGL1":"WebGL2")+" scene active. "+(selected?selected.source:"Imported fleet")+" uses the same model, materials and renderer in home and flight. Build 3D-9.";
           }
           var panel=document.getElementById("graphics-panel");
           if((failed||assetFailed||previewFailed)&&panel.dataset.state!==state){panel.open=true;document.getElementById("graphics-diagnostics").hidden=false;}
@@ -8699,7 +8749,8 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
             if(key.indexOf("boss:")===0)boss(preview,{kind:key.slice(5),x:W/2,y:H/2,rot:.7,state:"fight",flash:0,shell:0,vanish:0,telegraph:0,flameT:0,flameTele:0},time);
             else {var scale=key==="bomb"?75:key==="round"?160:key.indexOf("drone:")===0?17:key.indexOf("ship:")===0?6:7,roll=REDUCED?0:Math.sin(time*.7)*.07;
               if(key.indexOf("ship:")===0)craft(preview,key.slice(5),W/2,H/2,0,scale,time,view?view.yaw:angle||0,view?view.pitch:.18,view?0:roll,tip,thrust,1);
-              else preview.add(key,W/2,H/2,0,scale,scale,scale,angle||0,.32,roll,tip,thrust,1,false,key.indexOf("drone:")===0?getDroneRig(key.slice(6)):null);}
+              else if(key.indexOf("drone:")===0)droneCraft(preview,key.slice(6),W/2,H/2,scale,angle||0,.32,roll,tip);
+              else preview.add(key,W/2,H/2,0,scale,scale,scale,angle||0,.32,roll,tip,thrust,1,false);}
             preview.flush(time,false);return preview.canvas;
           }catch(e){
             // A failed preview used to allocate/compile another context every frame.

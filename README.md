@@ -14,7 +14,78 @@ STARFALL is an original space shooter by Drblack Ventures: five skies, five boss
 
 The game is a single self-contained HTML file (`index.html`) — no build step. This repo is deployed as a static site on Render (see `render.yaml`).
 
-## Original enemy faction and ship inspection (build 3D-8)
+## Metallic surfaces and flight-deck refinement (build 3D-9)
+
+Rift enemies and all five unique bosses now have continuous directional metallic
+lighting, cooler environment fill, a restrained specular highlight and emissive
+inserts. Sampled deck heights keep new service panels, cooling louvers and seam
+edges attached to each original hull. Enemy geometry stays within the existing
+3,000-index budget; bosses stay within 9,000. Aim/rush/elite cues, weak points and
+ability kits remain intact. The existing imported player fleet receives a
+stronger clearcoat highlight with the same meshes, textures and mounted weapons
+in home and gameplay. These are material/detail improvements to the existing
+models, not a claim of photorealistic replacement art.
+
+All six imported drones use the existing lightweight surface pipeline rather
+than the general fragment shader. Their two engine plumes use pooled instancing,
+and the same mounted rig and engine renderer appear in inspection and flight.
+No new framebuffer, context, texture sample or per-frame array is added.
+
+Five terrain-based planets replace the striped sky illustration. Terrain noise,
+clouds, day/night shading and atmosphere come from the existing deterministic
+planet cache; all five backdrop textures are warmed before combat so changing
+sectors cannot trigger terrain generation. Nebulae, live stars and crossfades
+remain. This spends roughly 10 MiB on the five GPU backdrop textures up front
+(the same set previously accumulated over a campaign), plus their cached canvases.
+
+Home keeps its layout ending at Play, with quieter navy/metal surfaces and clear
+primary action contrast. Selection panels, settings and the inspector use the
+same palette. Keyboard focus rings and reduced-motion-aware button transitions
+make navigation clearer. The boss HUD is shorter, retaining its name, health,
+unique accent and enrage warning while exposing more of the boss. Hull, score,
+combo and capacitor styling is consistent and readable at phone sizes.
+
+**Gameplay balance changes: none.** All 34 frozen functions and eight balance
+blocks remain exact. Five waves and all unique bosses are preserved. Single
+`index.html`, existing assets, no new downloads or runtime dependencies.
+
+Verification: the full `tests/verify.cjs` suite passes. Added coverage checks all
+six drone shader paths, actual thruster geometry and identical preview/flight
+rigs, plus prewarmed five-sector scenery. Existing tests cover all hulls, boss
+weak-point visibility, charger/elite warnings, pooled uploads, swept collisions,
+phone layouts, inspector gestures, navigation, pause/resume and recovery.
+
+Serial Chromium measurements against merged main `eb06a67`, 600 measured
+frames after 120 warm-up frames:
+
+| Scene | Main median / p95 | Updated median / p95 |
+| --- | --- | --- |
+| Animated home, 390×844 | 16.7 / 16.8 ms | 16.7 / 16.7 ms |
+| Eclipse combat, 390×844 | 16.7 / 50.0 ms | 16.7 / 50.0 ms |
+| Eclipse + 12 enemies, 900×900 | 33.3 / 50.1 ms | 33.3 / 50.1 ms |
+
+CPU update/render submission median/p95 improved from 0.5/1.1 to 0.4/0.8 ms on
+phone and 0.6/1.7 to 0.5/1.1 ms in crowded combat. GPU draws remain 11/17 at
+390/511 combat pixels wide; three drone pairs add six instanced exhausts.
+Both home versions have zero steady GPU-to-canvas preview copies. Maximum frame
+intervals (main/new) were 50.0/33.4 ms at home, 83.3/150.0 ms on phone and
+66.8/83.3 ms in crowded combat. The median/p95 samples show no regression;
+rare stalls remain. This shared Cloud Chromium run is not proof of locked 60 fps
+or physical iPhone Safari performance. The previous crowded-load limitation
+remains a device-validation concern.
+
+Served-page WebGL1 play-through: selected Aegis, Guardian and Vector using the
+actual UI, cleared the first full assault and Mothership in 92.9 s with 4/4 hull,
+and exercised charge, special and pause/resume. A read-only steering script drove
+real pointer/keyboard input without changing game state. No runtime errors.
+Whole-session frame median/p95 was 16.7/33.4 ms; maximum 1,199.9 ms includes
+startup, navigation and screenshot capture. Final home/inspection/faction
+screenshots were visually reviewed. After replacing the missing Engineering
+arrow glyph with the clearer Upgrades label, the presentation suite was rerun.
+
+Final HTML: 4,515,248 bytes raw / 1,897,162 bytes gzip. No assets were added.
+
+## Previous release: original enemy faction and ship inspection (build 3D-8)
 
 Enemies now belong to the original **Rift faction**, with six purpose-built 3D
 silhouettes: manta diver, horned charger, lobed weaver, shield sentinel, forked
@@ -83,8 +154,9 @@ varying and removal of an unused local; crowded sampling preceded the qualifier.
 The final full suite and play-through exercise those exact final shaders.
 A separate 600-frame animated-home sample measured main/new median/p95 of
 16.7/16.7 and 16.7/16.8 ms respectively, with zero steady preview copies in both.
-Maximum intervals were 50.0/216.7 ms. The PR remains a draft because the crowded
-combat tail has not met the standing no-regression requirement.
+Maximum intervals were 50.0/216.7 ms. PR #10 was initially a draft because the crowded combat tail regressed; it was
+subsequently merged at the user’s explicit request. These are historical 3D-8
+measurements; see the current release measurements above.
 
 The final HTML is 4,510,601 bytes raw / 1,896,259 bytes gzip, down from main’s
 4,894,178 / 2,105,815 bytes. The optional combat packer reproduces the embedded

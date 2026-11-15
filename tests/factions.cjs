@@ -17,6 +17,16 @@ module.exports=async function verifyFactions(page){
    const frame=w.thumbnail('boss:'+kind,'#a7dfff','#a7dfff',1,0),gl=w.preview.gl,p=new Uint8Array(frame.width*frame.height*4);gl.readPixels(0,0,frame.width,frame.height,gl.RGBA,gl.UNSIGNED_BYTE,p);let h=2166136261;for(let n=0;n<p.length;n+=4)h=Math.imul(h^p[n]^p[n+3],16777619);bossHashes.add(h);}
   check(bossHashes.size===5,'Five bosses have distinct rendered signatures');
   const sky=SPACE_BACKDROP_CACHE[5],texture=w.renderer.skyTextures[5];t.render();t.render();check(SPACE_BACKDROP_CACHE[5]===sky&&w.renderer.skyTextures[5]===texture,'Illustrated scenery is cached and GPU textures are reused');
+  for(let sector=1;sector<=5;sector++)check(w.renderer.skyTextures[sector]&&SPACE_BACKDROP_CACHE[sector],'All terrain skies are warmed before combat');
+  t.g.enemies=[];t.g.boss=null;t.g.player.drones=1;
+  for(const type of ['scout','wasp','twin','phantom','guardian','swarm']){
+   t.g.player.droneType=type;t.g.player.dronePos[0].x=150;t.g.player.dronePos[0].y=500;
+   const rig=w.getDroneRig(type),gpu=w.combatGPU,draw=gpu.drawInstances;let lit=false;
+   gpu.drawInstances=function(...args){if(this.batches['drone:'+type]?.vao===this.gl.getParameter(this.gl.VERTEX_ARRAY_BINDING))lit=this.gl.getParameter(this.gl.CURRENT_PROGRAM)===this.toonProgram;return draw(...args)};
+   t.render();gpu.drawInstances=draw;check(rig.toon&&lit,'Drone uses the low-cost surface shader '+type);
+   check(gpu.batches.exhaust.count>=2,'Drone has live engine geometry '+type);
+   w.thumbnail('drone:'+type,'#8ae7ff','#8ae7ff',1,0);check(w.preview.batches['drone:'+type].source===rig&&w.preview.batches.exhaust.count===2,'Same drone rig and engines in inspection '+type);
+  }
   check(w.metrics.combatWidth>=document.getElementById('game').width&&w.renderer.gl.getError()===0,'Battle stays native without GL errors');return 'Factions: six unique non-arsenal enemies, five distinct bosses, lean toon/blend paths, native battle and cached scenery passed';
  }));
 };
