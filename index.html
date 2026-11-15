@@ -3775,7 +3775,7 @@
           run: run || 1,
           time: 0, score: 0, shake: 0, freeze: 0, flashRed: 0,
           combo: 0, comboT: 0, kills: 0, shots: 0, hits: 0, runTime: 0, bombs: 1, bombFlash: 0, bombFx: null, bulletId: 0, projectileGeneration: 0, perf: false, grain: makeGrain(), seenHint: {}, lastCritPop: 0,
-          pendingSector: 0, warpT: 0, warpDur: 2.6, warpI: 0, warpP: 0, warpW: 0, warpShake: 0, warpStars: makeWarpStars(), meteors: [], scoreMul: 1, repairPerk: false,
+          pendingSector: 0, warpT: 0, warpDur: 3.0, warpI: 0, warpP: 0, warpW: 0, warpShake: 0, warpStars: makeWarpStars(), meteors: [], scoreMul: 1, repairPerk: false,
           portals: [], slowT: 0, bgI: 0.3, bossChip: 1, coreHits: 0, comboMax: 0, waveDamage: 0, waveStart: null, objective: null, resultsShown: false, objBonus: 0, lastDmgPop: 0,
           gyroX: 0, gyroY: 0,
           player: {
@@ -4043,9 +4043,10 @@
         return gained;
       }
       function addShake(n) { if (!REDUCED && SETTINGS.shake) G.shake = Math.min(16, G.shake + n); }
-      function hitStop(t) { if (!REDUCED) G.freeze = Math.max(G.freeze, t); }
+      function hitStop(t) { if (!REDUCED) G.freeze = Math.max(G.freeze, Math.min(.06,t)); }
 
       function explode(x, y, color, n, big) {
+        VisualFX.burst(x,y,color,big);
         if (G && G.perf) n = Math.ceil(n / 2); // perf mode halves particle counts to hold frame rate
         if (G && G.parts.length > (G.perf ? 200 : 340)) n = Math.min(n, 4); // hard cap — effects never tank the frame rate
         for (var i = 0; i < n; i++) {
@@ -4209,6 +4210,7 @@
       }
 
       function enemyFire(e, ang, spd) {
+        VisualFX.light.x=e.x;VisualFX.light.y=e.y+10;VisualFX.light.power=.45;VisualFX.light.color="#ff5da2";
         emitEbullets(e.x, e.y + 10, Math.sin(ang) * spd, Math.cos(ang) * spd, 5);
       }
       function aimAngle(e) { return Math.atan2(G.player.x - e.x, G.player.y - e.y); }
@@ -4336,6 +4338,7 @@
       }
       function startWarp(nextSector) {
         G.pendingSector = nextSector;
+        VisualFX.resetWarp();
         G.waveState = "warp"; G.warpT = G.warpDur;
         G.player.beamOn = false; G.player.charge = 0; // weapons offline for the jump — beam cut instantly, charge dumped
         G.ebullets.length = 0; G.enemies.length = 0; G.spawnQueue.length = 0; G.portals.length = 0;
@@ -8312,6 +8315,8 @@
           else b.box(0,0,-.5,1,1,1,"#ffffff",key==="spark"?3:0);
           var primitive=b.finish(key);if(key==="sphere"||key==="cube")primitive.toon=true;return primitive;
         }
+        var HULL_FINISH={vanguard:0,phantom:1,aegis:0,interceptor:2,bulwark:1,spectre:3,tempest:2,nomad:0,solaris:2,reaper:3,starforge:1,sovereign:2};
+        var hullNormals=(function(){var a=new Uint8Array(512*512*4);for(var y=0;y<512;y++)for(var x=0;x<512;x++){var i=(y*512+x)*4,px=x%64,py=y%64,vent=px>12&&px<50&&py>20&&py<40,dx=px<2?-45:px>61?45:0,dy=py<2?-45:py>61?45:vent?(py%5<2?28:-28):0;var rivet=(px-6)*(px-6)+(py-6)*(py-6);if(rivet<9){dx=(px-6)*13;dy=(py-6)*13;}a[i]=128+dx;a[i+1]=128+dy;a[i+2]=240;a[i+3]=255;}return a;})();
         var vertex=`#version 300 es
           precision highp float;
           layout(location=0) in vec3 aPosition; layout(location=1) in vec3 aNormal;
@@ -8325,19 +8330,20 @@
         var fragment=`#version 300 es
           precision highp float;
           in vec3 vNormal;in vec3 vWorld;in vec4 vMaterial;in vec4 vTint;in vec4 vEngine;in vec2 vUV;in vec3 vLocal;
+          uniform vec4 uBattle;uniform vec3 uBattleColor;uniform vec2 uFinish;uniform sampler2D uHullNormal;
           uniform float uShadow;uniform float uTime;uniform float uTextured;uniform sampler2D uGrill;out vec4 result;
           void main(){if(uShadow>.5){result=vec4(.005,.012,.022,.22*vTint.a);return;}
             // A draw-uniform fast path keeps imported hulls out of procedural effect branches.
             if(uTextured>2.5){float d=dot(vNormal,vec3(-.408,.408,.816));float band=.42+.28*smoothstep(-.2,-.08,d)+.3*smoothstep(.45,.58,d);float elite=step(.12,dot(abs(vTint.rgb-vEngine.rgb),vec3(1.)));vec3 base=vMaterial.rgb*(vMaterial.a<1.5?vTint.rgb:vec3(1.));vec3 ink=mix(base,vTint.rgb,mix(.18,.75,elite));result=vec4(ink*band+vec3(.08,.14,.2)*(1.-abs(vNormal.z))*.2+vec3(max(0.,vTint.a-1.)*.8),min(vTint.a,1.));return;}
             if(uTextured>.5){
               vec3 base=vMaterial.a>7.5?texture(uGrill,clamp(vUV,0.,1.)).rgb:vMaterial.rgb;float paint=vMaterial.a>7.5?smoothstep(.06,.22,base.r-base.b):0.;base=mix(base,vTint.rgb*(.3+.7*max(base.r,max(base.g,base.b))),paint*.85);
-              vec3 N=normalize(vNormal),L=normalize(vec3(-.5,.65,1.)),V=normalize(vec3(0.,0.,1050.)-vWorld);
+              vec3 detail=texture(uHullNormal,fract(vLocal.xy*.012)).xyz*2.-1.;vec3 N=normalize(vNormal+vec3(detail.xy*.24,0.)),L=normalize(vec3(-.5,.65,1.)),V=normalize(vec3(0.,0.,1050.)-vWorld);
               float diffuse=max(dot(N,L),0.),fill=max(dot(N,normalize(vec3(.65,-.45,.8))),0.);
               float h=max(dot(N,normalize(L+V)),0.),h2=h*h,h4=h2*h2,h8=h4*h4,h16=h8*h8;float spec=h16*h16*h4*h2;
               float rim=1.-max(dot(N,V),0.);rim=rim*rim*rim;
-              float metal=1.-paint*.4;vec3 environment=mix(vec3(.025,.05,.09),vec3(.18,.3,.43),N.z*.5+.5);
+              float metal=uFinish.x*(1.-paint*.4);spec=pow(h,mix(110.,12.,uFinish.y));vec3 environment=mix(vec3(.025,.05,.09),vec3(.18,.3,.43),N.z*.5+.5);
               vec3 lit=base*(vec3(.18,.22,.29)+vec3(1.,.91,.77)*diffuse*.95+vec3(.42,.7,1.)*fill*.3)+environment*metal*.22+vec3(.85,.95,1.)*spec*(.8+metal*.4)+vec3(.16,.43,.65)*rim;
-              lit=lit/(vec3(.7)+lit);if(vWorld.z< -40.)lit=mix(vec3(.01,.025,.045),lit,clamp((vWorld.z+230.)/230.,.25,1.));
+              vec3 delta=uBattle.xyz-vWorld;float fall=max(0.,1.-length(delta)/180.);lit+=base*uBattleColor*uBattle.w*fall*fall*max(.15,dot(N,normalize(delta)));lit=lit/(vec3(.7)+lit);if(vWorld.z< -40.)lit=mix(vec3(.01,.025,.045),lit,clamp((vWorld.z+230.)/230.,.25,1.));
               result=vec4(mix(lit,sqrt(max(lit,vec3(0.))),.3)+vec3(max(0.,vTint.a-1.)*.8),min(vTint.a,1.));return;
             }
             vec3 base=vMaterial.rgb;float tag=vMaterial.a;float alpha=min(vTint.a,1.);
@@ -8351,11 +8357,11 @@
             else if(tag>1.5&&tag<2.5)base=vTint.rgb;
             float craft=step(1.5,vEngine.a);
             if(tag<1.5){if(craft>.5){base*=mix(vec3(1.),vTint.rgb,.22);float stripe=smoothstep(4.,5.,abs(vLocal.x))*(1.-smoothstep(8.,10.,abs(vLocal.x)))*smoothstep(-24.,-18.,vLocal.y)*(1.-smoothstep(3.,8.,vLocal.y));base=mix(base,base*vTint.rgb,stripe*.8);}else base*=vTint.rgb;}
-            vec3 N=normalize(vNormal);vec3 L=normalize(vec3(-.5,.65,1.));vec3 V=normalize(vec3(0.,0.,1050.)-vWorld);
-            float diffuse=max(dot(N,L),0.);float fill=max(dot(N,normalize(vec3(.65,-.45,.8))),0.);float spec=pow(max(dot(N,normalize(L+V)),0.),tag>3.5&&tag<4.5?100.:38.);
-            float rim=pow(1.-max(dot(N,V),0.),3.);float panel=tag<1.5?(.94+.06*smoothstep(.06,.12,abs(sin(vLocal.y*1.7)))):1.;base*=panel;vec3 lit=base*(vec3(.2,.23,.29)+vec3(1.,.91,.78)*diffuse*.95+vec3(.44,.7,1.)*fill*.3)+vec3(.85,.95,1.)*spec*(.5+craft*.3)+vec3(.16,.4,.6)*rim;
+            vec3 detail=texture(uHullNormal,fract(vLocal.xy*.012)).xyz*2.-1.;vec3 N=normalize(vNormal+vec3(detail.xy*.24,0.));vec3 L=normalize(vec3(-.5,.65,1.));vec3 V=normalize(vec3(0.,0.,1050.)-vWorld);
+            float diffuse=max(dot(N,L),0.);float fill=max(dot(N,normalize(vec3(.65,-.45,.8))),0.);float spec=pow(max(dot(N,normalize(L+V)),0.),tag>3.5&&tag<4.5?100.:mix(110.,12.,uFinish.y));
+            float rim=pow(1.-max(dot(N,V),0.),3.);float panel=tag<1.5?(.94+.06*smoothstep(.06,.12,abs(sin(vLocal.y*1.7)))):1.;base*=panel;vec3 lit=base*(vec3(.2,.23,.29)+vec3(1.,.91,.78)*diffuse*.95+vec3(.44,.7,1.)*fill*.3)+mix(vec3(.04),base,uFinish.x)*spec*(1.+craft)+vec3(.16,.4,.6)*rim;
             if(tag>4.5&&tag<5.5)lit+=vec3(.06,.38,.8)*rim*1.8;
-            lit=lit/(vec3(.7)+lit);if(vWorld.z< -40.)lit=mix(vec3(.01,.025,.045),lit,clamp((vWorld.z+230.)/230.,.25,1.));result=vec4(pow(lit,vec3(.83))+vec3(max(0.,vTint.a-1.)*.8),alpha);}`;
+            vec3 delta=uBattle.xyz-vWorld;float fall=max(0.,1.-length(delta)/180.);lit+=base*uBattleColor*uBattle.w*fall*fall*max(.15,dot(N,normalize(delta)));lit=lit/(vec3(.7)+lit);if(vWorld.z< -40.)lit=mix(vec3(.01,.025,.045),lit,clamp((vWorld.z+230.)/230.,.25,1.));result=vec4(pow(lit,vec3(.83))+vec3(max(0.,vTint.a-1.)*.8),alpha);}`;
         function program(gl,vs,fs,legacy) {
           if(legacy) {
             // The same material/lighting shaders on WebGL1, without runtime libraries.
@@ -8383,8 +8389,10 @@
             this.createVAO=gl.createVertexArray.bind(gl);this.bindVAO=gl.bindVertexArray.bind(gl);this.deleteVAO=gl.deleteVertexArray.bind(gl);
             this.divisor=gl.vertexAttribDivisor.bind(gl);this.drawInstances=gl.drawElementsInstanced.bind(gl);
           }
-          this.program=program(gl,vertex,fragment,this.legacy);this.batches={};this.textureCache=new WeakMap();this.draws=0;this.instances=0;
+          this.program=program(gl,vertex,fragment,this.legacy);gl.useProgram(this.program);this.batches={};this.textureCache=new WeakMap();this.draws=0;this.instances=0;
           this.size=gl.getUniformLocation(this.program,"uSize");this.offset=gl.getUniformLocation(this.program,"uOffset");this.camera=gl.getUniformLocation(this.program,"uCamera");this.shadow=gl.getUniformLocation(this.program,"uShadow");this.time=gl.getUniformLocation(this.program,"uTime");this.grillLocation=gl.getUniformLocation(this.program,"uGrill");this.textured=gl.getUniformLocation(this.program,"uTextured");
+          this.battle=gl.getUniformLocation(this.program,"uBattle");this.battleColor=gl.getUniformLocation(this.program,"uBattleColor");this.finish=gl.getUniformLocation(this.program,"uFinish");
+          this.hullNormal=gl.createTexture();gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,this.hullNormal);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,512,512,0,gl.RGBA,gl.UNSIGNED_BYTE,hullNormals);gl.generateMipmap(gl.TEXTURE_2D);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);gl.uniform1i(gl.getUniformLocation(this.program,"uHullNormal"),2);gl.activeTexture(gl.TEXTURE0);
           this.effects=program(gl,`#version 300 es
 precision highp float;layout(location=0) in vec3 aPosition;layout(location=3) in vec2 aUV;layout(location=4) in mat4 iModel;layout(location=8) in vec4 iTint;layout(location=9) in vec4 iEngine;
 uniform vec2 uSize;uniform vec2 uOffset;uniform float uCamera;out vec2 fxUV;out vec4 fxColor;out float localY;
@@ -8392,12 +8400,13 @@ void main(){vec4 p=iModel*vec4(aPosition,1.);fxUV=aUV;fxColor=vec4(iEngine.rgb,m
 precision highp float;in vec2 fxUV;in vec4 fxColor;in float localY;uniform float effectType;out vec4 result;
 void main(){if(effectType<.5){vec2 p=(fxUV-.5)*2.;float f=max(0.,1.-dot(p,p));result=vec4(fxColor.rgb*1.4,fxColor.a*f*f*f);}else if(effectType<1.5){vec2 p=abs((fxUV-.5)*2.);float s=1.-smoothstep(.12,1.,p.x),c=1.-smoothstep(.7,1.,p.y),h=1.-smoothstep(.04,.26,p.x);result=vec4(mix(fxColor.rgb,vec3(1.),h*.9),fxColor.a*s*s*c);}else if(effectType<2.5){result=vec4(fxColor.rgb*1.6,fxColor.a);}else{float f=clamp(-localY,0.,1.);result=vec4(mix(vec3(1.),fxColor.rgb,smoothstep(0.,.35,f))*1.4,fxColor.a*(1.-smoothstep(.35,1.,f)));}}`,this.legacy);
           this.toonProgram=program(gl,`#version 300 es
-precision highp float;layout(location=0) in vec3 aPosition;layout(location=1) in vec3 aNormal;layout(location=2) in vec4 aMaterial;layout(location=4) in mat4 iModel;layout(location=8) in vec4 iTint;layout(location=9) in vec4 iEngine;uniform vec2 uSize;uniform vec2 uOffset;uniform float uCamera;out mediump vec4 toonColor;
+precision highp float;layout(location=0) in vec3 aPosition;layout(location=1) in vec3 aNormal;layout(location=2) in vec4 aMaterial;layout(location=4) in mat4 iModel;layout(location=8) in vec4 iTint;layout(location=9) in vec4 iEngine;uniform vec4 uBattle;uniform vec3 uBattleColor;uniform vec2 uSize;uniform vec2 uOffset;uniform float uCamera;out mediump vec4 toonColor;
 void main(){vec4 p=iModel*vec4(aPosition,1.);vec3 N=normalize(mat3(iModel)*(aNormal*vec3(iModel[0].w,iModel[1].w,iModel[2].w)));vec3 L=vec3(-.408,.408,.816);float d=max(0.,dot(N,L));float fill=max(0.,dot(N,vec3(.62,-.48,.62)));float h=max(0.,dot(N,vec3(-.22,.23,.948)));float h2=h*h,h4=h2*h2,h8=h4*h4,spec=h8*h8;float rim=1.-abs(N.z);rim=rim*rim;
 float elite=step(.12,dot(abs(iTint.rgb-iEngine.rgb),vec3(1.)));vec3 base=aMaterial.rgb*(aMaterial.a<1.5?iTint.rgb:vec3(1.));float luminance=dot(base,vec3(.2126,.7152,.0722));base=mix(base,vec3(luminance),.32);vec3 ink=mix(base,iTint.rgb,mix(.12,.7,elite));vec3 lit=ink*(vec3(.12,.17,.25)+vec3(1.,.86,.69)*d*1.05+vec3(.22,.46,.72)*fill*.42)+vec3(.7,.85,1.)*spec*.65+vec3(.16,.48,.72)*rim*.25;
 if(aMaterial.a>2.5&&aMaterial.a<3.5)lit=mix(aMaterial.rgb,iEngine.rgb,.35)*1.4;
-toonColor=vec4(sqrt(max(lit,vec3(0.)))*.9+vec3(max(0.,iTint.a-1.)*.8),min(iTint.a,1.));float z=p.z-uCamera;gl_Position=vec4(p.x*2.*uCamera/uSize.x+uOffset.x*2.*(-z)/uSize.x,p.y*2.*uCamera/uSize.y+uOffset.y*2.*(-z)/uSize.y,-1.0008*z-2.0008,-z);}`,`#version 300 es
+vec3 delta=uBattle.xyz-p.xyz;float fall=max(0.,1.-length(delta)/180.);lit+=base*uBattleColor*uBattle.w*fall*fall*max(.15,dot(N,normalize(delta)));toonColor=vec4(sqrt(max(lit,vec3(0.)))*.9+vec3(max(0.,iTint.a-1.)*.8),min(iTint.a,1.));float z=p.z-uCamera;gl_Position=vec4(p.x*2.*uCamera/uSize.x+uOffset.x*2.*(-z)/uSize.x,p.y*2.*uCamera/uSize.y+uOffset.y*2.*(-z)/uSize.y,-1.0008*z-2.0008,-z);}`,`#version 300 es
 precision mediump float;in mediump vec4 toonColor;out vec4 result;void main(){result=toonColor;}`,this.legacy);
+          this.toonBattle=gl.getUniformLocation(this.toonProgram,"uBattle");this.toonBattleColor=gl.getUniformLocation(this.toonProgram,"uBattleColor");
           this.toonSize=gl.getUniformLocation(this.toonProgram,"uSize");this.toonOffset=gl.getUniformLocation(this.toonProgram,"uOffset");this.toonCamera=gl.getUniformLocation(this.toonProgram,"uCamera");
           this.effectSize=gl.getUniformLocation(this.effects,"uSize");this.effectOffset=gl.getUniformLocation(this.effects,"uOffset");this.effectCamera=gl.getUniformLocation(this.effects,"uCamera");this.effectType=gl.getUniformLocation(this.effects,"effectType");
           var tex=this.grill=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([180,180,180,255]));gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,this.legacy?gl.CLAMP_TO_EDGE:gl.REPEAT);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,this.legacy?gl.CLAMP_TO_EDGE:gl.REPEAT);
@@ -8479,6 +8488,8 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
           gl.depthMask(false);gl.uniform1f(this.shadow,1);
           if(shadows)for(var key in this.batches){var b=this.batches[key];if(!b.count||!b.cast)continue;this.bindVAO(b.vao);this.drawInstances(gl.TRIANGLES,b.source.count,gl.UNSIGNED_SHORT,0,b.count);this.draws++;}
           gl.uniform1f(this.shadow,0);
+          var fx=VisualFX.light,lc=color(fx.color);gl.uniform4f(this.battle,fx.x-W/2,H/2-fx.y,35,REDUCED?0:fx.power*3);gl.uniform3fv(this.battleColor,lc);
+          gl.useProgram(this.toonProgram);gl.uniform4f(this.toonBattle,fx.x-W/2,H/2-fx.y,35,REDUCED?0:fx.power*3);gl.uniform3fv(this.toonBattleColor,lc);gl.useProgram(this.program);
           var boundProgram=0;
           for(var pass=0;pass<2;pass++)for(var key in this.batches){
             var b=this.batches[key],transparent=key==="laser"||key==="glow"||key==="ring"||key==="exhaust"||key==="bomb";if(!b.count||transparent!==(pass===1))continue;
@@ -8487,7 +8498,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
             var effect=EFFECT_TYPES[key],kind=shadows?0:effect!==undefined?1:b.source.family==="rift"||b.source.toon?2:0;
             if(kind!==boundProgram){gl.useProgram(kind===2?this.toonProgram:kind===1?this.effects:this.program);boundProgram=kind;}
             if(kind===1)gl.uniform1f(this.effectType,effect);
-            else if(kind===0){var material=b.source.image?1:0;if(material!==boundMaterial){gl.uniform1f(this.textured,material);boundMaterial=material;}var texture=b.texture||(key==="planet"?this.nebula:this.grill);if(texture!==boundTexture){gl.bindTexture(gl.TEXTURE_2D,texture);boundTexture=texture;}}
+            else if(kind===0){var finishId=key.indexOf("ship:")===0?(b.source.finishId||0):0;gl.uniform2f(this.finish,finishId===1?.35:finishId===2?1:finishId===3?.08:.8,finishId===1?.72:finishId===2?.12:finishId===3?.94:.4);var material=b.source.image?1:0;if(material!==boundMaterial){gl.uniform1f(this.textured,material);boundMaterial=material;}var texture=b.texture||(key==="planet"?this.nebula:this.grill);if(texture!==boundTexture){gl.bindTexture(gl.TEXTURE_2D,texture);boundTexture=texture;}}
             this.bindVAO(b.vao);this.drawInstances(gl.TRIANGLES,b.source.count,gl.UNSIGNED_SHORT,0,b.count);this.draws++;
           }
           gl.depthMask(true);this.bindVAO(null);
@@ -8518,7 +8529,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
             for(var n=offset;n<vertices.length;n+=12){vertices[n]*=.34;vertices[n+1]=vertices[n+1]*.34+12;vertices[n+2]=vertices[n+2]*.34+roof+1;
               if(vertices[n+9]===2){vertices[n+6]=col[0];vertices[n+7]=col[1];vertices[n+8]=col[2];vertices[n+9]=0;}}
             for(var n=0;n<weapon.count;n++)indices[hull.count+n]=weapon.indices[n]+hull.uniqueVertices;
-            rig={key:"ship:"+model,vertices:vertices,indices:indices,count:indices.length,uniqueVertices:count,assetId:hull.assetId||"procedural:"+model,source:hull.source,image:hull.image||null,hull:hull,weapon:weapon,hullCount:hull.count};
+            rig={finishId:HULL_FINISH[model]||0,key:"ship:"+model,vertices:vertices,indices:indices,count:indices.length,uniqueVertices:count,assetId:hull.assetId||"procedural:"+model,source:hull.source,image:hull.image||null,hull:hull,weapon:weapon,hullCount:hull.count};
             if(!rigCache[key]){rigOrder.push(key);if(rigOrder.length>24)delete rigCache[rigOrder.shift()];}rigCache[key]=rig;
           }
           activeRig=rig;activeRigModel=model;activeRigGun=gun;activeRigColor=paint;return rig;
@@ -8537,13 +8548,13 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
         }
         function craft(g,model,x,y,z,scale,time,yaw,pitch,roll,tint,engine,alpha,gun){
           gun=gun||LOADOUT.gun;var rig=getRig(model,gun);
-          var body=g.add("ship:"+model,x,y,z,scale,scale,scale,yaw,pitch,roll,tint,engine,alpha,false,rig);
+          var body=g.add("ship:"+model,x,y,z,scale,scale*(1+(G.warpW||0)*.22),scale,yaw,pitch,roll,tint,engine,alpha,false,rig);
           var imported=geometry["ship:"+model],anchors=imported&&imported.engines;
           var layout=model==="vanguard"?NITRO_ENGINES:(ENGINE_LAYOUTS[(SHIP_ART[model]||SHIP_ART.vanguard).pods]||ENGINE_LAYOUTS.twin);
           var flicker=REDUCED?1:1+Math.sin(time*43)*.12;
           for(var j=0;j<(anchors?anchors.length:layout.length);j++){
             var ex=anchors?anchors[j][0]:layout[j],ey=anchors?anchors[j][1]:model==="vanguard"?-24:-19,ez=anchors?anchors[j][2]:4;
-            attached(g,body,ex,ey,ez,"exhaust",3.2*scale,13*scale*flicker,3.2*scale,yaw,pitch,roll,engine,engine,1);
+            attached(g,body,ex,ey,ez,"exhaust",3.2*scale,13*scale*flicker*(1+(G.warpW||0)*2),3.2*scale,yaw,pitch,roll,engine,engine,1);
             attached(g,body,ex,ey-4,ez+3,"glow",16*scale,16*scale,1,0,0,0,engine,engine,alpha*.24);
           }
           return body;
@@ -8568,7 +8579,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
         function environment(g){
           var t=G.time,p=G.player,env=ENVS[G.sector-1],accent=BOSS_VISUALS[BOSS_KINDS[G.sector-1]].color;
           for(var l=0;l<3;l++)for(var i=0;i<G.stars[l].length;i+=qualityScale<.5?2:1){var star=G.stars[l][i];g.add("glow",star.x,star.y,-230+l*40,3+l,3+l,1,0,0,0,"#bedfff","#bedfff",.45+l*.15,false);}
-          if(G.warpW>0&&G.warpStars)for(var wi=0;wi<G.warpStars.length;wi++){var ws=G.warpStars[wi],dist=ws.d*Math.max(W,H)*.55,dx=Math.cos(ws.a)*dist,dy=Math.sin(ws.a)*dist*.72,len=G.warpW*dist*.85;g.add("spark",W/2+dx+(G.warpShake||0),H*.42+dy,-20,ws.s*(1+G.warpW*.6),Math.max(1,len),1,-Math.atan2(dx,-dy),0,0,"#bceaff","#bceaff",G.warpW,false);}
+          if(G.warpW>0&&G.warpStars)for(var wi=0;wi<G.warpStars.length;wi++){var ws=G.warpStars[wi],dist=((ws.d+G.time*G.warpW*.85)%1)*Math.max(W,H)*.75*(1-.35*Math.max(0,1-G.warpP/.22)),dx=Math.cos(ws.a)*dist,dy=Math.sin(ws.a)*dist*.72,len=G.warpW*dist*.85;g.add("spark",W/2+dx+(G.warpShake||0),H*.42+dy,-20,ws.s*(1+G.warpW*.6),Math.max(1,len),1,-Math.atan2(dx,-dy),0,0,"#bceaff","#bceaff",G.warpW,false);}
           for(var i=0;i<G.debris.length;i++){var rock=G.debris[i];g.add("sphere",rock.x,rock.y,-60,rock.r*.6,rock.r*.5,rock.r*.5,rock.rot,rock.rot*.4,0,accent,accent,1,false);}
 
           for(var i=0;i<G.parts.length;i++){var pt=G.parts[i];if(pt.t<0)continue;var life=Math.max(0,1-pt.t/pt.life),sz=pt.size||2;if(pt.ring)g.add("ring",pt.x,pt.y,13,pt.r,pt.r,30,0,0,0,pt.color,pt.color,life*.65,false);else if(pt.bloom)glow(g,pt.x,pt.y,18,sz*(1+pt.t/pt.life),pt.color,life*.45);else g.add("spark",pt.x,pt.y,5,sz*life,(pt.streak?30:pt.spark?Math.max(sz,Math.hypot(pt.vx,pt.vy)*.035):sz)*life,sz*life,pt.spark?-Math.atan2(pt.vx,-pt.vy):t,0,pt.spark?0:t,pt.color,pt.color,life,false);}
@@ -8577,7 +8588,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
           var p=G.player,t=G.time;
             var a=p.invuln>0&&Math.floor(t*14)%2===0?1.18:1;
             // The exact preview mesh and craft renderer stay full resolution in flight.
-            craft(g,p.ship||"vanguard",p.x,p.y,2,1.35,t,-p.bank*.25,.18,p.bank,shipColorHex(),thrusterHex(),a,p.gunType);
+            craft(g,p.ship||"vanguard",p.x+(G.warpShake||0),p.y,2,1.35,t,-p.bank*.25,.18,p.bank,shipColorHex(),thrusterHex(),a,p.gunType);
 
             if(p.muzzle>0)glow(g,p.x,p.y-36,18,25,blasterHex(),.8);
             if(p.shield)g.add("ring",p.x,p.y,12,41,41,30,t*.2,.14,0,"#8affdc","#8affdc",.6,false);
@@ -8592,6 +8603,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
 
         function scene(g,nativePlayer){
           var t=G.time,p=G.player;
+          VisualFX.draw(g);
           for(var i=0;i<G.portals.length;i++){var portal=G.portals[i],k=Math.min(1,portal.t/portal.dur);g.add("ring",portal.x,portal.y,0,28*k,11*k,18,t*2,.3,0,"#a9e9ff","#a9e9ff",1-k*.4,false);}
           for(var i=0;i<G.enemies.length;i++){
             var e=G.enemies[i],m=ENEMY_MATERIALS[e.type],s=e.type==="charger"&&e.elite?1.28:1;
@@ -8715,7 +8727,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
         function nativePlayerView(){
           // The opaque battle surface avoids compositing a full-screen transparent GL layer.
           // It uses the same GPU class, craft function and cached rig as the transparent inspector.
-          var g=renderer;if(!g)return null;g.isPreview=false;g.zoom=1;g.cropWidth=g.cropHeight=g.offsetX=g.offsetY=0;
+          var g=renderer;if(!g)return null;g.isPreview=false;g.zoom=1-(G.warpW||0)*.045;g.cropWidth=g.cropHeight=g.offsetX=g.offsetY=0;
           if(g.flightRevision!==metrics.revision){warm(g);g.flightRevision=metrics.revision;}return g;
         }
         var qualityScale=1,frameStart=0,qualityMs=0,qualityFrames=0,qualityStable=0;
@@ -8822,16 +8834,71 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
         var ready=loadModel();
         return {draw:draw,thumbnail:thumbnail,presentPreview:presentPreview,freezePreview:freezePreview,getRig:getRig,getDroneRig:getDroneRig,getGeometry:get,metrics:metrics,retry:retry,get ready(){return ready;},asset:assetMeta,fleet:fleetMeta,combat:combatMeta,get renderer(){return renderer;},get preview(){return preview;},get combatGPU(){return renderer;},get foreground(){return renderer&&!failed&&metrics.nativePlayer&&!metrics.menuActive?renderer:null;}};
       })();
+      // Fixed visual pools: effects never own or mutate combat entities.
+      var VisualFX = (function(){
+        var chunks=new Float32Array(64*9),trails=new Float32Array(256*7),owners=new Array(96).fill(null),anchors=new Float32Array(96*2),ownerHead=0,head=0,trailHead=0,lastTime=-1,lastKills=0,game=null;
+        var light={x:0,y:0,power:0,color:"#ffb02e"},warpAge=0,exitAge=9,sample=0,skip=false;
+        function resetWarp(){warpAge=0;exitAge=0;skip=false;}
+        function burst(x,y,col,big){
+          light.x=x;light.y=y;light.power=big?1:.55;light.color=col;
+          // Death bursts originate exactly at a craft; pickup and impact bursts do not.
+          var death=!G.player.alive&&Math.abs(x-G.player.x)<1&&Math.abs(y-G.player.y)<1;
+          for(var j=0;j<G.enemies.length;j++){var e=G.enemies[j];if(e.dead&&Math.abs(e.x-x)<1&&Math.abs(e.y-y)<1)death=true;}
+          if(G.boss&&G.boss.hp<=0)death=true;
+          if(!death)return;
+          for(var j=0;j<(big?10:5);j++){var i=(head++%64)*9,a=j*2.39996;chunks[i]=x;chunks[i+1]=y;chunks[i+2]=12;chunks[i+3]=Math.cos(a)*(65+j*9);chunks[i+4]=Math.sin(a)*(65+j*9);chunks[i+5]=1.1+j*.035;chunks[i+6]=a;chunks[i+7]=j%3+3;chunks[i+8]=0;}
+        }
+        function trail(x,y,faction,owner){
+          var slot=-1;for(var j=0;j<96;j++)if(owners[j]===owner){slot=j;break;}
+          if(slot<0){slot=ownerHead++%96;owners[slot]=owner;anchors[slot*2]=x;anchors[slot*2+1]=y+(faction?-9:9);}
+          var ox=anchors[slot*2],oy=anchors[slot*2+1],dx=ox-x,dy=oy-y,i=(trailHead++%256)*7;
+          trails[i]=(x+ox)*.5;trails[i+1]=(y+oy)*.5;trails[i+2]=.34;trails[i+3]=faction;trails[i+4]=-Math.atan2(dx,-dy);trails[i+5]=Math.max(9,Math.hypot(dx,dy)+2);trails[i+6]=1;
+          anchors[slot*2]=x;anchors[slot*2+1]=y;
+        }
+        function tick(){
+          if(game!==G){game=G;chunks.fill(0);trails.fill(0);owners.fill(null);lastTime=G.time;lastKills=G.kills;light.power=0;exitAge=9;}
+          var dt=Math.max(0,Math.min(.05,G.time-lastTime));lastTime=G.time;
+          if(G.kills>lastKills&&!REDUCED&&G.enemies.length===0&&G.spawnQueue.length===0)G.slowT=Math.max(G.slowT,.3);lastKills=G.kills;
+          light.power*=Math.exp(-dt*18);
+          if(G.player.muzzle>0&&light.power<=.45){light.x=G.player.x;light.y=G.player.y-35;light.power=Math.max(light.power,.45);light.color=blasterHex();}
+          for(var i=0;i<chunks.length;i+=9)if(chunks[i+5]>0){chunks[i+5]-=dt;chunks[i]+=chunks[i+3]*dt;chunks[i+1]+=chunks[i+4]*dt;chunks[i+2]+=dt*35;chunks[i+6]+=dt*3;chunks[i+8]+=dt;}
+          for(var i=0;i<trails.length;i+=7){trails[i+2]-=dt;trails[i+1]+=dt*(trails[i+3]?-25:25);}
+          sample+=dt;if(sample>.045&&G.mode==="playing"){sample=0;if(G.player.alive)trail(G.player.x,G.player.y+23,0,G.player);for(var d=0;d<G.player.drones;d++){var dp=G.player.dronePos[d];trail(dp.x,dp.y+8,0,dp);}for(var j=0;j<G.enemies.length;j++){var e=G.enemies[j];trail(e.x,e.y-12,1,e);}if(G.boss)trail(G.boss.x,G.boss.y-40,1,G.boss);}
+          if(G.waveState==="warp"){
+            if(skip&&G.warpT>.42)G.warpT=Math.max(.42,G.warpT-dt*8);
+            warpAge=G.warpDur-G.warpT;exitAge=0;
+            var q=warpAge/G.warpDur,jump=Math.max(0,Math.min(1,(q-.22)/.13)),settle=Math.max(0,Math.min(1,(q-.78)/.22));
+            G.warpP=q;G.warpW=REDUCED?0:(q<.22?.12*Math.pow(q/.22,2):(1-Math.pow(1-jump,3))*(1-settle*settle*(3-2*settle)));G.warpI=G.warpW;
+            G.warpShake=REDUCED||!SETTINGS.shake?0:Math.sin(warpAge*58)*Math.sin(Math.min(1,q/.22)*Math.PI)*1.3;
+          }else exitAge+=dt;
+        }
+        function draw(g){
+          for(var i=0;i<chunks.length;i+=9)if(chunks[i+5]>0){var a=Math.min(1,chunks[i+5]*3),r=chunks[i+7];g.add("cube",chunks[i],chunks[i+1],chunks[i+2],r,r*.5,r*.7,chunks[i+6],chunks[i+6]*.7,chunks[i+6]*1.3,"#6b778a","#ffb02e",a,false);g.add("spark",chunks[i],chunks[i+1],chunks[i+2]+2,1,8,1,chunks[i+6],0,0,"#ffb02e","#ffb02e",a,false);}
+          if(REDUCED)return;
+          if(G.warpW>.01){var w=G.warpW;g.add("glow",W*.5,H*.42,-30,W*1.4,H*1.4,1,0,0,0,"#7561ce","#7561ce",w*.23,false);for(var edge=-1;edge<=1;edge+=2)g.add("glow",W*.5+edge*W*.48,H*.42,20,W*.3,H*1.1,1,0,0,0,edge<0?"#ff5da2":"#3fd6ff",edge<0?"#ff5da2":"#3fd6ff",w*.18,false);}
+          for(var i=0;i<trails.length;i+=7)if(trails[i+2]>0){var a=trails[i+2]/.34,c=trails[i+3]?"#ff5da2":thrusterHex();g.add("laser",trails[i],trails[i+1],-3,3*a,trails[i+5],1,trails[i+4],0,0,c,c,a*.25,false);}
+        }
+        function overlay(){
+          var q=G.warpP,a=0;
+          if(G.waveState==="warp")a=REDUCED?Math.min(1,q/.55):SETTINGS.flash?Math.pow(Math.max(0,(q-.86)/.14),2):0;
+          else if(exitAge<.4)a=REDUCED?1-exitAge/.4:SETTINGS.flash?Math.exp(-exitAge*12):0;
+          if(a>0){ctx.globalAlpha=a;ctx.fillStyle=REDUCED?"#060c18":"#e6ffff";ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;}
+        }
+        return {tick:tick,draw:draw,burst:burst,light:light,resetWarp:resetWarp,overlay:overlay,skip:function(){skip=true;}};
+      })();
+      canvas.addEventListener("pointerdown",function(){if(G.waveState==="warp")VisualFX.skip();});
       function render() {
+        VisualFX.tick();
         if(!SF3D.draw()){renderLegacy2D();return;}
         if(SF3D.metrics.menuActive){if(G.mode==="start"&&!render._menu){ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);}render._menu=true;return;}render._menu=false;
         ctx.setTransform(viewScale,0,0,viewScale,0,0);ctx.clearRect(0,0,W,H);
         // Text remains a lightweight screen-space overlay; combat geometry is WebGL.
+        VisualFX.overlay();
         ctx.textAlign="center";
         for(var i=0;i<G.popups.length;i++){var p=G.popups[i];ctx.globalAlpha=Math.max(0,1-p.t/.9);ctx.fillStyle=p.color;ctx.font=(p.big?"900 22px":p.small?"700 10px":"700 13px")+" Rajdhani,sans-serif";ctx.fillText(p.text,p.x,p.y);}
         ctx.globalAlpha=1;ctx.textBaseline="middle";
         for(var i=0;i<G.pickups.length;i++){var pickup=G.pickups[i];ctx.font="900 11px Orbitron,monospace";ctx.fillStyle="#f1ffff";ctx.fillText(pickup.type==="weapon"?"W":pickup.type==="drone"?"D":"S",pickup.x,pickup.y);if(pickup.magnet){ctx.font="700 10px Orbitron,monospace";ctx.fillText(pickup.type==="weapon"?"+WEAPON":pickup.type==="drone"?"+DRONE":"+SHIELD",pickup.x,pickup.y-23);}}
-        if(SETTINGS.flash&&!REDUCED&&G.warpP>.68&&G.warpP<.86){ctx.globalAlpha=Math.sin((G.warpP-.68)/.18*Math.PI)*.42;ctx.fillStyle="#e6ffff";ctx.fillRect(0,0,W,H);ctx.globalAlpha=1;}
+
         for(var i=0;i<G.enemies.length;i++){var e=G.enemies[i];if(e.type==="weaver"||e.type==="sentinel"||e.type==="bulwark")drawMiniHp(e,e.elite?"#ffe99a":ENEMY_MATERIALS[e.type].accent);}
         if(G.flashRed>0&&SETTINGS.flash&&!REDUCED){ctx.fillStyle="rgba(255,50,75,"+G.flashRed*.3+")";ctx.fillRect(0,0,W,H);}
       }
@@ -8853,7 +8920,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
           var fps = fpsFrames / fpsAcc; fpsAcc = 0; fpsFrames = 0;
           if (SETTINGS.perfAuto && !SETTINGS.perfForce && fps < 45 && G.mode === "playing") enablePerf(false);
         }
-        if (G.slowT > 0) { G.slowT -= dt; dt *= 0.32; } // boss-kill slow-mo beat — world time dilates, UI stays real-time
+        if (G.slowT > 0) { G.slowT -= dt; if(!REDUCED)dt *= 1-.68*Math.min(1,G.slowT/.18); } // boss-kill slow-mo beat — world time dilates, UI stays real-time
         // Idle drift — ease the touch timescale toward its target on real (unscaled) time, then compose multiplicatively
         var rawDt = Math.min(0.033, (now - (loop._p || now)) / 1000); loop._p = now;
         TouchScale.target = touchTimescaleTarget();
