@@ -1,6 +1,36 @@
 // Run with the repository served at http://127.0.0.1:8765. Requires Playwright.
 const { chromium } = require("playwright");
 const fs = require("fs");
+const crypto = require("crypto");
+const balanceLock = JSON.parse(
+  fs.readFileSync("tests/balance-lock.json", "utf8"),
+);
+const shippingSource = fs.readFileSync("index.html", "utf8");
+for (const [kind, entries] of Object.entries({
+  function: balanceLock.functions,
+  var: balanceLock.declarations,
+})) {
+  for (const [name, expected] of Object.entries(entries)) {
+    const prefix =
+      "      " +
+      (kind === "function" ? "function " + name + "(" : "var " + name + " =");
+    const begin = shippingSource.indexOf(prefix);
+    if (begin < 0) throw Error("Missing frozen balance block: " + name);
+    const end =
+      kind === "function"
+        ? shippingSource.indexOf("\n      }", begin) + 8
+        : shippingSource.indexOf(";\n", begin) + 1;
+    const actual = crypto
+      .createHash("sha256")
+      .update(shippingSource.slice(begin, end))
+      .digest("hex");
+    if (actual !== expected)
+      throw Error("Frozen gameplay block changed: " + name);
+  }
+}
+console.log(
+  "Frozen balance: 34 combat/economy functions and 8 data blocks match main.",
+);
 (async () => {
   const b = await chromium.launch({
     headless: true,
@@ -18,7 +48,7 @@ const fs = require("fs");
   const end = src.lastIndexOf("})();");
   src =
     src.slice(0, end) +
-    `window.t={get g(){return G},startRun,startSector,spawnBoss,update,render,emitBullets,emitParts,emitEbullets,resolveBombHit,updateBoss,createEnemy,killEnemy,showScreen,drawShipModel,drawShip,paintShipCanvas,LOADOUT,SHIP_ART,Input,explode,openLaunchConfirm,hideLaunchConfirm};` +
+    `window.t={get g(){return G},startRun,startSector,spawnBoss,update,render,emitBullets,emitParts,emitEbullets,resolveBombHit,updateBoss,createEnemy,killEnemy,showScreen,drawShipModel,drawShip,paintShipCanvas,LOADOUT,SHIP_ART,Input,explode,openLaunchConfirm,hideLaunchConfirm,stationSprite,enemyMaterial,bossArmorSprite,equipmentSprite,getDroneSprite,MATERIAL_CACHE,playerBoltSprite};` +
     src.slice(end);
   await p.route("**/test.html", (r) =>
     r.fulfill({ body: src, contentType: "text/html" }),
@@ -184,6 +214,99 @@ const fs = require("fs");
       t.LOADOUT.ship = selectedShip;
       previewCanvas.remove();
       getShipSprite = originalSprite;
+      // Every new render path is cached, stable after warm-up, and visually distinct.
+      const fingerprints = new Set();
+      for (let sector = 1; sector <= 5; sector++) {
+        const station = t.stationSprite(sector);
+        ok(
+          station === t.stationSprite(sector),
+          "Station " + sector + " reuses its texture",
+        );
+        fingerprints.add(station.toDataURL());
+      }
+      ok(fingerprints.size === 5, "Five different orbital environments");
+      for (const kind of [
+        "diver",
+        "charger",
+        "weaver",
+        "sentinel",
+        "lancer",
+        "bulwark",
+      ])
+        ok(
+          t.enemyMaterial(kind) === t.enemyMaterial(kind),
+          kind + " uses a cached material",
+        );
+      const bossPrints = new Set();
+      for (const kind of [
+        "mothership",
+        "dreadnought",
+        "leviathan",
+        "cryowarden",
+        "eclipse",
+      ]) {
+        const armor = t.bossArmorSprite(kind);
+        bossPrints.add(armor.toDataURL());
+        ok(
+          armor === t.bossArmorSprite(kind),
+          kind + " armor texture is cached",
+        );
+      }
+      ok(bossPrints.size === 5, "Boss armor geometry stays distinct");
+      for (const kind of ["power", "cannon"])
+        ok(
+          t.equipmentSprite(kind) === t.equipmentSprite(kind),
+          kind + " engineering preview is cached",
+        );
+      const gunPrints = new Set();
+      for (const kind of ["gun:pulse", "gun:scatter", "gun:lance"]) {
+        const module = t.equipmentSprite(kind);
+        gunPrints.add(module.toDataURL());
+        ok(
+          module === t.equipmentSprite(kind),
+          kind + " equipment texture is reused",
+        );
+      }
+      ok(
+        gunPrints.size === 3,
+        "Cannon previews retain distinct barrel arrangements",
+      );
+      const bolt = t.playerBoltSprite("#3fd6ff", 2.4, false, false);
+      ok(
+        bolt === t.playerBoltSprite("#3fd6ff", 2.4, false, false),
+        "Laser texture is reused",
+      );
+      g = reset();
+      t.emitBullets(200, -19, 0, -500, 1);
+      t.render();
+      const retiredBolt = g.bullets[0];
+      ok(
+        !!retiredBolt.material,
+        "Projectile resolves its texture on first draw",
+      );
+      t.update(0.033);
+      t.update(0.016);
+      t.emitBullets(200, 200, 0, 0, 1);
+      ok(
+        g.bullets[0] === retiredBolt && g.bullets[0].material === null,
+        "Pooled projectile clears cached visual state",
+      );
+      t.render();
+      const cacheShape = JSON.stringify(
+        Object.keys(t.MATERIAL_CACHE).map(
+          (key) => Object.keys(t.MATERIAL_CACHE[key]).length,
+        ),
+      );
+      for (let frame = 0; frame < 60; frame++) t.render();
+      ok(
+        cacheShape ===
+          JSON.stringify(
+            Object.keys(t.MATERIAL_CACHE).map(
+              (key) => Object.keys(t.MATERIAL_CACHE[key]).length,
+            ),
+          ),
+        "Steady rendering creates no new material-cache entries",
+      );
       let kinds = [];
       for (let n = 1; n <= 5; n++) {
         g = reset();
@@ -275,10 +398,16 @@ const fs = require("fs");
     await p.evaluate(() => {
       const play = document.getElementById("btn-play").getBoundingClientRect();
       const stage = document.getElementById("stage").getBoundingClientRect();
-      if (play.bottom > stage.bottom || play.top < stage.top) throw Error("Home Play button requires scrolling");
+      if (play.bottom > stage.bottom || play.top < stage.top)
+        throw Error("Home Play button requires scrolling");
       for (const selector of [".ref-ship", ".ref-mission", ".ref-shortcuts"]) {
         const rect = document.querySelector(selector).getBoundingClientRect();
-        if (rect.width < 100 || rect.left < stage.left || rect.right > stage.right) throw Error("Reference card is clipped");
+        if (
+          rect.width < 100 ||
+          rect.left < stage.left ||
+          rect.right > stage.right
+        )
+          throw Error("Reference card is clipped");
       }
     });
     await p.evaluate(() => {

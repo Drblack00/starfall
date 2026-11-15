@@ -163,3 +163,77 @@ checks, plus a served-page playthrough: first wave and Mothership defeated in
 (max 50.1ms), and 0.9ms median / 2.4ms p95 update/render CPU time. The broader
 startup/UI/play/capture sample included an 850ms maximum; initial procedural
 sprite construction and shared-host load remain limitations, not locked 60fps.
+
+## Attached-video reference pass
+
+Branch `improve/video-reference-visuals` starts from main commit
+`5144be4c8a14148f13010003b2fe32a85e7cb5fb`. Both supplied videos were reviewed:
+the menu/inventory clip establishes the cut-corner cards, red actions, close-up
+ship presentation and illuminated equipment modules; the combat/results clip
+establishes industrial orbital scenery, layered metallic craft and readable
+energy trails. The reference clips and extracted frames are not production assets.
+
+This pass adds a cached material library inside `index.html`:
+
+- Shared player hulls use extruded armour plates, beveled edge lighting,
+  independently shaded nacelles, recessed glass and machined panel detail.
+  Home, fleet cards, settings and flight retain the same model/renderer.
+- Six enemy classes use separate cached hull materials. Drone bodies gain raised
+  armour; live drone flames reuse cached engine textures. Engineering/cannon
+  cards gain reactor and barrel previews using the same material vocabulary.
+- All five original boss bodies and ability kits remain. Additional cached
+  surface detail is different for each boss; the Leviathan's three arm plates
+  track the existing blocking-arm rotation. Intro cards reuse the flight material.
+- Five independently themed orbital shipyards scroll below combat, with
+  parallax, shaded decks, service modules and emissive strips. These sprites are
+  scenery only, outside all spawning and collision collections. Their wrap period
+  moves the whole structure offscreen before it wraps, avoiding a visible jump.
+- Projectile glow/core shapes are cached. Each pooled player projectile resolves
+  its texture once and clears that reference when recycled. Smaller transparent
+  sprite margins and a bounded station footprint reduce overdraw. Material
+  construction is warmed at the existing sector-announce boundary, with its own
+  seeded generator. Steady combat does no plate/mesh generation.
+- Menu actions/cards, the portal tile, equipment previews and the slow home
+  backdrop drift follow the visual language in the clips. Reduced-motion styles,
+  original navigation, live stats and actual purchase rules are retained.
+
+Rendering remains Canvas 2D; the material pass bakes extruded plate shading into
+reusable sprites. No build step, framework, production file or external asset was
+added. The single HTML runtime, existing assets, five-wave campaign, and one
+assault plus one distinct boss per wave remain intact.
+
+### Verification for this revision
+
+`tests/verify.cjs` passes with no browser runtime errors. It now checks cached
+station/enemy/boss/equipment/laser paths, distinct station and boss textures,
+steady cache size, pooled projectile visual reset and the previous collision,
+combo, touch, reduced-motion, transition and 12-ship shared-hull checks. Phone
+layouts are checked at 320/375/430px. `tests/balance-lock.json` locks 34 original
+combat/economy function bodies and eight balance data blocks against main,
+including upgrade pricing, rewards, scoring, movement, attacks and collisions.
+All of those checks pass: **no balance or gameplay-number changes**.
+
+Served-page browser-driven input completed the first assault and Mothership fight
+in about 84 seconds with 3 hull remaining, including home/hangar navigation,
+charged shots, smart bomb and pause/resume. No combat fixtures were applied to
+that play session. All five boss presentations were inspected in phone-sized
+renders. Physical phone hardware/gyro and a full manual five-wave clear were not
+verified.
+
+The warmed seeded stress benchmark uses the existing `tests/benchmark.cjs`
+workload and 600 samples after 120 warm-up frames:
+
+| Measurement | Main | This branch |
+| --- | ---: | ---: |
+| RAF median / p95 | 16.7 / 16.8ms | 16.7 / 16.8ms |
+| RAF maximum | 50.0ms | 33.5ms |
+| Update/render CPU median / p95 | 1.0 / 1.7ms | 0.8 / 1.5ms |
+| Update/render CPU maximum | 7.4ms | 5.9ms |
+
+An earlier material version increased frame-time p95 to 33.4ms. Reducing the
+station footprint, dropping redundant background rotation, trimming projectile
+transparent margins and avoiding straight-bolt transforms corrected that
+regression in the isolated comparison above. The broader startup/UI/play/capture
+session measured 16.7ms median / 16.8ms p95 with a 900ms maximum. Cold asset work,
+screenshots and shared-host scheduling can still stall; these measurements do
+not establish locked 60fps on all hardware.
