@@ -1,6 +1,7 @@
 // Rendering checks used by verify.cjs; the original simulation checks stay intact.
 module.exports = async function verifyWebGL(browser, page, source) {
   console.log(await page.evaluate(async () => {
+    PROFILE.graphics="hd";
     const w=t.SF3D, check=(v,msg)=>{if(!v)throw Error(msg)};
     check(await w.ready,'Embedded Nitro asset decodes');
     const high=w.getGeometry('ship:vanguard'), low=w.getGeometry('ship:vanguard:lod');
@@ -46,7 +47,7 @@ module.exports = async function verifyWebGL(browser, page, source) {
     const clock=performance.now.bind(performance);let fake=clock();performance.now=()=>fake+=40;
     for(let frame=0;frame<150;frame++)t.render();performance.now=clock;
     check(w.metrics.resolution<=.32&&w.metrics.backgroundWidth<native.width,'Adaptive resolution scales the backdrop');
-    check(w.metrics.nativePlayer&&Math.abs(w.metrics.playerWidth/128-native.width/420)<.01,'Low-quality world never reduces player resolution');
+    check(w.metrics.nativePlayer&&Math.abs(w.metrics.playerWidth/128-native.width/420)<.01&&w.metrics.combatWidth===native.width&&w.metrics.combatHeight===native.height,'Low-quality world never reduces player resolution');
     const viewport=w.foreground.gl.getParameter(w.foreground.gl.VIEWPORT);
     check(viewport[2]===w.foreground.canvas.width&&viewport[3]===w.foreground.canvas.height,'Player is actually submitted at native pixel density');
     const reducedQuality=w.metrics.resolution;fake=clock();performance.now=()=>fake+=1000/60;
@@ -56,29 +57,29 @@ module.exports = async function verifyWebGL(browser, page, source) {
     check(w.metrics.resolution<=.32,'Quality still drops promptly when the frame budget is exceeded');
     const saved={x:t.g.player.x,y:t.g.player.y,bank:t.g.player.bank};
     for(const [x,y,bank] of [[80,130,-.3],[350,620,.3]]){Object.assign(t.g.player,{x,y,bank});t.render();const rect=w.foreground.canvas.getBoundingClientRect(),stage=native.getBoundingClientRect();
-      check(Math.abs(rect.left-(stage.left+(x-64)/420*stage.width))<.2&&Math.abs(rect.top-(stage.top+(y+10-80)/740*stage.height))<.2,'Native player view tracks the same gameplay position across the playfield');}
+      check(Math.abs(rect.left-stage.left)<.2&&Math.abs(rect.top-stage.top)<.2&&Math.abs(rect.width-stage.width)<.2&&Math.abs(rect.height-stage.height)<.2,'Sharp combat surface covers the same playfield while ships move');}
     Object.assign(t.g.player,saved);t.render();
     check(document.getElementById('graphics-panel').dataset.state==='ready','Visible status confirms both real 3D and Nitro readiness');
     for(const name of Object.keys(t.SHIP_ART))check(w.thumbnail(name,'#aaffff','#88ddff',1,0),'Shared ship preview '+name);
     t.g.boss=null;t.g.enemies=[];t.g.player.muzzle=0;
     const charger=t.createEnemy('charger',200);charger.y=250;charger.state='aim';charger.flash=0;t.g.enemies=[charger];
-    t.g.time=0;t.render();const bright=w.renderer.batches.glow.count;
-    t.g.time=.1;t.render();check(w.renderer.batches.glow.count===bright-1,'Charger aim cue blinks at legacy phase');
+    t.g.time=0;t.render();const bright=w.combatGPU.batches.glow.count;
+    t.g.time=.1;t.render();check(w.combatGPU.batches.glow.count===bright-1,'Charger aim cue blinks at legacy phase');
     charger.state='rush';charger.vx=160;charger.vy=200;t.render();
-    check(Math.abs(w.renderer.batches['enemy:charger'].records[1])>.1,'Charger hull rotates during rush');
-    {const a=w.renderer.batches['enemy:charger'].records;check(Math.abs(a[4]/-a[5]-charger.vx/charger.vy)<.001,'Charger nose follows its real rush velocity');}
+    check(Math.abs(w.combatGPU.batches['enemy:charger'].records[1])>.1,'Charger hull rotates during rush');
+    {const a=w.combatGPU.batches['enemy:charger'].records;check(Math.abs(a[4]/-a[5]-charger.vx/charger.vy)<.001,'Charger nose follows its real rush velocity');}
     charger.state='aim';charger.elite=true;t.render();
-    check(Math.abs(Math.abs(w.renderer.batches['enemy:charger'].records[0])-1.28)<.001,'Elite charger keeps enlarged hull');
-    check(w.renderer.batches.cube.count>0,'Elite charger armour band rendered');
+    check(Math.abs(Math.abs(w.combatGPU.batches['enemy:charger'].records[0])-1.28)<.001,'Elite charger keeps enlarged hull');
+    check(w.combatGPU.batches.cube.count>0,'Elite charger armour band rendered');
     t.g.enemies=[];
     const kinds=['mothership','dreadnought','leviathan','cryowarden','eclipse'];
     const counts=new Set();
     for(let i=0;i<5;i++) {
       t.startSector(i+1);t.spawnBoss();t.g.boss.state='fight';t.g.boss.y=150;t.render();
       const key='boss:'+kinds[i],mesh=w.getGeometry(key);counts.add(mesh.count);
-      check(w.renderer.batches[key].source===mesh,'Boss flight uses shared geometry');
+      check(w.combatGPU.batches[key].source===mesh,'Boss flight uses shared geometry');
       let front=-Infinity;for(let n=2;n<mesh.vertices.length;n+=12)front=Math.max(front,mesh.vertices[n]*1.22);
-      check(w.renderer.batches.core.records[14]>front,'Boss weak-point marker sits above its hull');
+      check(w.combatGPU.batches.core.records[14]>front,'Boss weak-point marker sits above its hull');
       check(w.thumbnail(key,'#aaffff','#aaffff',1,0),'Boss preview '+key);
     }
     check(counts.size>=4,'Boss meshes remain distinct');
@@ -98,6 +99,7 @@ module.exports = async function verifyWebGL(browser, page, source) {
   }));
   await page.evaluate(()=>{if(t.SF3D.foreground!==t.SF3D.preview)throw Error('Home and flight do not share the exact GPU renderer')});
   console.log(await page.evaluate(async()=>{
+    PROFILE.graphics="hd";
     const w=t.SF3D,check=(value,message)=>{if(!value)throw Error(message)};
     await w.ready;
     check(w.fleet.models.length===11&&w.fleet.license==='CC0-1.0','Eleven commercially usable imported fleet models');
@@ -142,25 +144,25 @@ module.exports = async function verifyWebGL(browser, page, source) {
   }));
   console.log(await page.evaluate(async()=>{
     const w=t.SF3D,check=(x,message)=>{if(!x)throw Error(message)};await w.ready;
-    check(w.combat.models.length===20&&w.combat.license==='CC0-1.0','Twenty licensed combat model adaptations');
+    check(w.combat.models.length===26&&w.combat.license==='CC0-1.0','Twenty-six licensed combat model adaptations');
     t.startRun(1);t.g.spawnQueue=[];t.g.waveState='active';t.g.player.invuln=1000;
     const atlas=new Set(),savedGun=t.LOADOUT.gun;
     for(const asset of w.combat.models){const mesh=w.getGeometry(asset.key);
       check(mesh.assetId&&mesh.count===asset.triangles*3&&mesh.indices.length===mesh.count,'Imported combat mesh '+asset.key);
       check(mesh.vertices.every(Number.isFinite)&&mesh.indices.every(i=>i<mesh.uniqueVertices),'Finite valid combat geometry '+asset.key);
-      check(mesh.count<=1920,'Fixed combat triangle budget '+asset.key);
+      check(mesh.count<=3660,'Fixed combat triangle budget '+asset.key);
       if(asset.key.startsWith('mount:')){const extent=[0,1,2].map(c=>{let lo=Infinity,hi=-Infinity;for(let n=c;n<mesh.vertices.length;n+=12){lo=Math.min(lo,mesh.vertices[n]);hi=Math.max(hi,mesh.vertices[n]);}return hi-lo;});check(extent[1]>extent[0]&&extent[1]>extent[2]&&mesh.count<=720,'Drone barrel points toward local nose within budget '+asset.key);}
       const key=asset.key.split(':')[1];
-      if(asset.key.startsWith('enemy:')){t.g.enemies=[];const e=t.createEnemy(key,210);e.y=200;e.spawnT=0;e.elite=true;t.g.enemies.push(e);t.render();const batch=w.renderer.batches[asset.key];check(batch.count===1&&batch.textureReady,'Textured enemy is submitted '+key);atlas.add(batch.texture);}
-      else if(asset.key.startsWith('drone:')){t.g.player.droneType=key;t.g.player.drones=1;t.render();const batch=w.renderer.batches[asset.key],rig=w.getDroneRig(key);check(batch.count===1&&batch.source===rig&&rig.hull===mesh&&rig.weapon===w.getGeometry('mount:'+({phantom:'lance',guardian:'scatter'}[key]||'pulse')),'Imported drone and mounted cannon in live flight '+key);const buffer=batch.records;w.thumbnail(asset.key,'#aaffee','#aaffee',1,0);check(w.preview.batches[asset.key].source===rig,'Exact drone preview/flight rig '+key);check(rig.vertices.slice(0,mesh.vertices.length).every((v,n)=>v===mesh.vertices[n])&&rig.indices.slice(0,mesh.count).every((v,n)=>v===mesh.indices[n]),'Unchanged drone hull prefix '+key);t.render();check(batch.records===buffer&&w.getDroneRig(key)===rig,'Drone buffers and rig reused '+key);}
+      if(asset.key.startsWith('enemy:')){t.g.enemies=[];const e=t.createEnemy(key,210);e.y=200;e.spawnT=0;e.elite=true;t.g.enemies.push(e);t.render();const batch=w.combatGPU.batches[asset.key];check(batch.count===1&&batch.textureReady,'Textured enemy is submitted '+key);atlas.add(batch.texture);}
+      else if(asset.key.startsWith('drone:')){t.g.player.droneType=key;t.g.player.drones=1;t.render();const batch=w.combatGPU.batches[asset.key],rig=w.getDroneRig(key);check(batch.count===1&&batch.source===rig&&rig.hull===mesh&&rig.weapon===w.getGeometry('mount:'+({phantom:'lance',guardian:'scatter'}[key]||'pulse')),'Imported drone and mounted cannon in live flight '+key);const buffer=batch.records;w.thumbnail(asset.key,'#aaffee','#aaffee',1,0);check(w.preview.batches[asset.key].source===rig,'Exact drone preview/flight rig '+key);check(rig.vertices.slice(0,mesh.vertices.length).every((v,n)=>v===mesh.vertices[n])&&rig.indices.slice(0,mesh.count).every((v,n)=>v===mesh.indices[n]),'Unchanged drone hull prefix '+key);t.render();check(batch.records===buffer&&w.getDroneRig(key)===rig,'Drone buffers and rig reused '+key);}
       else if(asset.key.startsWith('equipment:')){t.g.player.gunType=key;t.LOADOUT.gun=key;t.render();check(w.foreground.batches['ship:'+t.g.player.ship].source.weapon===mesh,'Mounted imported weapon '+key);w.thumbnail('vanguard','#ddf6ff','#77ddff',1,0);check(w.preview.batches['ship:vanguard'].source.weapon===mesh,'Same mounted weapon mesh at home '+key);}
       check(w.thumbnail(asset.key,'#aaffee','#aaffee',1,0),'Shared combat model preview '+asset.key);
     }
     check(atlas.size===1,'Six enemy types share one GPU texture atlas');
     t.LOADOUT.gun=savedGun;t.g.player.gunType=savedGun;t.g.bombFx={x:210,y:400,t:.1,rings:[]};t.render();
-    const bomb=w.renderer.batches.bomb,records=bomb.records;check(bomb.count===1,'Smart bomb has a live 3D body');
+    const bomb=w.combatGPU.batches.bomb,records=bomb.records;check(bomb.count===1,'Smart bomb has a live 3D body');
     t.g.bombFx.t=.5;t.render();check(bomb.count===0&&bomb.records===records,'Bomb body ends smoothly without reallocating storage');t.g.bombFx=null;
-    t.emitBullets(210,400,0,-700,1);t.render();check(w.renderer.batches.spark.count>0&&w.renderer.batches.spark.source===w.getGeometry('round'),'Imported round model is used for player blaster shots');
+    t.emitBullets(210,400,0,-700,1);t.render();check(w.combatGPU.batches.laser.count>0&&w.combatGPU.batches.laser.source===w.getGeometry('laser'),'Soft-core lasers are submitted at native combat resolution');t.g.bullets.at(-1).charged=true;t.render();check(w.combatGPU.batches.round.count>0&&w.combatGPU.batches.round.source===w.getGeometry('round'),'Charged shots retain an imported three-dimensional energy core');
     check(w.renderer.gl.getError()===0&&w.foreground.gl.getError()===0,'No combat-material GPU errors');
     return 'Combat: six textured enemy hulls share one atlas, six drone bodies, three mounted weapons, smart bomb and blaster rounds reuse GPU buffers';
   }));
@@ -239,7 +241,7 @@ module.exports = async function verifyWebGL(browser, page, source) {
     for(let n=0;n<100;n++)t.SF3D.thumbnail('vanguard','#ffffff','#ffffff',n,0);
     if(before!==window.previewAttempts)throw Error('Failed preview retries every frame');
     if(document.getElementById('graphics-panel').dataset.state!=='preview-error')throw Error('Preview failure is hidden');
-    t.startRun(1);t.render();if(t.SF3D.metrics.mode!=='webgl2'||t.SF3D.renderer.batches['ship:vanguard'].count!==1)throw Error('Preview failure lost real 3D gameplay');
+    t.startRun(1);t.render();if(t.SF3D.metrics.mode!=='webgl2'||t.SF3D.combatGPU.batches['ship:vanguard'].count!==1)throw Error('Preview failure lost real 3D gameplay');
     t.showScreen('start');t.g.mode='start';
   });
   await previewFailure.locator('#graphics-retry').click();

@@ -473,6 +473,7 @@ console.log(
   }
   await require("./webgl.cjs")(b, p, src);
   await require("./presentation.cjs")(b);
+  await require("./hd.cjs")(b);
   const reduced = await b.newPage({ viewport: { width: 375, height: 812 } });
   reduced.on("pageerror", (e) => errors.push(e.message));
   await reduced.emulateMedia({ reducedMotion: "reduce" });
