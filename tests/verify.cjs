@@ -472,8 +472,10 @@ console.log(
     console.log("Phone HUD and touch checks passed at " + width + "px");
   }
   await require("./webgl.cjs")(b, p, src);
+  await require("./factions.cjs")(p);
   await require("./presentation.cjs")(b);
   await require("./hd.cjs")(b);
+  await require("./inspection.cjs")(b);
   const reduced = await b.newPage({ viewport: { width: 375, height: 812 } });
   reduced.on("pageerror", (e) => errors.push(e.message));
   await reduced.emulateMedia({ reducedMotion: "reduce" });

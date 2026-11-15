@@ -67,7 +67,7 @@ module.exports=async function verifyPresentation(browser){
   await page.keyboard.press('Escape');await page.waitForTimeout(250);
   await page.locator('#btn-play').click();await page.locator('#btn-lc-go').click();
   await page.waitForFunction(()=>G.mode==='playing');
-  await page.evaluate(()=>{if(document.getElementById('ship3d')!==window.sharedPreview)throw Error('Gameplay allocated a different ship surface');if(window.gpuContexts>2)throw Error('Added extra GPU contexts')});
+  await page.evaluate(()=>{if(SF3D.foreground.canvas.id!=='world3d'||SF3D.foreground.batches['ship:'+G.player.ship].source.hull!==SF3D.getGeometry('ship:'+G.player.ship)||Object.getPrototypeOf(SF3D.foreground)!==Object.getPrototypeOf(SF3D.preview))throw Error('Gameplay did not use the same ship geometry and GPU renderer class');if(window.gpuContexts>2)throw Error('Added extra GPU contexts')});
   await page.keyboard.press('Escape');await page.waitForTimeout(300);
   await page.locator('#btn-pause-settings').click();await page.waitForTimeout(350);
   await page.evaluate(()=>{if(!SF3D.metrics.menuActive||SF3D.metrics.nativePlayer)throw Error('Settings still renders hidden paused gameplay')});

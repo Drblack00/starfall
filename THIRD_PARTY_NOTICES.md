@@ -1,3 +1,11 @@
+# Original Rift faction (build 3D-8)
+
+The six current enemy hulls and five boss hulls are original procedural STARFALL
+art. They use no player-fleet mesh, texture or downloaded model. Build 3D-8 removes
+the six older Quaternius enemy adaptations and their shared atlas from the
+embedded combat payload. The historical table below documents prior usage;
+existing player-fleet, drone, weapon and ordnance credits remain applicable.
+
 # Nitro Blade
 
 **Nitro Blade** by **VertaScan** — [original model on Sketchfab](https://sketchfab.com/3d-models/nitro-blade-6c34eb48b0c44667864a2af3fed92d6c).
@@ -45,9 +53,9 @@ engine anchors. Both mesh data and textures are embedded in `index.html`. Model
 names are credited here; existing STARFALL ship names, stats and career unlocks stay
 unchanged. No endorsement by Quaternius or the mirror maintainer is implied.
 
-# Combat models and equipment (build 3D-5)
+# Historical combat models and equipment (build 3D-5)
 
-Six Quaternius hull adaptations supply the enemy fleet, retaining the original
+The previous release used six Quaternius hull adaptations for enemies, retaining the original
 creator's CC0 license and the pinned source revision above. These adaptations
 have 600 triangles each, outward normals and normalized/packed indexed vertices.
 Their source UVs are remapped into one guttered 1024×512 atlas derived from the

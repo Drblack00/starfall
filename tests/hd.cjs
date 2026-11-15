@@ -35,15 +35,14 @@ module.exports=async function verifyHD(browser){
   await page.waitForTimeout(350);
   await page.evaluate(()=>{
     const rig=SF3D.foreground.batches['ship:'+G.player.ship];if(rig.source.weapon!==SF3D.getGeometry('frame:sniper3'))throw Error('Selected chassis is missing in gameplay');
-    if(SF3D.metrics.combatWidth!==document.getElementById('game').width||SF3D.foreground.canvas.width!==document.getElementById('game').width)throw Error('Combat is rendered on a coarse background raster');
+    if(SF3D.metrics.combatWidth<document.getElementById('game').width||SF3D.foreground.canvas.width<document.getElementById('game').width)throw Error('Combat is rendered on a coarse background raster');
     if(!Music.started||Music.stems.length!==3||Music.stems.some(s=>!s.source.loop))throw Error('Action music is not playing as reusable loop stems');
     window.scoreSources=Music.stems.map(s=>s.source);if(Music.stems[1].level<=.2)throw Error('Combat percussion did not rise');
   });
   await page.evaluate(()=>{PROFILE.graphics='auto';const clock=performance.now.bind(performance);let fake=clock();performance.now=()=>fake+=40;for(let n=0;n<150;n++)SF3D.draw();performance.now=clock;
     const native=document.getElementById('game'),sharp=SF3D.foreground;
-    if(SF3D.metrics.nativeCombat||!SF3D.metrics.nativeEffects||SF3D.metrics.combatWidth>=native.width)throw Error('Auto did not adapt the distant combat raster');
-    if(sharp.canvas.width<192*native.width/420-.5||sharp.canvas.height<200*native.height/740-.5)throw Error('Auto reduced the player/escort pixel density');
-    if(sharp.batches['drone:'+G.player.droneType].source!==SF3D.getDroneRig(G.player.droneType))throw Error('Auto lost the native 3D drone rig');
+    if(!SF3D.metrics.nativeCombat||SF3D.metrics.nativeEffects||SF3D.metrics.combatWidth<native.width||SF3D.metrics.backgroundDetail>=.5)throw Error('Scenery adaptation reduced combat resolution');
+    if(sharp.batches['drone:'+G.player.droneType].source!==SF3D.getDroneRig(G.player.droneType))throw Error('Smooth mode lost the native 3D drone rig');
   });
   await page.locator('#btn-pause').click();await page.waitForTimeout(350);
   await page.evaluate(()=>{if(Music.stems[1].level>=.2)throw Error('Pause did not soften percussion');for(let n=0;n<3;n++)if(Music.stems[n].source!==window.scoreSources[n])throw Error('Music recreates sources while playing');});
@@ -52,5 +51,5 @@ module.exports=async function verifyHD(browser){
   await page.locator('#scr-pause .music-btn').click();await page.waitForTimeout(200);
   await page.evaluate(()=>{if(!Music.on||Music.stems.some((s,n)=>s.source!==window.scoreSources[n]))throw Error('Music toggle restarted the score instead of preserving phase')});
   if(errors.length)throw Error(errors.join('\n'));await page.close();
-  console.log('HD: six new drone bodies, nine persistent cosmetic blaster chassis, exact mounted/viewed models, HD combat, sharp Auto escorts and phase-aligned action audio passed');
+  console.log('HD: six new drone bodies, nine persistent cosmetic blaster chassis, exact mounted/viewed models, HD combat, native Smooth-mode combat and phase-aligned action audio passed');
 };

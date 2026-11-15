@@ -14,7 +14,83 @@ STARFALL is an original space shooter by Drblack Ventures: five skies, five boss
 
 The game is a single self-contained HTML file (`index.html`) — no build step. This repo is deployed as a static site on Render (see `render.yaml`).
 
-## Smooth combat, drone bodies and action score (build 3D-7)
+## Original enemy faction and ship inspection (build 3D-8)
+
+Enemies now belong to the original **Rift faction**, with six purpose-built 3D
+silhouettes: manta diver, horned charger, lobed weaver, shield sentinel, forked
+lancer and armored bulwark. None uses a player-fleet mesh or texture. Charger aim
+blinks, rush rotation and enlarged gold-armored elites remain visible. The five
+bosses have separate carrier, artillery, three-armed, ice-star and gravity-core
+hulls; their existing abilities, weak points and combat cues remain intact.
+
+The presentation uses soft cel lighting, rounded pastel cockpit panels and a
+clear gold Play button. Home still ends at Play. Hangar has a live ship inspector:
+drag to rotate and tilt, choose Pan to move the view, pinch or scroll to zoom,
+and Reset to ease back. Two fingers pan and zoom together. Arrow keys rotate,
+Alt+arrows pan, +/- zoom, and Home/0 reset. Blasters, Drones, Paint and Upgrades
+are reachable from Hangar and Back returns there. Reduced-motion preferences and
+3D loading/fallback states are respected.
+
+**Smooth** now keeps the entire battle at native canvas resolution, including
+enemies, bosses, lasers and particles. **Extra Crisp** adds 1.25× sampling when
+frame time permits. Scenery complexity adapts without making combat blurry.
+Five cached illustrated skies provide shaded planets and nebulae; sector changes
+crossfade. One opaque GPU pass renders the battle, avoiding the former separate
+transparent combat composition. Opaque hulls skip blending; dedicated vertex-lit toon and lean emissive
+shaders avoid the full per-fragment hull shader for Rift craft and pooled effects. Indexed meshes, instance buffers and effect pools remain reused.
+
+Home and inspection use the same renderer class, craft function, mounted rig,
+materials and player geometry as flight, in a separate persistent transparent
+preview context. There are still only two GPU contexts and no steady preview
+readbacks or canvas copies. Enemy meshes and sky textures are built/uploaded once
+and cached. The embedded combat payload retains 20 equipment/drone meshes; the
+six shared fleet-based enemy adaptations and their atlas are removed. The
+optional packer reproduces this filtered payload; runtime needs no build or
+network asset requests.
+
+**Gameplay balance changes: none.** All 34 frozen functions and eight balance
+blocks remain byte-for-byte unchanged. Five assaults and five unique bosses,
+unlocks, collision radii, rewards and prices are preserved.
+
+Verification: `CHROMIUM_PATH=/usr/bin/chromium node tests/verify.cjs` passes,
+including distinct rendered faction silhouettes, native resolution, cached
+buffers/textures, WebGL1 recovery, real inspector pointer/pinch/keyboard input,
+phone layouts, pause/resume and reduced motion. The served WebGL1 play-through
+selected Aegis, Guardian escorts and Vector
+blasters through the UI, cleared the first full assault and Mothership in 71.7 s
+with 4/4 hull, and exercised charge, special and pause/resume. No browser runtime
+errors occurred. Across startup/navigation/screenshots and play, frame intervals
+were 16.7 ms median, 50.0 ms p95 and 1,616.6 ms maximum; the maximum includes loading
+and capture work and is not a steady-state frame measurement.
+
+Final 600-frame seeded samples (120 warm-up frames, serial headless Chromium on
+this shared Cloud desktop, comparison main `e3ed2a4`):
+
+| Scene | Main frame median / p95 | Updated frame median / p95 | Main → updated combat width |
+| --- | --- | --- | --- |
+| 390×844, Eclipse, WebGL2 | 16.7 / 50.0 ms | 16.7 / 50.0 ms | 117 → 390 px |
+| 900×900, Eclipse + 12 enemies, WebGL2 | 33.3 / 50.1 ms | 33.4 / 66.7 ms | 153 → 511 px |
+
+JS update/render submission improved from 1.0/3.7 to 0.4/1.5 ms median/p95 in the
+phone sample, and 1.0/3.9 to 0.6/2.1 ms in the crowded sample. Draws fell from
+13 to 11 and 19 to 17 respectively. The updated native battle has approximately
+11× the previous fallback pixel count. The phone frame median and p95 match
+main, while the crowded stress sample has a slower tail. **Locked 60 fps and
+performance parity under heavy GPU load are not established.** Physical iPhone
+Safari and physical mobile GPU performance have not been verified. The phone
+sample preceded only an explicit matching precision qualifier for the same toon
+varying and removal of an unused local; crowded sampling preceded the qualifier.
+The final full suite and play-through exercise those exact final shaders.
+A separate 600-frame animated-home sample measured main/new median/p95 of
+16.7/16.7 and 16.7/16.8 ms respectively, with zero steady preview copies in both.
+Maximum intervals were 50.0/216.7 ms. The PR remains a draft because the crowded
+combat tail has not met the standing no-regression requirement.
+
+The final HTML is 4,510,601 bytes raw / 1,896,259 bytes gzip, down from main’s
+4,894,178 / 2,105,815 bytes. The optional combat packer reproduces the embedded
+20-model payload exactly.
+
+## Previous release: smooth combat, drone bodies and action score (build 3D-7)
 
 The six escort slots now use distinct downloaded Quaternius drone/robot and turret
 bodies, adapted into hovering gun platforms. Curved surfaces use split smooth
