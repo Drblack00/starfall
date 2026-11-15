@@ -6,9 +6,6 @@ const balanceLock = JSON.parse(
   fs.readFileSync("tests/balance-lock.json", "utf8"),
 );
 const shippingSource = fs.readFileSync("index.html", "utf8");
-// Restore only the reviewed dead text for historical hash comparison. This
-// keeps every other byte in update() locked without editing balance-lock.json.
-const removedWarpEnvelope = "        // Warp envelope — Sample 01 timing over 2.6s: charge 0–19% (intensity to 0.25, ship shakes),\n        // peak 19–78% (cubic ease-out to full streak), settle 78–100% (soft landing to 0)\n        if (G.warpT > 0) {\n          var wprog = 1 - G.warpT / G.warpDur;\n          G.warpP = wprog;\n          var wv;\n          if (wprog < 0.19) wv = (wprog / 0.19) * 0.25;\n          else if (wprog < 0.78) { var wpk = (wprog - 0.19) / 0.59; wv = 0.25 + (1 - Math.pow(1 - wpk, 3)) * 0.75; }\n          else wv = 1 - (wprog - 0.78) / 0.22;\n          G.warpW = REDUCED ? 0 : clamp(wv, 0, 1);\n          G.warpI = G.warpW; // legacy alias — star scroll / checks read warpI\n          G.warpShake = (!REDUCED && wprog < 0.19) ? Math.sin(G.time * 33.333) * 2.2 * (wprog / 0.19) : 0;\n        } else { G.warpP = 0; G.warpW = 0; G.warpI = 0; G.warpShake = 0; }\n";
 for (const [kind, entries] of Object.entries({
   function: balanceLock.functions,
   var: balanceLock.declarations,
@@ -23,19 +20,16 @@ for (const [kind, entries] of Object.entries({
       kind === "function"
         ? shippingSource.indexOf("\n      }", begin) + 8
         : shippingSource.indexOf(";\n", begin) + 1;
-    let frozenBlock = shippingSource.slice(begin, end);
-    if (name === "update" && !frozenBlock.includes(removedWarpEnvelope))
-      frozenBlock = frozenBlock.replace("        if (Math.random() < dt * 0.22)", removedWarpEnvelope + "        if (Math.random() < dt * 0.22)");
     const actual = crypto
       .createHash("sha256")
-      .update(frozenBlock)
+      .update(shippingSource.slice(begin, end))
       .digest("hex");
     if (actual !== expected)
       throw Error("Frozen gameplay block changed: " + name);
   }
 }
 console.log(
-  "Frozen balance: 34 combat/economy functions and 8 data blocks match main (reviewed dead warp text normalized).",
+  "Frozen balance: 34 combat/economy functions and 8 data blocks match main.",
 );
 (async () => {
   const b = await chromium.launch({

@@ -26,6 +26,8 @@ Every hull has a signature ultimate: Nitro Blade dashes through an enemy line;
 other hulls use piercing lances, defensive pulses, needle runs, heavy salvos,
 phase steps, fans, salvage attraction, solar bursts, crescents, slow siege bolts,
 radial novas, an Atlas siege shell, Wraith cloaking, or a Kestrel wing overdrive.
+Starforge intentionally lays a slow siege wall: five shells at `vy = -45`, each
+with 260 units of range (about 5.8 seconds of travel), rather than a fast salvo.
 
 Per-hull liveries unlock at **2 / 5 / 8 career stars**: stealth black, gold trim,
 and Rift-captured purple. Stars are eligibility, never spent. Factory paint keeps
@@ -34,9 +36,14 @@ stat callouts and a hinged canopy. Flaps bank, radar spins and weapon doors open
 on firing. Damage adds scorch, smoke and sparks; the between-wave repair-bay
 scan is cosmetic and does not add healing to existing ships.
 
-Three new specialist escorts are available: repair (1 HP per 12 seconds, capped
-at max hull), jammer (45% slower vertical advance within 200 units for 2 seconds),
-and kamikaze (a dive every 6 seconds, 3 damage in a 65-unit blast). A painted boss
+Three new specialist escorts are available: each repair drone heals 1 HP per
+12-second cycle, capped at max hull; each jammer applies 45% slower vertical
+advance within 200 units for 2 seconds; each kamikaze dives every 6 seconds and
+deals 3 damage in a 65-unit blast. Abilities intentionally fire per drone instance:
+a carrier with two repair drones heals up to 2 HP per cycle, and three repair
+drones heal up to 3 HP. Two or three kamikazes perform two or three independent
+dives/blasts; overlapping blasts can each deal damage. Jammer slow percentages
+do not stack. A painted boss
 can also be targeted by a kamikaze; its blast uses the existing projectile/core
 and boss-shield rules. Existing drone weapon damage and cadence remain unchanged.
 Drone plating evolves visually at **10 / 30 minutes of active flight per type**
@@ -54,8 +61,9 @@ node tests/ships-drones.cjs
 The last test also compares full and skipped warps against merged Batch A
 (`7289efe`) in normal and reduced-motion modes. The old warp envelope is removed
 from `update()`. VisualFX owns its final arrival-frame tail and subsequent reset.
-The original balance-lock file is unchanged; verification restores only the
-removed text for comparison against its historical hash.
+Verification hashes the shipped source directly. Only the `functions.update`
+lock entry is re-baselined for the deleted dead envelope; all other lock entries
+remain unchanged.
 
 ## Metallic surfaces and flight-deck refinement (build 3D-9)
 
