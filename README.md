@@ -1016,3 +1016,67 @@ Based on main `2bb229f` (Batch B / PR #13). Runtime remains entirely in `index.h
 | `update` | Core-hit stagger integration, cinematic collision gate, and carrier escort interception. Existing numeric damage, spawn and economy values are unchanged. | `aadc64f7b6dcd4cfd6480e6d9c623aaac27f630da0a23e9dc332e64f67dae869` |
 
 Validation: `tests/verify.cjs`, `tests/bosses-modes.cjs` (normal + reduced motion), and the Batch B `tests/ships-drones.cjs` regression suite, including frame-identical warp/skip comparison against merged Batch A. The phone-sized headless Chromium benchmark at 390×844 measured 0.4 ms median / 0.8 ms p95 work and 16.7 ms p95 frame intervals over 600 samples. This is a desktop headless viewport measurement, not a physical-phone hardware certification. New event storage uses a preallocated typed array, and render overlays reuse existing canvas/GPU resources.
+
+## Batch D — home, deck and experience (#4, #5, #7, #25–29, #34–36)
+
+Based on main `4fdb1a1` (merged Batch C / PR #14). Runtime stays in the single
+`index.html`, using embedded materials and reusable instance buffers.
+
+- Depth-layered, textured fog passes behind and in front of craft; matching fog
+  lighting tints hulls. Each sector has a different planet palette/geography,
+  counter-rotating cloud material, night-side city lights and atmosphere rim.
+- Ion lightning, ember dust, rift sparkle, cryo crystals and eclipse static give
+  the five skies their weather identity. Flash preference and reduced motion
+  suppress lightning; reduced motion freezes ambient drift and clouds.
+- The dock retains the selected native ship and adds a holo-table planet, patrol
+  drones and moving crew silhouettes. Launch Check now includes a living planet,
+  two intel cards and a dark boss teaser before its existing launch confirmation.
+- **COCKPIT** adds a glass canopy reflecting the current rendered environment and
+  animated HUD glare; the external player hull is hidden in this view.
+- Results count accuracy, peak combo, escorts lost and time bonus. A separate
+  presentation-only action score combines the unchanged gameplay score with
+  `max(0, round(300 - runTime))` on victory. It never pays credits or alters the
+  official score, bounty, campaign stars or economy. Reduced motion shows final
+  counters immediately.
+- **PHOTO / P** freezes battle. Orbit and elevation sliders rotate the frozen
+  world around the ship. **SAVE PHOTO** downloads a local PNG; **SHARE…** is a
+  separate explicit tap that invokes the system file-share sheet when available.
+  Cancellation and unsupported sharing stay local. Return restores the prior
+  playing or paused state. Escape also returns.
+- **NG+ SKIES** unlocks after a campaign clear. It starts at sky 1 with run 1's
+  unchanged campaign values and adds a pair of crossing projectiles every three
+  combat seconds. No patterns fire during intros or transitions. NG+ checkpoints
+  preserve the mode; starting a normal campaign clears it. An NG+ clear unlocks
+  persistent Aurora and Solar cosmetic liveries for each selected hull.
+- Smooth remains the default. **HD CINEMATIC** adds a 48-segment planet (versus
+  24), higher raster density when affordable, and extra fog/weather particles.
+  The existing frame-time governor drops extras and reduces fog to two pooled
+  slabs on a tight budget, preserving native combat pixels. Menu updates are
+  capped at 10 Hz; reduced motion updates on selection changes only.
+
+No balance-lock entries or verifier hashing logic changed. All locked blocks are
+still hashed directly from the shipped bytes; `TOTAL_WAVES` remains 5 and all five
+bosses remain distinct.
+
+Validation (serve the repository on port 8765; Playwright required):
+
+```sh
+python -m http.server 8765
+CHROMIUM_PATH=/usr/bin/chromium node tests/verify.cjs
+CHROMIUM_PATH=/usr/bin/chromium node tests/home-deck.cjs
+CHROMIUM_PATH=/usr/bin/chromium node tests/bosses-modes.cjs
+CHROMIUM_PATH=/usr/bin/chromium node tests/ships-drones.cjs
+```
+
+The new suite covers campaign/NG+ separation, checkpoint restoration, prestige
+liveries, real result counters, frozen photo simulation, camera matrices, reusable
+buffers, nonblank captures, explicit-only sharing, five distinct skies, reduced
+motion and 320/375/430px briefing layouts. Existing verification includes native
+WebGL2/WebGL1, context recovery and phone HUD/touch regressions.
+
+A 375×812 DPR-2 headless Chromium comparison over 600 measured frames found
+0.5 ms median / 0.9 ms p95 JavaScript work for Batch D (main: 0.5 / 1.1 ms).
+Native combat remained 750px wide; the low-budget scene added two draw calls.
+Headless frame intervals were 33.4 ms median / 66.6 ms p95 (main: 16.7 / 66.6 ms).
+These software-rendered desktop measurements do **not** certify 60fps on physical
+phones; that device check remains necessary before making a universal claim.
