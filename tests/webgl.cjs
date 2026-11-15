@@ -38,13 +38,18 @@ module.exports = async function verifyWebGL(browser, page, source) {
     let visible=0;for(let n=0;n<pixels.length;n+=4)if(pixels[n+3]>30&&pixels[n]+pixels[n+1]+pixels[n+2]>100)visible++;
     check(visible>400,'Gameplay view actually contains a visibly lit 3D ship, not just a registered mesh');
     const native=document.getElementById('game');
-    check(Math.abs(w.foreground.canvas.width/128-native.width/420)<.01,'Flight player keeps native pixel density');
+    check(w.foreground.canvas.width/128>=native.width/420-.01,'Flight player keeps at least native pixel density');
     const clock=performance.now.bind(performance);let fake=clock();performance.now=()=>fake+=40;
     for(let frame=0;frame<150;frame++)t.render();performance.now=clock;
     check(w.metrics.resolution<=.32&&w.metrics.backgroundWidth<native.width,'Adaptive resolution scales the backdrop');
     check(w.metrics.nativePlayer&&Math.abs(w.metrics.playerWidth/128-native.width/420)<.01,'Low-quality world never reduces player resolution');
     const viewport=w.foreground.gl.getParameter(w.foreground.gl.VIEWPORT);
     check(viewport[2]===w.foreground.canvas.width&&viewport[3]===w.foreground.canvas.height,'Player is actually submitted at native pixel density');
+    const reducedQuality=w.metrics.resolution;fake=clock();performance.now=()=>fake+=1000/60;
+    for(let frame=0;frame<150;frame++)t.render();
+    check(w.metrics.resolution>reducedQuality,'Sustained 60Hz motion restores world detail after a transient slowdown');
+    performance.now=()=>fake+=40;for(let frame=0;frame<150;frame++)t.render();performance.now=clock;
+    check(w.metrics.resolution<=.32,'Quality still drops promptly when the frame budget is exceeded');
     const saved={x:t.g.player.x,y:t.g.player.y,bank:t.g.player.bank};
     for(const [x,y,bank] of [[80,130,-.3],[350,620,.3]]){Object.assign(t.g.player,{x,y,bank});t.render();const rect=w.foreground.canvas.getBoundingClientRect(),stage=native.getBoundingClientRect();
       check(Math.abs(rect.left-(stage.left+(x-64)/420*stage.width))<.2&&Math.abs(rect.top-(stage.top+(y+10-80)/740*stage.height))<.2,'Native player view tracks the same gameplay position across the playfield');}
@@ -87,6 +92,49 @@ module.exports = async function verifyWebGL(browser, page, source) {
     return 'WebGL: embedded mesh, LOD, shared previews, five bosses, stable instance buffers passed';
   }));
   await page.evaluate(()=>{if(t.SF3D.foreground!==t.SF3D.preview)throw Error('Home and flight do not share the exact GPU renderer')});
+  console.log(await page.evaluate(async()=>{
+    const w=t.SF3D,check=(value,message)=>{if(!value)throw Error(message)};
+    await w.ready;
+    check(w.fleet.models.length===11&&w.fleet.license==='CC0-1.0','Eleven commercially usable imported fleet models');
+    const saved={ship:t.g.player.ship,loadout:t.LOADOUT.ship,invuln:t.g.player.invuln,charge:t.g.player.charge,shield:t.g.player.shield,mode:t.g.mode};
+    const names=new Set(),signatures=new Set();
+    t.g.mode='playing';t.g.player.invuln=0;t.g.player.charge=0;t.g.player.shield=false;
+    for(const asset of w.fleet.models){
+      const mesh=w.getGeometry('ship:'+asset.ship);names.add(mesh.assetId);
+      check(mesh.source===asset.name+' / Quaternius'&&mesh.assetId==='quaternius:'+asset.name,'Imported hull replaces procedural slot '+asset.ship);
+      check(mesh.count===asset.triangles*3&&mesh.indices.length===mesh.count,'Full imported triangle count '+asset.ship);
+      check(mesh.image.naturalWidth===512&&mesh.image.naturalHeight===512,'Embedded surface texture decoded '+asset.ship);
+      const packed=atob(asset.data),indices=atob(asset.indices);
+      for(let n=0;n<mesh.vertices.length;n+=137){const q=packed.charCodeAt(n*2)|(packed.charCodeAt(n*2+1)<<8),channel=n%12;
+        check(mesh.vertices[n]===Math.fround(asset.offsets[channel]+q*asset.steps[channel]),'Source vertex/normal/UV retained '+asset.ship);}
+      for(let n=0;n<mesh.indices.length;n++){check(mesh.indices[n]<asset.vertices,'Valid imported index');if(n%127===0)check(mesh.indices[n]===(indices.charCodeAt(n*2)|(indices.charCodeAt(n*2+1)<<8)),'Source topology retained');}
+      check(mesh.vertices.every(Number.isFinite),'Finite imported mesh '+asset.ship);
+      const gpu=w.foreground,draw=gpu.drawInstances,materials=[];
+      gpu.drawInstances=function(...args){materials.push(this.gl.getUniform(this.program,this.textured));return draw(...args)};
+      t.g.player.ship=asset.ship;t.LOADOUT.ship=asset.ship;t.render();gpu.drawInstances=draw;
+      check(materials[0]===1&&materials.at(-1)===0,'Imported hull takes fast material path and effects reset it '+asset.ship);
+      const batch=w.foreground.batches['ship:'+asset.ship];
+      check(batch.source===mesh&&batch.textureReady&&batch.texture,'Textured imported hull submitted in live flight '+asset.ship);
+      const gl=w.foreground.gl,pixels=new Uint8Array(gl.drawingBufferWidth*gl.drawingBufferHeight*4);gl.readPixels(0,0,gl.drawingBufferWidth,gl.drawingBufferHeight,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
+      let visible=0,hash=2166136261;for(let n=0;n<pixels.length;n+=4){if(pixels[n+3]>80&&pixels[n]+pixels[n+1]+pixels[n+2]>100)visible++;hash=Math.imul(hash^pixels[n],16777619);}
+      check(visible>200,'Visible imported model pixels in gameplay '+asset.ship);signatures.add(hash);
+      const preview=w.thumbnail(asset.ship,'#80ccff','#88ddff',1,0);
+      check(preview&&w.preview.batches['ship:'+asset.ship].source===batch.source,'Exact home/flight mesh identity '+asset.ship);
+      t.render();check(gl.getError()===gl.NO_ERROR,'No imported material GL errors '+asset.ship);
+      const buffer=batch.records,texture=batch.texture;t.render();t.render();
+      check(batch.records===buffer&&batch.texture===texture,'Fixed imported buffers and textures reused '+asset.ship);
+    }
+    check(names.size===11&&signatures.size===11,'Every added ship has a different mesh and rendered silhouette');
+    t.g.player.ship=saved.ship;t.LOADOUT.ship=saved.loadout;t.g.player.invuln=saved.invuln;t.g.player.charge=saved.charge;t.g.player.shield=saved.shield;t.g.mode=saved.mode;t.render();
+    check(w.renderer.nebula&&w.renderer.batches.planet.count===1,'Cached cloud texture and single-pass planet material stay active');
+    const gpu=w.renderer;
+    const a=gpu.add('spark',100,100,0,2,3,4,0,0,0,'#ffffff','#ffffff',1,false),offset=(a.count-1)*24;
+    const identity=Array.from(a.records.slice(offset,offset+16));
+    gpu.add('spark',100,100,0,2,3,4,1e-9,1e-9,1e-9,'#ffffff','#ffffff',1,false);
+    for(let n=0;n<16;n++)check(Math.abs(identity[n]-a.records[offset+24+n])<1e-6,'Identity transform fast path agrees with rotated path');
+    t.render();
+    return 'Imported fleet: eleven unique textured hulls, exact home/flight geometry, visible pixels, reusable buffers/textures passed';
+  }));
   const contextLoss=await page.evaluate(()=>{
     const ext=t.SF3D.renderer.gl.getExtension('WEBGL_lose_context');
     if(!ext)return false;window.testContextExt=ext;ext.loseContext();return true;
@@ -108,6 +156,8 @@ module.exports = async function verifyWebGL(browser, page, source) {
     if(t.SF3D.foreground.batches['ship:vanguard'].source.assetId!=='nitro-blade')throw Error('WebGL1 lost supplied mesh');
     if(t.SF3D.foreground.batches['ship:vanguard'].source!==t.SF3D.getGeometry('ship:vanguard')||!t.SF3D.metrics.nativePlayer)throw Error('WebGL1 did not preserve detailed native-resolution flight');
     if(!t.SF3D.thumbnail('vanguard','#ffffff','#88ddff',1,0)||!t.SF3D.preview.legacy)throw Error('WebGL1 preview did not share backend');
+    for(const asset of t.SF3D.fleet.models){t.g.player.ship=asset.ship;t.render();const batch=t.SF3D.foreground.batches['ship:'+asset.ship];if(batch.source.assetId!=='quaternius:'+asset.name||!batch.textureReady||t.SF3D.foreground.gl.getError())throw Error('WebGL1 imported fleet failed '+asset.ship);}
+    t.g.player.ship='vanguard';t.render();
     for(let wave=1;wave<=5;wave++){t.startSector(wave);t.spawnBoss();t.g.boss.state='fight';t.g.boss.y=150;t.render();}
     const gpu=t.SF3D.renderer,storage=Object.values(gpu.batches).map(b=>[b.records,b.uploadRanges]);
     for(let n=0;n<20;n++)t.render();

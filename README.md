@@ -14,7 +14,95 @@ STARFALL is an original space shooter by Drblack Ventures: five skies, five boss
 
 The game is a single self-contained HTML file (`index.html`) — no build step. This repo is deployed as a static site on Render (see `render.yaml`).
 
-## Visible 3D flight (build 3D-3)
+## Imported textured fleet (build 3D-4)
+
+All twelve player ships now have imported 3D hulls. Vanguard retains the user-supplied
+Nitro Blade; the other eleven use distinct models by **Quaternius** from the
+[Ultimate Spaceships Pack](https://quaternius.com/packs/ultimatespaceships.html),
+licensed [CC0](https://creativecommons.org/publicdomain/zero/1.0/) for commercial use.
+Choose a ship in the Fleet/hangar; existing career locks stay in place.
+
+| STARFALL slot | Imported model | Triangles |
+| --- | --- | ---: |
+| Phantom | Omen | 1,426 |
+| Aegis | Challenger | 1,748 |
+| Interceptor | Insurgent | 2,800 |
+| Bulwark | Pancake | 2,688 |
+| Spectre | Executioner | 2,800 |
+| Tempest | Spitfire | 2,800 |
+| Nomad | Dispatcher | 748 |
+| Solaris | Striker | 2,800 |
+| Reaper | Zenith | 2,152 |
+| Starforge | Bob | 938 |
+| Sovereign | Imperial | 2,642 |
+
+Each model uses indexed triangles, normals and UVs, plus its weathered
+surface texture reduced to 512×512. The four largest hulls are adapted to a mobile budget of
+2,800 triangles; the remaining seven retain their source topology. The same
+mesh, material shader, paint and engine renderer appears at home and in flight. Per-model exhaust anchors follow the banking
+hull. Paint colors tint the textured accent areas while preserving neutral panels.
+All data is embedded in `index.html`; there is no runtime model download, new external
+asset, framework or build step. HTML transfer size is approximately 3.55 MB raw /
+1.58 MB with HTTP gzip (main 3D-3: 1.36 / 0.40 MB). Eleven extra textured models
+increase startup decoding and memory; the two existing contexts together can hold
+about 29 MiB of fleet texture storage including mipmaps.
+
+The surrounding scene gains layered nebula filaments, shaded planetary clouds
+and an atmospheric rim. Sky/terrain detail uses a baked, reusable cloud texture;
+the planet rim stays in its existing draw pass. Exhaust tapers smoothly instead of ending in a solid cone.
+Textures use linear mip filtering to reduce distant detail shimmer. Player-only
+supersampling increases edge quality when world quality is above 75%, then returns
+to native density on slower devices. The player is never downsampled with the world.
+World detail now recovers gradually after four stable 60Hz sampling windows; the
+previous sub-14.5 ms recovery threshold could never recover on a 60Hz display.
+
+Performance work includes an allocation-free identity-transform path for stars,
+straight bolts and glows; a draw-uniform material fast path for imported hulls;
+a polynomial glow falloff; cached texture bindings; and an
+opacity veil for idle dimming that avoids filtering both live GPU canvases. Geometry,
+textures and fixed instance storage are cached and reused; the equipped hull is
+prewarmed without uploading unused ships to both GPU contexts. Existing bullet/particle
+pools and swept collisions remain in place. **Gameplay balance changes: none.** All
+34 frozen combat/economy functions and eight data blocks are unchanged; the five
+assault/boss waves and five unique boss ability kits are retained.
+
+`tests/verify.cjs` additionally checks all eleven imported meshes against their packed
+vertices and indices, decoded textures, distinct rendered silhouettes, actual lit
+flight pixels, exact home/flight geometry identity, reusable texture/buffer objects,
+the transform fast path, 60Hz quality recovery, and WebGL1 compatibility. See the PR for final play and
+frame-time results. The final locally served WebGL1 playthrough selected Aegis in
+the hangar, cleared the first assault and Mothership, paused/resumed, and finished
+with all four hull points and no browser errors in 63.7 seconds. No gameplay
+fixtures were used in that playthrough. Its measured window, including startup,
+navigation and screenshots, had 16.7 ms median / 33.4 ms p95 / 916.6 ms maximum
+frame intervals.
+
+Final 600-frame stress samples after 120 warm-up frames compared main `3652e9b`
+with this build in the same cloud Chromium environment:
+
+| Visual hull | Main frame interval median / p95 | New frame interval median / p95 | Main / new JS p95 |
+| --- | --- | --- | --- |
+| Vanguard | 16.7 / 50.0 ms | 16.7 / 50.0 ms | 1.3 / 1.2 ms |
+| Interceptor | 16.7 / 33.4 ms | 16.7 / 33.4 ms | 1.0 / 1.0 ms |
+
+Maximum frame intervals were 149.9 / 50.1 ms for main/new Vanguard and 50.1 / 50.1 ms
+for Interceptor. Maximum JS work was 12.7 / 15.4 ms and 3.1 / 29.0 ms respectively.
+Adaptive world scale ended at 30% for both Vanguard runs and 42% / 30% for
+main/new Interceptor; the player remained at native density. P95 still exceeds the
+16.7 ms target: sustained 60fps on physical iPhone Safari has not been verified.
+
+The cached cloud texture can optionally be regenerated with
+`python3 tools/make-nebula.py <output-data-uri.txt>`.
+
+Asset provenance, licenses and transformations are in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Optional offline regeneration uses
+`blender --background --python tools/simplify-fleet.py -- <source-dir> <lod-dir>`, then
+`python3 tools/import-fleet.py <source-dir> <output.json> --optimized-dir <lod-dir>`
+with numpy and Pillow. This reproduces the embedded data from the pinned source
+files (Blender 4.3.2 was used) and is **not** needed to run or deploy the game. The `fleet-assets` payload records every original
+GLB's SHA-256 and the source repository revision.
+
+## Visible 3D flight (build 3D-3, historical)
 
 The home preview and gameplay now use the **exact same 5,068-triangle Nitro Blade
 hull**, rendered by the same live GPU craft/engine renderer. This game-ready

@@ -36,11 +36,13 @@ const fs = require("fs");
     await p.goto("http://127.0.0.1:8765/test.html");
     console.log(
       file,
-      await p.evaluate(async () => {
+      await p.evaluate(async (visualShip) => {
+        if(typeof SF3D!=="undefined")await SF3D.ready;
         t.startRun(1);
         t.startSector(5);
         t.spawnBoss();
         let g = t.g;
+        if(visualShip)g.player.ship=visualShip;
         g.spawnQueue = [];
         g.waveState = "boss";
         g.boss.state = "fight";
@@ -82,9 +84,9 @@ const fs = require("fs");
           rafMs: stats(raf),
           samples: work.length,
           freeParts: g.partsPool?.length,
-          graphics: typeof SF3D !== "undefined" ? {mode:SF3D.metrics.mode,resolution:SF3D.metrics.resolution,draws:SF3D.metrics.draws,instances:SF3D.metrics.instances,backgroundWidth:SF3D.metrics.backgroundWidth,combatWidth:SF3D.metrics.combatWidth,playerWidth:SF3D.metrics.playerWidth,nativePlayer:SF3D.metrics.nativePlayer} : {mode:"canvas2d"},
+          graphics: typeof SF3D !== "undefined" ? {mode:SF3D.metrics.mode,resolution:SF3D.metrics.resolution,draws:SF3D.metrics.draws,instances:SF3D.metrics.instances,backgroundWidth:SF3D.metrics.backgroundWidth,combatWidth:SF3D.metrics.combatWidth,playerWidth:SF3D.metrics.playerWidth,nativePlayer:SF3D.metrics.nativePlayer,ship:g.player.ship} : {mode:"canvas2d"},
         };
-      }),
+      },process.env.STARFALL_SHIP||null),
     );
     await b.close();
   }
