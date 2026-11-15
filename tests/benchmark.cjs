@@ -82,7 +82,7 @@ const fs = require("fs");
           rafMs: stats(raf),
           samples: work.length,
           freeParts: g.partsPool?.length,
-          graphics: typeof SF3D !== "undefined" ? {mode:SF3D.metrics.mode,resolution:SF3D.metrics.resolution,draws:SF3D.metrics.draws,instances:SF3D.metrics.instances} : {mode:"canvas2d"},
+          graphics: typeof SF3D !== "undefined" ? {mode:SF3D.metrics.mode,resolution:SF3D.metrics.resolution,draws:SF3D.metrics.draws,instances:SF3D.metrics.instances,backgroundWidth:SF3D.metrics.backgroundWidth,combatWidth:SF3D.metrics.combatWidth,playerWidth:SF3D.metrics.playerWidth,nativePlayer:SF3D.metrics.nativePlayer} : {mode:"canvas2d"},
         };
       }),
     );
