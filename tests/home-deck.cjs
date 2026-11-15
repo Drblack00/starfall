@@ -176,21 +176,45 @@ const { chromium } = require("playwright"),
           d.PROFILE.graphics = "auto";
           d.render();
           const smooth = gpu.batches.fog.count;
+          ok(
+            smooth === 0 &&
+              !gpu.batches.planet.count &&
+              !gpu.batches["planet:hd"].count &&
+              !gpu.cinematic &&
+              gpu.mist === null &&
+              gpu.toonMist === null,
+            "Smooth submits no cinematic draws and compiles out mist uniforms",
+          );
+          const smoothProgram = gpu.program,
+            smoothEffects = gpu.effects;
+          g.mode = "start";
+          d.render();
+          g.mode = "playing";
           d.PROFILE.graphics = "hd";
           g.perf = false;
           d.render();
           ok(
-            gpu.batches.fog.count >= smooth,
+            gpu.batches.fog.count > smooth &&
+              gpu.cinematic &&
+              gpu.mist !== null &&
+              (reduced
+                ? gpu.batches.planet.count === 1
+                : gpu.batches["planet:hd"].count === 1),
             "Cinematic detail respects quality budget",
           );
+          const cinematicProgram = gpu.program,
+            cinematicEffects = gpu.effects;
           const realNow = performance.now.bind(performance);
-          let clock = realNow();
+          let clock = realNow(),
+            presented = 1000;
           Object.defineProperty(performance, "now", {
             configurable: true,
             value: () => clock,
           });
           for (let n = 0; n < 120; n++) {
-            clock += 40;
+            clock += 0.1;
+            presented += 40;
+            d.SF3D.presentFrame(presented);
             d.render();
           }
           Object.defineProperty(performance, "now", {
@@ -199,9 +223,32 @@ const { chromium } = require("playwright"),
           });
           ok(
             d.SF3D.metrics.backgroundDetail <= 0.5 &&
-              gpu.batches.fog.count <= 2 &&
+              gpu.batches.fog.count === 0 &&
+              gpu.batches["planet:hd"].count === 0 &&
+              d.SF3D.metrics.presentedFrameMs === 40 &&
+              !gpu.cinematic &&
+              gpu.program === smoothProgram &&
+              gpu.effects === smoothEffects,
+            "Slow presented frames with cheap JS restore cached Smooth shaders and remove cinematic draws",
+          );
+          g.mode = "start";
+          d.render();
+          g.mode = "playing";
+          d.render();
+          ok(
+            gpu.program === cinematicProgram &&
+              gpu.effects === cinematicEffects,
+            "Cinematic re-enable reuses previously compiled shader programs",
+          );
+          d.PROFILE.graphics = "auto";
+          d.render();
+          ok(
+            gpu.program === smoothProgram &&
+              gpu.effects === smoothEffects &&
+              gpu.batches.fog.count === 0 &&
+              gpu.batches.planet.count === 0 &&
               gpu.batches["planet:hd"].count === 0,
-            "Sustained slow frames drop cinematic mesh and fog budget",
+            "Manual return to Smooth reuses original shaders and removes cinematic geometry",
           );
           const fingerprints = new Set();
           for (let n = 1; n <= 5; n++) {

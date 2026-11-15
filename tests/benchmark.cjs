@@ -12,7 +12,7 @@ const fs = require("fs");
         : {}),
       args: ["--no-sandbox"],
     });
-    let p = await b.newPage({ viewport: { width: +(process.env.STARFALL_WIDTH||900), height: +(process.env.STARFALL_HEIGHT||900) },deviceScaleFactor:+(process.env.STARFALL_DPR||1) });
+    let p = await b.newPage({ viewport: { width: +(process.env.STARFALL_WIDTH||900), height: +(process.env.STARFALL_HEIGHT||900) },deviceScaleFactor:+(process.env.STARFALL_DPR||1),reducedMotion:process.env.STARFALL_REDUCED==="1"?"reduce":"no-preference" });
     if(process.env.STARFALL_WEBGL1==="1")await p.addInitScript(()=>{
       const old=HTMLCanvasElement.prototype.getContext;
       HTMLCanvasElement.prototype.getContext=function(type,...args){return type==="webgl2"?null:old.call(this,type,...args)};
