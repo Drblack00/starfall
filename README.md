@@ -16,11 +16,11 @@ The game is a single self-contained HTML file (`index.html`) — no build step. 
 
 ## Top-down 3D test ship
 
-The primary renderer now uses native WebGL2: perspective-projected, lit triangle
+The primary renderer uses native WebGL2, with native WebGL1 compatibility: perspective-projected, lit triangle
 meshes for ships, enemies, five distinct bosses, drones, equipment, projectiles,
 and environment geometry. The original top-down controls and XY simulation stay
 unchanged. HUD text and touch input remain on the full-resolution overlay.
-There is no framework, runtime download, or build step. Browsers without WebGL2
+There is no framework, runtime download, or build step. Browsers without either supported 3D backend
 use the existing 2D compatibility renderer with a visible notice; context loss
 also uses that renderer until WebGL recovers.
 
@@ -88,6 +88,59 @@ needed. The broader home/play/pause/capture run measured 16.7 ms median,
 verification work; use the isolated comparison for steady-state assessment.
 
 The older sections that follow describe previous 2D revisions.
+
+## 3D startup compatibility fix (build 3D-2)
+
+The GitHub Pages artifact for merge `ccec7dc` was downloaded and compared with
+main: its `index.html` is identical and contains Nitro Blade plus the WebGL
+renderer. That verifies the deployment contents, not the state of a particular
+phone tab. A screenshot of the old ship alone cannot distinguish stale HTML
+from graphics/model startup failure.
+
+This revision addresses those startup failures:
+
+- Try real-time WebGL1 with native instancing and vertex arrays if WebGL2 cannot
+  initialize. Both use the same mesh registry and material/lighting shader code;
+  WebGL1 shader syntax is adapted at initialization. A WebGL2 shader failure
+  retries WebGL1 on a fresh canvas. 2D is a last fallback when both fail.
+- Load embedded, linearly packed 16-bit vertex channels directly, without browser
+  stream decompression. Position error is below 0.000412 game units; these are
+  rendering vertices only, with unchanged gameplay collision data. The complete
+  HTML grows from 1.85 to 2.32 MB uncompressed but shrinks from 1.10 to 0.72 MB
+  under HTTP gzip. No runtime downloads or build step are introduced.
+- Show actual 3D/model readiness and **BUILD 3D-2** in the Ship header. Tap this
+  indicator for backend details, the actual startup error, a local **RETRY 3D**
+  action, and a versioned reload link. Retrying preserves the game state and
+  removes abandoned scene canvases. Unsupported devices explicitly say **2D
+  COMPATIBILITY**; a failed preview/model is identified separately.
+- Stop retrying a failed preview context every animation frame. Retry is bounded
+  and user initiated. Both backends prewarm fixed buffers; WebGL1 also prewarms
+  upload views to avoid allocating typed-array slices during frames.
+
+`tests/verify.cjs` passes, including new cases disabling WebGL2 and browser stream
+decompression together, simulating WebGL2 shader failure, inspecting real Nitro
+flight/preview geometry and all five bosses on WebGL1, explicit fallback errors,
+retry recovery, and bounded preview failures. Existing 320/375/430px menu/HUD/
+touch checks and all frozen balance checks remain green. A served-page playthrough
+with WebGL2 disabled cleared the first assault and boss, including pause/resume,
+in 67.4 seconds without browser errors (one hull point remaining). Its broad
+startup/play/capture sample was 16.7 ms median / 33.4 ms p95; startup/captures
+included a 950 ms maximum. These are Chromium software-GPU compatibility tests;
+physical Safari/iPhone verification remains unconfirmed.
+
+Isolated seeded 600-frame benchmark after 120 warm-up frames on the cloud
+software GPU (all at 30% dynamic raster resolution):
+
+| Measurement | Merged main WebGL2 | Fix WebGL2 | Fix WebGL1 |
+| --- | ---: | ---: | ---: |
+| Frame median / p95 | 16.7 / 50.0 ms | 16.7 / 49.9 ms | 16.7 / 50.0 ms |
+| Frame maximum | 83.4 ms | 50.1 ms | 66.7 ms |
+| CPU median / p95 | 0.4 / 2.2 ms | 0.3 / 2.0 ms | 0.4 / 2.6 ms |
+| CPU maximum | 8.8 ms | 8.2 ms | 27.1 ms |
+
+Use `STARFALL_WEBGL1=1 CHROMIUM_PATH=/usr/bin/chromium node tests/benchmark.cjs`
+to exercise the compatibility backend. These results retain the baseline frame
+profile; they do not establish locked 60fps on hardware or software devices.
 
 ## Verification for the performance/gameplay pass
 
