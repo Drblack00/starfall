@@ -189,6 +189,7 @@ console.log(
 
       // Verify the actual home and flight call paths share the same cached hull.
       const originalThumbnail = t.SF3D.thumbnail;
+      const originalPresentPreview=t.SF3D.presentPreview;t.SF3D.presentPreview=()=>false;
       t.SF3D.thumbnail = () => null;
       const originalSprite = getShipSprite,
         usedSprites = [];
@@ -217,6 +218,7 @@ console.log(
       previewCanvas.remove();
       getShipSprite = originalSprite;
       t.SF3D.thumbnail = originalThumbnail;
+      t.SF3D.presentPreview=originalPresentPreview;
       // Every new render path is cached, stable after warm-up, and visually distinct.
       const fingerprints = new Set();
       for (let sector = 1; sector <= 5; sector++) {
@@ -470,6 +472,7 @@ console.log(
     console.log("Phone HUD and touch checks passed at " + width + "px");
   }
   await require("./webgl.cjs")(b, p, src);
+  await require("./presentation.cjs")(b);
   const reduced = await b.newPage({ viewport: { width: 375, height: 812 } });
   reduced.on("pageerror", (e) => errors.push(e.message));
   await reduced.emulateMedia({ reducedMotion: "reduce" });

@@ -28,7 +28,7 @@ const fs = require("fs");
     let end = src.lastIndexOf("})();");
     src =
       src.slice(0, end) +
-      `window.t={get g(){return G},startRun,startSector,spawnBoss,update,render,explode};` +
+      `window.t={get g(){return G},startRun,startSector,spawnBoss,update,render,explode,createEnemy};` +
       src.slice(end);
     await p.route("**/test.html", (r) =>
       r.fulfill({ body: src, contentType: "text/html" }),
@@ -36,11 +36,13 @@ const fs = require("fs");
     await p.goto("http://127.0.0.1:8765/test.html");
     console.log(
       file,
-      await p.evaluate(async () => {
+      await p.evaluate(async ({visualShip,crowd}) => {
+        if(typeof SF3D!=="undefined")await SF3D.ready;
         t.startRun(1);
         t.startSector(5);
         t.spawnBoss();
         let g = t.g;
+        if(visualShip)g.player.ship=visualShip;
         g.spawnQueue = [];
         g.waveState = "boss";
         g.boss.state = "fight";
@@ -49,6 +51,7 @@ const fs = require("fs");
         g.player.invuln = 100000;
         g.player.weapon = 5;
         g.player.drones = 3;
+        if(crowd){for(let i=0;i<12;i++){const enemy=t.createEnemy(['diver','weaver','charger','sentinel','lancer','bulwark'][i%6],40+i%4*100);enemy.y=140+Math.floor(i/4)*70;enemy.hp=100000;enemy.spawnT=0;g.enemies.push(enemy)}}
         let work = [],
           raf = [],
           last;
@@ -58,6 +61,7 @@ const fs = require("fs");
             let begin = performance.now();
             if (n % 60 === 0) t.explode(200, 300, "#ffb02e", 80, true);
             t.update(1 / 60);
+            if(crowd)for(let i=0;i<g.enemies.length;i++){g.enemies[i].x=40+i%4*100;g.enemies[i].y=140+Math.floor(i/4)*70;}
             t.render();
             if (n >= 120) {
               work.push(performance.now() - begin);
@@ -82,9 +86,9 @@ const fs = require("fs");
           rafMs: stats(raf),
           samples: work.length,
           freeParts: g.partsPool?.length,
-          graphics: typeof SF3D !== "undefined" ? {mode:SF3D.metrics.mode,resolution:SF3D.metrics.resolution,draws:SF3D.metrics.draws,instances:SF3D.metrics.instances,backgroundWidth:SF3D.metrics.backgroundWidth,combatWidth:SF3D.metrics.combatWidth,playerWidth:SF3D.metrics.playerWidth,nativePlayer:SF3D.metrics.nativePlayer} : {mode:"canvas2d"},
+          graphics: typeof SF3D !== "undefined" ? {mode:SF3D.metrics.mode,resolution:SF3D.metrics.resolution,draws:SF3D.metrics.draws,instances:SF3D.metrics.instances,backgroundWidth:SF3D.metrics.backgroundWidth,combatWidth:SF3D.metrics.combatWidth,playerWidth:SF3D.metrics.playerWidth,nativePlayer:SF3D.metrics.nativePlayer,ship:g.player.ship} : {mode:"canvas2d"},
         };
-      }),
+      },{visualShip:process.env.STARFALL_SHIP||null,crowd:process.env.STARFALL_CROWD==="1"}),
     );
     await b.close();
   }

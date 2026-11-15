@@ -14,7 +14,197 @@ STARFALL is an original space shooter by Drblack Ventures: five skies, five boss
 
 The game is a single self-contained HTML file (`index.html`) — no build step. This repo is deployed as a static site on Render (see `render.yaml`).
 
-## Visible 3D flight (build 3D-3)
+## Home and combat presentation (build 3D-5)
+
+Home now ends at **Play**. Its duplicate lower navigation, pilot strip, decorative
+readouts and footer have been removed. Fleet and Upgrade stay on the ship card;
+the cannon and drone summary open Arsenal and Drone Bay directly. Help and model
+credits are in Settings, career/unlock notices are in Contracts, and a saved run
+appears inside the mission card. All existing systems remain accessible.
+
+Home, hangar, settings preview and gameplay reuse the **same live GPU canvas and
+craft renderer**, including the selected mounted weapon. Animated menu previews no
+longer copy GPU frames into 2D canvases every frame. A single snapshot preserves
+the outgoing ship during the leaving fade; opaque menus suspend hidden flight
+rendering, including customization opened from pause; static card art is cached per section,
+model revision, unlock state and equipment. One animation scheduler handles game
+and menu art, and hidden ship/planet previews are skipped. The stage keeps the same
+aspect ratio across screens, avoiding geometry jumps during navigation.
+
+Keyboard Enter respects focused controls and launch confirmation, Escape returns
+from menus or pauses play, and text editing no longer triggers game shortcuts.
+Selection states are exposed to assistive technology, focus returns to the home
+control, and primary phone controls remain reachable. Tests cover 320, 375 and
+430 pixel widths, all system routes, stable layout, paused customization without repeated GPU canvas movement, and
+zero steady GPU preview copies. No game mechanics are changed.
+
+**Seventeen additional combat model adaptations** are embedded in `index.html`:
+
+| Role | Model / creator | Triangles |
+| --- | --- | ---: |
+| enemy:diver | Quaternius / Dispatcher | 600 |
+| enemy:weaver | Quaternius / Spitfire | 600 |
+| enemy:charger | Quaternius / Striker | 600 |
+| enemy:sentinel | Quaternius / Omen | 600 |
+| enemy:lancer | Quaternius / Zenith | 600 |
+| enemy:bulwark | Quaternius / Challenger | 600 |
+| drone:scout | Kenney / craft-speedera | 280 |
+| drone:wasp | Kenney / craft-speederb | 270 |
+| drone:twin | Kenney / craft-speederc | 292 |
+| drone:phantom | Kenney / craft-speederd | 322 |
+| drone:guardian | Kenney / craft-miner | 384 |
+| drone:swarm | Kenney / craft-racer | 280 |
+| equipment:pulse | Kenney / blaster-a | 470 |
+| equipment:scatter | Kenney / blaster-h | 296 |
+| equipment:lance | Kenney / blaster-e | 638 |
+| bomb | Kenney / grenade-a | 96 |
+| round | Kenney / bullet-foam-tip | 12 |
+
+The six enemy types use distinct detailed Quaternius hulls with a shared weathered
+texture atlas and a 600-triangle budget. Charger aim still blinks at 10 Hz (steady
+with reduced motion/flashes off), with an added hull highlight. Its rush heading
+now follows its actual velocity; elite armor sits above the imported hull and
+retains its enlarged/gold treatment. These are visual cues, not collision changes.
+
+Kenney's CC0 Space Kit and Blaster Kit supply the six drone bodies, three mounted
+weapons, smart bomb and blaster round. Source colors are adapted to the game's
+metal/livery materials; existing drone counts and abilities and the three existing
+gun types are preserved. The same cannon mesh appears on the menu and gameplay
+ship. The smart-bomb body rises, turns and fades into its existing shockwave;
+blaster rounds use an indexed 3D mesh shared with the existing spark batch. No new weapon stats or unlocks are added.
+
+Ship and mounted cannon geometry is combined into one cached draw, with a bounded
+24-variant rig cache. The hull vertex/index prefix remains intact, and both home
+and gameplay share the same combined mesh. GPU texture caching shares one atlas
+across all enemy batches. Meshes, textures,
+instance storage and existing bullet/particle pools are reused. The HTML remains
+self-contained, approximately **4.18 MB raw / 1.86 MB gzip**; existing assets are
+unchanged, with no framework, runtime model downloads or build step. The five
+assault/boss waves and five unique boss ability kits remain intact. **Balance
+changes: none** — all 34 frozen functions and eight data blocks still match main.
+
+Optional offline asset authoring (not required for running/deploying):
+
+```sh
+blender --background --python tools/export-combat.py -- QUATERNIUS_DIR KENNEY_PACKS /tmp/combat-raw.json
+python3 tools/pack-combat.py /tmp/combat-raw.json index.html /tmp/combat-assets.json
+```
+
+Blender 4.3.2, numpy and Pillow were used. Source repositories, pinned revisions,
+original GLB SHA-256 values and licenses are retained in the embedded metadata and
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). `tests/verify.cjs` checks the new
+geometry, shared enemy texture, mounted weapon identity, drone/round/bomb use,
+material resets, WebGL backends, context recovery, menu navigation and phone UI.
+Verified by serving the page in Chromium and playing an assault through its boss,
+including charge/special fire and pause/resume, using native WebGL1: clear in
+91.7 seconds, all four hull points intact, no browser errors. Across that run,
+median frame interval was 16.7 ms and p95 33.4 ms; the maximum including startup,
+navigation and screenshots was 1,366.7 ms.
+
+A 600-frame isolated comparison against the prior PR #7 commit (`3a40488`):
+
+| Measurement | Previous | Updated |
+| --- | ---: | ---: |
+| Home frame median / p95 | 16.7 / 16.8 ms | 16.7 / 16.7 ms |
+| Home GPU-to-2D preview copies | 599 | 0 |
+| Crowded combat JS median / p95 | 0.6 / 2.4 ms | 0.6 / 1.7 ms |
+| Crowded combat frame median / p95 | 16.7 / 50.0 ms | 16.8 / 50.1 ms |
+| Crowded combat draw calls | 19 | 19 |
+
+The stress scene includes the fifth boss, twelve enemies, maximum weapons, three
+drones and particle bursts. It does not sustain 60 fps at the tail in this software
+browser, although the added geometry preserves its draw count and median frame
+interval. Physical iPhone Safari performance remains unverified.
+
+## Imported textured fleet (build 3D-4, historical)
+
+All twelve player ships now have imported 3D hulls. Vanguard retains the user-supplied
+Nitro Blade; the other eleven use distinct models by **Quaternius** from the
+[Ultimate Spaceships Pack](https://quaternius.com/packs/ultimatespaceships.html),
+licensed [CC0](https://creativecommons.org/publicdomain/zero/1.0/) for commercial use.
+Choose a ship in the Fleet/hangar; existing career locks stay in place.
+
+| STARFALL slot | Imported model | Triangles |
+| --- | --- | ---: |
+| Phantom | Omen | 1,426 |
+| Aegis | Challenger | 1,748 |
+| Interceptor | Insurgent | 2,800 |
+| Bulwark | Pancake | 2,688 |
+| Spectre | Executioner | 2,800 |
+| Tempest | Spitfire | 2,800 |
+| Nomad | Dispatcher | 748 |
+| Solaris | Striker | 2,800 |
+| Reaper | Zenith | 2,152 |
+| Starforge | Bob | 938 |
+| Sovereign | Imperial | 2,642 |
+
+Each model uses indexed triangles, normals and UVs, plus its weathered
+surface texture reduced to 512×512. The four largest hulls are adapted to a mobile budget of
+2,800 triangles; the remaining seven retain their source topology. The same
+mesh, material shader, paint and engine renderer appears at home and in flight. Per-model exhaust anchors follow the banking
+hull. Paint colors tint the textured accent areas while preserving neutral panels.
+All data is embedded in `index.html`; there is no runtime model download, new external
+asset, framework or build step. HTML transfer size is approximately 3.55 MB raw /
+1.58 MB with HTTP gzip (main 3D-3: 1.36 / 0.40 MB). Eleven extra textured models
+increase startup decoding and memory; the two existing contexts together can hold
+about 29 MiB of fleet texture storage including mipmaps.
+
+The surrounding scene gains layered nebula filaments, shaded planetary clouds
+and an atmospheric rim. Sky/terrain detail uses a baked, reusable cloud texture;
+the planet rim stays in its existing draw pass. Exhaust tapers smoothly instead of ending in a solid cone.
+Textures use linear mip filtering to reduce distant detail shimmer. Player-only
+supersampling increases edge quality when world quality is above 75%, then returns
+to native density on slower devices. The player is never downsampled with the world.
+World detail now recovers gradually after four stable 60Hz sampling windows; the
+previous sub-14.5 ms recovery threshold could never recover on a 60Hz display.
+
+Performance work includes an allocation-free identity-transform path for stars,
+straight bolts and glows; a draw-uniform material fast path for imported hulls;
+a polynomial glow falloff; cached texture bindings; and an
+opacity veil for idle dimming that avoids filtering both live GPU canvases. Geometry,
+textures and fixed instance storage are cached and reused; the equipped hull is
+prewarmed without uploading unused ships to both GPU contexts. Existing bullet/particle
+pools and swept collisions remain in place. **Gameplay balance changes: none.** All
+34 frozen combat/economy functions and eight data blocks are unchanged; the five
+assault/boss waves and five unique boss ability kits are retained.
+
+`tests/verify.cjs` additionally checks all eleven imported meshes against their packed
+vertices and indices, decoded textures, distinct rendered silhouettes, actual lit
+flight pixels, exact home/flight geometry identity, reusable texture/buffer objects,
+the transform fast path, 60Hz quality recovery, and WebGL1 compatibility. See the PR for final play and
+frame-time results. The final locally served WebGL1 playthrough selected Aegis in
+the hangar, cleared the first assault and Mothership, paused/resumed, and finished
+with all four hull points and no browser errors in 63.7 seconds. No gameplay
+fixtures were used in that playthrough. Its measured window, including startup,
+navigation and screenshots, had 16.7 ms median / 33.4 ms p95 / 916.6 ms maximum
+frame intervals.
+
+Final 600-frame stress samples after 120 warm-up frames compared main `3652e9b`
+with this build in the same cloud Chromium environment:
+
+| Visual hull | Main frame interval median / p95 | New frame interval median / p95 | Main / new JS p95 |
+| --- | --- | --- | --- |
+| Vanguard | 16.7 / 50.0 ms | 16.7 / 50.0 ms | 1.3 / 1.2 ms |
+| Interceptor | 16.7 / 33.4 ms | 16.7 / 33.4 ms | 1.0 / 1.0 ms |
+
+Maximum frame intervals were 149.9 / 50.1 ms for main/new Vanguard and 50.1 / 50.1 ms
+for Interceptor. Maximum JS work was 12.7 / 15.4 ms and 3.1 / 29.0 ms respectively.
+Adaptive world scale ended at 30% for both Vanguard runs and 42% / 30% for
+main/new Interceptor; the player remained at native density. P95 still exceeds the
+16.7 ms target: sustained 60fps on physical iPhone Safari has not been verified.
+
+The cached cloud texture can optionally be regenerated with
+`python3 tools/make-nebula.py <output-data-uri.txt>`.
+
+Asset provenance, licenses and transformations are in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Optional offline regeneration uses
+`blender --background --python tools/simplify-fleet.py -- <source-dir> <lod-dir>`, then
+`python3 tools/import-fleet.py <source-dir> <output.json> --optimized-dir <lod-dir>`
+with numpy and Pillow. This reproduces the embedded data from the pinned source
+files (Blender 4.3.2 was used) and is **not** needed to run or deploy the game. The `fleet-assets` payload records every original
+GLB's SHA-256 and the source repository revision.
+
+## Visible 3D flight (build 3D-3, historical)
 
 The home preview and gameplay now use the **exact same 5,068-triangle Nitro Blade
 hull**, rendered by the same live GPU craft/engine renderer. This game-ready
