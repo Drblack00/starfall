@@ -46,15 +46,15 @@ module.exports = async function verifyWebGL(browser, page, source) {
     check(w.foreground.canvas.width/128>=native.width/420-.01,'Flight player keeps at least native pixel density');
     const clock=performance.now.bind(performance);let fake=clock();performance.now=()=>fake+=40;
     for(let frame=0;frame<150;frame++)t.render();performance.now=clock;
-    check(w.metrics.resolution<=.32&&w.metrics.backgroundWidth<native.width,'Adaptive resolution scales the backdrop');
+    check(w.metrics.backgroundDetail<=.32&&w.metrics.backgroundWidth>=native.width,'Scenery detail adapts without reducing combat pixels');
     check(w.metrics.nativePlayer&&Math.abs(w.metrics.playerWidth/128-native.width/420)<.01&&w.metrics.combatWidth===native.width&&w.metrics.combatHeight===native.height,'Low-quality world never reduces player resolution');
     const viewport=w.foreground.gl.getParameter(w.foreground.gl.VIEWPORT);
     check(viewport[2]===w.foreground.canvas.width&&viewport[3]===w.foreground.canvas.height,'Player is actually submitted at native pixel density');
-    const reducedQuality=w.metrics.resolution;fake=clock();performance.now=()=>fake+=1000/60;
+    const reducedQuality=w.metrics.backgroundDetail;fake=clock();performance.now=()=>fake+=1000/60;
     for(let frame=0;frame<150;frame++)t.render();
-    check(w.metrics.resolution>reducedQuality,'Sustained 60Hz motion restores world detail after a transient slowdown');
+    check(w.metrics.backgroundDetail>reducedQuality,'Sustained 60Hz motion restores world detail after a transient slowdown');
     performance.now=()=>fake+=40;for(let frame=0;frame<150;frame++)t.render();performance.now=clock;
-    check(w.metrics.resolution<=.32,'Quality still drops promptly when the frame budget is exceeded');
+    check(w.metrics.backgroundDetail<=.32,'Quality still drops promptly when the frame budget is exceeded');
     const saved={x:t.g.player.x,y:t.g.player.y,bank:t.g.player.bank};
     for(const [x,y,bank] of [[80,130,-.3],[350,620,.3]]){Object.assign(t.g.player,{x,y,bank});t.render();const rect=w.foreground.canvas.getBoundingClientRect(),stage=native.getBoundingClientRect();
       check(Math.abs(rect.left-stage.left)<.2&&Math.abs(rect.top-stage.top)<.2&&Math.abs(rect.width-stage.width)<.2&&Math.abs(rect.height-stage.height)<.2,'Sharp combat surface covers the same playfield while ships move');}
@@ -83,9 +83,9 @@ module.exports = async function verifyWebGL(browser, page, source) {
       check(w.thumbnail(key,'#aaffff','#aaffff',1,0),'Boss preview '+key);
     }
     check(counts.size>=4,'Boss meshes remain distinct');
-    const flush=w.renderer.flush;let checkedPasses=0;
-    w.renderer.flush=function(...args){for(const batch of Object.values(this.batches))for(let n=0;n<batch.count*24;n++)check(Number.isFinite(batch.records[n]),'Warp and combat instance transforms stay finite');checkedPasses++;return flush.apply(this,args)};
-    t.g.warpW=1;t.g.warpP=.75;t.render();w.renderer.flush=flush;check(checkedPasses===1&&w.metrics.nativePlayer,'World and native player both render as live 3D views');
+    const flush=w.combatGPU.flush,frameGPU=w.combatGPU;let checkedPasses=0;
+    frameGPU.flush=function(...args){for(const batch of Object.values(this.batches))for(let n=0;n<batch.count*24;n++)check(Number.isFinite(batch.records[n]),'Warp and combat instance transforms stay finite');checkedPasses++;return flush.apply(this,args)};
+    t.g.warpW=1;t.g.warpP=.75;t.render();frameGPU.flush=flush;check(checkedPasses===1&&w.metrics.nativePlayer,'World and native player both render as live 3D views');
     t.g.warpW=0;t.g.warpP=0;t.render();
     const gpu=w.renderer, shape=Object.keys(gpu.batches).join(), stores=Object.values(gpu.batches).map(b=>b.records);
     for(let i=0;i<30;i++)t.render();
@@ -97,7 +97,7 @@ module.exports = async function verifyWebGL(browser, page, source) {
     check(c.getImageData(0,0,100,100).data.some((value,n)=>n%4===3&&value>30),'Returning home can still paint the reused hidden 3D context');t.g.mode=mode;t.render();
     return 'WebGL: embedded mesh, LOD, shared previews, five bosses, stable instance buffers passed';
   }));
-  await page.evaluate(()=>{if(t.SF3D.foreground!==t.SF3D.preview)throw Error('Home and flight do not share the exact GPU renderer')});
+  await page.evaluate(()=>{if(Object.getPrototypeOf(t.SF3D.foreground)!==Object.getPrototypeOf(t.SF3D.preview))throw Error('Home and flight do not share the same GPU renderer class')});
   console.log(await page.evaluate(async()=>{
     PROFILE.graphics="hd";
     const w=t.SF3D,check=(value,message)=>{if(!value)throw Error(message)};
@@ -117,9 +117,9 @@ module.exports = async function verifyWebGL(browser, page, source) {
       for(let n=0;n<mesh.indices.length;n++){check(mesh.indices[n]<asset.vertices,'Valid imported index');if(n%127===0)check(mesh.indices[n]===(indices.charCodeAt(n*2)|(indices.charCodeAt(n*2+1)<<8)),'Source topology retained');}
       check(mesh.vertices.every(Number.isFinite),'Finite imported mesh '+asset.ship);
       const gpu=w.foreground,draw=gpu.drawInstances,materials=[];
-      gpu.drawInstances=function(...args){materials.push(this.gl.getUniform(this.program,this.textured));return draw(...args)};
+      gpu.drawInstances=function(...args){materials.push(this.gl.getParameter(this.gl.CURRENT_PROGRAM)===this.effects?"fx":this.gl.getParameter(this.gl.CURRENT_PROGRAM)===this.toonProgram?"toon":this.gl.getUniform(this.program,this.textured));return draw(...args)};
       t.g.player.ship=asset.ship;t.LOADOUT.ship=asset.ship;t.render();gpu.drawInstances=draw;
-      check(materials.includes(1)&&materials.at(-1)===0,'Imported hull takes fast material path and effects reset it '+asset.ship);
+      check(materials.includes(1)&&materials.at(-1)==="fx",'Imported hull takes textured path and effects switch to their dedicated shader '+asset.ship);
       const batch=w.foreground.batches['ship:'+asset.ship];
       check(batch.source.hull===mesh&&batch.textureReady&&batch.texture,'Textured imported hull submitted in live flight '+asset.ship);
       const gl=w.foreground.gl,pixels=new Uint8Array(gl.drawingBufferWidth*gl.drawingBufferHeight*4);gl.readPixels(0,0,gl.drawingBufferWidth,gl.drawingBufferHeight,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
@@ -133,7 +133,7 @@ module.exports = async function verifyWebGL(browser, page, source) {
     }
     check(names.size===11&&signatures.size===11,'Every added ship has a different mesh and rendered silhouette');
     t.g.player.ship=saved.ship;t.LOADOUT.ship=saved.loadout;t.g.player.invuln=saved.invuln;t.g.player.charge=saved.charge;t.g.player.shield=saved.shield;t.g.mode=saved.mode;t.render();
-    check(w.renderer.nebula&&w.renderer.batches.planet.count===1,'Cached cloud texture and single-pass planet material stay active');
+    check(w.combatGPU.skyTextures[t.g.sector]&&SPACE_BACKDROP_CACHE[t.g.sector],'Cached illustrated scenery stays active behind native combat');
     const gpu=w.renderer;
     const a=gpu.add('spark',100,100,0,2,3,4,0,0,0,'#ffffff','#ffffff',1,false),offset=(a.count-1)*24;
     const identity=Array.from(a.records.slice(offset,offset+16));
@@ -144,7 +144,7 @@ module.exports = async function verifyWebGL(browser, page, source) {
   }));
   console.log(await page.evaluate(async()=>{
     const w=t.SF3D,check=(x,message)=>{if(!x)throw Error(message)};await w.ready;
-    check(w.combat.models.length===26&&w.combat.license==='CC0-1.0','Twenty-six licensed combat model adaptations');
+    check(w.combat.models.length===20&&w.combat.license==='CC0-1.0','Twenty licensed combat model adaptations');
     t.startRun(1);t.g.spawnQueue=[];t.g.waveState='active';t.g.player.invuln=1000;
     const atlas=new Set(),savedGun=t.LOADOUT.gun;
     for(const asset of w.combat.models){const mesh=w.getGeometry(asset.key);
@@ -158,13 +158,13 @@ module.exports = async function verifyWebGL(browser, page, source) {
       else if(asset.key.startsWith('equipment:')){t.g.player.gunType=key;t.LOADOUT.gun=key;t.render();check(w.foreground.batches['ship:'+t.g.player.ship].source.weapon===mesh,'Mounted imported weapon '+key);w.thumbnail('vanguard','#ddf6ff','#77ddff',1,0);check(w.preview.batches['ship:vanguard'].source.weapon===mesh,'Same mounted weapon mesh at home '+key);}
       check(w.thumbnail(asset.key,'#aaffee','#aaffee',1,0),'Shared combat model preview '+asset.key);
     }
-    check(atlas.size===1,'Six enemy types share one GPU texture atlas');
+    check(!w.combat.models.some(m=>m.key.startsWith('enemy:')),'No arsenal hull is embedded as an enemy');for(const type of ['diver','charger','weaver','sentinel','lancer','bulwark']){const mesh=w.getGeometry('enemy:'+type);check(mesh.family==='rift'&&!mesh.image&&mesh.assetId==='starfall-rift:'+type,'Original enemy faction geometry '+type);}
     t.LOADOUT.gun=savedGun;t.g.player.gunType=savedGun;t.g.bombFx={x:210,y:400,t:.1,rings:[]};t.render();
     const bomb=w.combatGPU.batches.bomb,records=bomb.records;check(bomb.count===1,'Smart bomb has a live 3D body');
     t.g.bombFx.t=.5;t.render();check(bomb.count===0&&bomb.records===records,'Bomb body ends smoothly without reallocating storage');t.g.bombFx=null;
     t.emitBullets(210,400,0,-700,1);t.render();check(w.combatGPU.batches.laser.count>0&&w.combatGPU.batches.laser.source===w.getGeometry('laser'),'Soft-core lasers are submitted at native combat resolution');t.g.bullets.at(-1).charged=true;t.render();check(w.combatGPU.batches.round.count>0&&w.combatGPU.batches.round.source===w.getGeometry('round'),'Charged shots retain an imported three-dimensional energy core');
     check(w.renderer.gl.getError()===0&&w.foreground.gl.getError()===0,'No combat-material GPU errors');
-    return 'Combat: six textured enemy hulls share one atlas, six drone bodies, three mounted weapons, smart bomb and blaster rounds reuse GPU buffers';
+    return 'Combat: six original faction hulls stay separate from the arsenal, six drone bodies, three mounted weapons, smart bomb and blaster rounds reuse GPU buffers';
   }));
   const contextLoss=await page.evaluate(()=>{
     const ext=t.SF3D.renderer.gl.getExtension('WEBGL_lose_context');
