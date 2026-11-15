@@ -3358,7 +3358,8 @@
           h = "<div class=\"camp-soon\">ENDLESS<small>An unbroken wave beyond the fifth sky — still being charted. It is not playable yet, and nothing here pretends otherwise.</small></div>";
         } else if (CAMP_TAB === "rush") {
           if (launchBtn) launchBtn.style.display = "none";
-          for (n = 1; n <= 5; n++) h += campNodeHTML(n, true);
+          var bestRush = loadJSON("starfall-rush-c");
+          h = '<button class="camp-node boss" data-sky="1" data-rush="1"><span>FIVE-BOSS GAUNTLET<br>One hull · no repairs · timed<br>★★★ ≤3m · ★★ ≤5m'+(bestRush?'<br>BEST '+fmtTime(bestRush.time)+' · '+bestRush.stars+' / 3 STARS':'')+'</span></button>';
         } else {
           if (launchBtn) { launchBtn.style.display = ""; launchBtn.innerHTML = "LAUNCH — WAVE " + LAUNCH.sector + " · " + ENVS[LAUNCH.sector - 1].name + "&ensp;▶"; }
           for (n = 1; n <= 5; n++) h += campNodeHTML(n, false);
@@ -3743,6 +3744,7 @@
         G.parts.push(o);
       }
       function emitBullets(x, y, vx, vy, dmg, kind, col, r, range, sx, sy, id, charged, pierce, bossHit) {
+        if(G.mutator==="glass")dmg*=2;
         var o = G.bulletsPool.pop() || {};
         o.x = x;
         o.y = y;
@@ -3967,11 +3969,13 @@
         bar.dataset.kind = kind; bar.dataset.signal = presentation.signal;
         document.getElementById("boss-card").dataset.kind = kind;
         document.getElementById("boss-card").style.setProperty("--boss-accent", presentation.color);
+        G.boss.state = "intro"; G.boss.introC = 3; G.boss.focusC = 0; G.boss.staggerC = 0;
         G.bossSpawned = true; G.bossChip = 1;
         document.getElementById("bosschip").style.width = "100%";
         document.getElementById("bossname").textContent = BOSS_NAMES[kind] + " — WAVE " + G.sector + " BOSS";
         // Cinematic boss intro card — name, epithet and bounty before the fight
         var bc = document.getElementById("boss-card");
+        bc.classList.add("batch-c-intro");
         document.getElementById("bc-name").textContent = BOSS_NAMES[kind];
         document.getElementById("bc-epi").textContent = BOSS_EPITHETS[kind];
         document.getElementById("bc-bounty").textContent = "BOUNTY " + BOSS_BOUNTY[kind].toLocaleString("en-US") + " PTS";
@@ -3981,7 +3985,7 @@
         clearTimeout(bc._hideTimer);
         bc.classList.remove("show"); void bc.offsetWidth; bc.classList.add("show");
         // Release the touch surface when the entrance card finishes, including reduced motion.
-        bc._hideTimer = setTimeout(function () { bc.classList.remove("show"); }, 2400);
+        bc._hideTimer = setTimeout(function () { bc.classList.remove("show"); }, 3000);
         if (!G.seenHint.boss) { G.seenHint.boss = 1; showHint("HIT THE GLOWING CORE — DOUBLE DAMAGE"); }
         syncBossBar(); showBossBar(true); Sfx.bossWarn();
         var ba = document.getElementById("boss-alert");
@@ -3993,7 +3997,7 @@
       function checkBossEnrage() {
         var b = G.boss;
         if (!b || b.enraged || b.dead || b.hp <= 0 || b.hp > b.maxHp / 2) return;
-        b.enraged = true;
+        b.enraged = true; b.phaseC = true; b.pattern = (b.pattern + 1) % 3; b.burstLeft = 0; b.atkT = .8;
         b.atkMul = (b.atkMul || 1) * 0.68;   // attacks cycle ~32% faster
         b.spdMul = (b.spdMul || 1) + 0.22;   // new shells fly faster (applied in update)
         document.getElementById("bossbar").classList.add("enraged");
@@ -4085,11 +4089,12 @@
          the boss-down slow-mo + results, the hyperdrive warp, and the arrival banner.
          Steering and drift are untouched — only the guns shut down. */
       function weaponsOffline() {
-        return G.waveState === "bossdown" || G.waveState === "warp" || G.waveState === "announce";
+        return !!(G.boss && G.boss.state === "intro" && G.boss.introC > 0) || G.waveState === "bossdown" || G.waveState === "warp" || G.waveState === "announce";
       }
 
       function playerShoot(dt) {
         var p = G.player;
+        if (G.mutator === "drones") return;
         if (p.gunType === "lance") { p.beamOn = true; p.muzzle = 0.05; updateBeam(dt); return; }
         p.beamOn = false;
         var w = WEAPONS[p.weapon];
@@ -4137,7 +4142,7 @@
         // impact point for the flare: the closest target in the column
         p.beamHitY = 0;
         for (j = 0; j < G.enemies.length; j++) { en = G.enemies[j]; if (Math.abs(en.x - p.x) < en.r + 12 && en.y < p.y - 10) p.beamHitY = Math.max(p.beamHitY, en.y + en.r * 0.4); }
-        if (G.boss && !G.boss.dead && G.boss.state !== "enter" && Math.abs(p.x - G.boss.x) < G.boss.colRx && p.y > G.boss.y)
+        if (G.boss && !G.boss.dead && G.boss.state !== "enter" && G.boss.state !== "intro" && Math.abs(p.x - G.boss.x) < G.boss.colRx && p.y > G.boss.y)
           p.beamHitY = Math.max(p.beamHitY, G.boss.y + G.boss.colRy * 0.55);
         p.beamT -= dt;
         if (p.beamT > 0) return;
@@ -4146,16 +4151,16 @@
         for (j = G.enemies.length - 1; j >= 0; j--) {
           en = G.enemies[j];
           if (Math.abs(en.x - p.x) < en.r + 12 && en.y < p.y - 10) {
-            en.hp -= dmg; en.flash = 0.08; G.hits++; G.shots++;
+            en.hp -= dmg * (G.mutator === "glass" ? 2 : 1); en.flash = 0.08; G.hits++; G.shots++;
             emitParts(p.x + rand(-3, 3), en.y, rand(-60, 60), rand(-40, 40), 0.16, 0, p.gunCol, 1.9, 1);
             if (en.hp <= 0) killEnemy(en, j);
           }
         }
-        if (G.boss && !G.boss.dead && G.boss.state !== "enter" && Math.abs(p.x - G.boss.x) < G.boss.colRx && p.y > G.boss.y) {
+        if (G.boss && !G.boss.dead && G.boss.state !== "enter" && G.boss.state !== "intro" && Math.abs(p.x - G.boss.x) < G.boss.colRx && p.y > G.boss.y) {
           var bb = G.boss, coreHit = Math.abs(p.x - bb.x) < 24;
           if (bb.vanish > 0 || bossShieldAbsorb(bb, dmg * (coreHit ? 2 : 1), null)) { G.hits++; G.shots++; }
           else {
-          bb.hp -= dmg * (coreHit ? 2 : 1); bb.flash = 0.06; G.hits++; G.shots++;
+          bb.hp -= bossHitC(bb, dmg * (G.mutator === "glass" ? 2 : 1) * (coreHit ? 2 : 1), coreHit, 0.15); bb.flash = 0.06; G.hits++; G.shots++;
           if (coreHit) { G.coreHits++; if (G.time - G.lastCritPop > 0.5) { G.lastCritPop = G.time; addPopup(p.x, bb.y + 20, "CORE HIT ×2", "#ffd23d"); } }
           checkBossEnrage();
           cryoShellCheck(bb);
@@ -4167,6 +4172,7 @@
 
       /* Charge shot — hold to build power, release to fire one heavy piercing bolt */
       function fireCharged(k) {
+        if(G.mutator==="drones")return;
         var p = G.player;
         p._chFull = false; COACH.charge = true;
         var dmg = 3 + Math.round(k * 4); // DMG 4 at a tap-charge, DMG 7 fully charged
@@ -4232,7 +4238,7 @@
 
       function damagePlayer(sx, sy) {
         var p = G.player;
-        if (p.invuln > 0 || !p.alive) return;
+        if (p.invuln > 0 || !p.alive || (G.boss && G.boss.state === "intro")) return;
         buzz(60);
         if (typeof sx === "number") showDamageDirection(sx, sy);
         G.waveDamage++; // any hit — shielded or not — ends a flawless-wave bid
@@ -4243,6 +4249,7 @@
           explode(p.x, p.y, "#2ef2c0", 12, false);
           Sfx.playerHit(); addShake(5); syncHud(); return;
         }
+        if (G.mutator === "glass") p.hp = Math.min(p.hp,1);
         p.hp--; p.invuln = 1.6; p.flash = 0.3; G.flashRed = 0.35;
         if (p.weapon > 1) { p.weapon--; addPopup(p.x, p.y - 34, "WEAPON DOWN", "#ffb02e"); }
         explode(p.x, p.y, "#ff4d5e", 16, false);
@@ -4343,7 +4350,7 @@
         $("wave-results").classList.remove("show");
         $("objective-box").classList.remove("on"); ObjToast.until = 0;
         var p = G.player;
-        if (G.rushMode) { victory(); return; } // Boss Rush: the one boss is down — the run settles here
+        if (G.rushMode) { if (G.sector === 5) victory(); else { startSector(G.sector + 1); G.spawnQueue.length = 0; G.enemies.length = 0; G.waveState = "bosswait"; G.waveT = 0; } return; } // Gauntlet: no inter-boss repair or resupply.
         if (G.sector >= TOTAL_WAVES) { victory(); return; }
         if (G.repairPerk && p.hp < p.maxHp) { p.hp++; addPopup(p.x, p.y - 42, "REPAIR +1", "#2ef2c0"); }
         if (p.hp < p.maxHp) { p.hp++; addPopup(p.x, p.y - 42, "HULL +1", "#2ef2c0"); }
@@ -4608,6 +4615,7 @@
             var en = G.enemies[j];
             if (sweptCircle(bx0, by0, b.x, b.y, en.x, en.y, en.r + 4)) {
               if (b.pierce && b.hitEnemies && b.hitEnemies.indexOf(en) >= 0) continue; // a piercing bolt wounds each enemy once
+              if (!b.pierce && shieldCarrierC(en, b)) { retire(G.bullets, i, G.bulletsRetired); consumed = true; break; }
               en.hp -= (b.dmg || 1) * (G.dmgMul || 1); if (b.charged) en._ck = 1; en.flash = 0.08; G.hits++;
               // Hit feedback — impact sparks + a floating damage number (throttled so streams stay readable)
               for (var sp2 = 0; sp2 < 2; sp2++)
@@ -4620,7 +4628,7 @@
             }
           }
           if (consumed) continue;
-          if (G.boss && !G.boss.dead && G.boss.state !== "enter" && !(b.pierce && b.bossHit)) {
+          if (G.boss && !G.boss.dead && G.boss.state !== "enter" && G.boss.state !== "intro" && !(b.pierce && b.bossHit)) {
             var bb = G.boss, dx = (b.x - bb.x) / bb.colRx, dy = (b.y - bb.y) / bb.colRy;
             if (sweptCircle((bx0 - bb.x) / bb.colRx, (by0 - bb.y) / bb.colRy, dx, dy, 0, 0, 1)) {
               if (bb.vanish > 0) { /* Rift Leviathan is between worlds — shots pass through */ }
@@ -4629,7 +4637,7 @@
               else {
               // Weak point: the glowing core takes double damage
               var coreHit = dist2(b.x, b.y, bb.x, bb.y + 2) < 24 * 24;
-              bb.hp -= (b.dmg || 1) * (G.dmgMul || 1) * (coreHit ? 2 : 1); bb.flash = 0.06; G.hits++;
+              bb.hp -= bossHitC(bb, (b.dmg || 1) * (G.dmgMul || 1) * (coreHit ? 2 : 1), coreHit, 0.12); bb.flash = 0.06; G.hits++;
               if (coreHit) G.coreHits++;
               if (G.time - G.lastDmgPop > 0.09) { G.lastDmgPop = G.time; addPopup(b.x + rand(-4, 4), b.y - 10, "" + Math.max(1, Math.round((b.dmg || 1) * (G.dmgMul || 1) * (coreHit ? 2 : 1))), coreHit ? "#ffd23d" : "#ffd9a0", true); }
               checkBossEnrage();
@@ -4721,7 +4729,7 @@
           if (en.hp <= 0) killEnemy(en, i);
         } else if (pd.kind === "boss") {
           var b = G.boss;
-          if (!b || b.dead || b !== pd.ref) return;
+          if (!b || b.dead || b !== pd.ref || b.state === "intro") return;
           if (b.vanish > 0) return; // rift-vanished — the shockwave finds nothing there
           var bdmg = 60;
           if (b.kind === "cryowarden" && b.shell > 0) { b.shell -= bdmg; bdmg = 0; if (b.shell <= 0) { b.shell = 0; addPopup(b.x, b.y + 60, "ICE SHELL BROKEN", "#7dd3fc"); } }
@@ -4739,6 +4747,7 @@
          rules as ever (6 to every enemy, bullets cleared, −60 to the boss) — the wave just
          delivers it now instead of it landing all at once. */
       function detonateBomb() {
+        if(G.mutator==="drones")return;
         if (!G || G.mode !== "playing" || G.bombs <= 0 || !G.player.alive) return;
         G.bombs--; trackBomb(); COACH.bomb = true;
         var sx = G.player.x, sy = G.player.y, pending = [], i, dx, dy;
@@ -4840,6 +4849,10 @@
       }
       function updateBoss(dt) {
         if (!G.boss) return;
+        if (G.boss.state === "intro" && G.boss.introC > 0) { G.boss.introC = Math.max(0,G.boss.introC-dt); G.boss.y = 140; G.player.invuln = Math.max(G.player.invuln,.25); if (!G.boss.introC) skipBossIntro(); return; }
+        G.boss.staggerC = Math.max(0,(G.boss.staggerC||0)-dt);
+        G.boss.focusC = Math.max(0,(G.boss.focusC||0)-dt*.3);
+        if (G.boss.staggerC > 0) return;
         if (G.boss.enraged && G.boss.dir) G.boss.x += G.boss.dir * 17 * dt; // enraged hulls drift harder
         if (G.boss.kind === "dreadnought") updateDreadnought(dt);
         else if (G.boss.kind === "leviathan") updateLeviathan(dt);
@@ -6492,6 +6505,13 @@
         drawMiniHp(e, "#ff7a3d");
       }
       function drawBoss(b) {
+        if(b.state==="intro"){ctx.save();ctx.translate(b.x,b.y);if(!REDUCED)ctx.rotate((3-b.introC)*Math.PI*2/3);else ctx.globalAlpha*=Math.min(1,(3-b.introC)/.3);ctx.translate(-b.x,-b.y);}
+        if(b.phaseC){ctx.save();ctx.translate(b.x,b.y);ctx.scale(.82,1.15);ctx.translate(-b.x,-b.y);}
+        drawBossBodyC(b);
+        if(b.phaseC)ctx.restore();
+        if(b.state==="intro")ctx.restore();
+      }
+      function drawBossBodyC(b) {
         ctx.save(); ctx.translate(b.x, b.y);
         var flash = false /* hit light is composed over the core, preserving hull detail */;
         // VOID MOTHERSHIP — broad crescent carrier: layered plating, lit windows, turrets
@@ -7757,9 +7777,12 @@
         showBossBar(false);
         $("run-tag").textContent = run > 1 ? "RUN " + run + " · ENEMY THREAT +" + Math.round((run - 1) * 30) + "%" : "";
         syncHud();
-        var startAt = clamp(LAUNCH.sector || 1, 1, TOTAL_WAVES);
+        var startAt = LAUNCH.rush ? 1 : clamp(LAUNCH.sector || 1, 1, TOTAL_WAVES);
         if (!skyUnlocked(startAt)) startAt = 1;
         G.rushMode = !!LAUNCH.rush;
+        G.dailyMode = !!BatchC.daily; G.eventMode = !!BatchC.events || G.dailyMode; G.mutator = G.dailyMode ? dailyMutator() : "";
+        if (G.rushMode) { G.player.hp = 1; G.player.maxHp = 1; G.player.shield = false; }
+        if (G.mutator === "drones") { G.player.drones = Math.max(1,G.player.drones); if (G.player.droneType === "repair" || G.player.droneType === "jammer") { G.player.droneType = "scout"; G.player.droneRate = DRONEWINGS.scout.rate; G.player.droneDmg = DRONEWINGS.scout.dmg; } }
         startSector(startAt);
         maybeStartOnboarding();
         if (G.rushMode) { // Boss Rush — skip the assault phase, straight to the boss
@@ -8572,16 +8595,16 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
           return body;
         }
         var NITRO_ENGINES=[-5.8,5.8];
-        function boss(g,b,t){var coreZ=b.kind==="eclipse"?74:b.kind==="cryowarden"?65:b.kind==="mothership"?56:52;var col=BOSS_VISUALS[b.kind].color,alpha=b.vanish>0?clamp(Math.abs(b.vanish-.28)/.28,.06,1):1;
-            if(b.kind==="mothership")g.add("boss:mothership",b.x,b.y,0,1.22,1.22,1.22,0,0,0,col,col,alpha,true);
-            else g.add("boss:"+b.kind,b.x,b.y,0,1.22,1.22,1.22,0,.07,0,col,col,alpha,true);
-            if(b.kind==="mothership")for(var side=-1;side<=1;side+=2)g.add("sphere",b.x+side*75,b.y,3,20,15,16,0,0,0,"#7799ac",col,alpha,true);
-            if(b.kind==="dreadnought"&&b.plates)for(var pi=0;pi<b.plates.length;pi++){var plate=b.plates[pi],pc=plate.hp>0?"#ffc972":"#201e1a";g.add("cube",b.x+plate.off*1.22,b.y+8,34,17,5,3,0,0,0,pc,pc,alpha,false);if(plate.hp>0)glow(g,b.x+plate.off*1.22,b.y+8,38,20,"#ff9d40",.18*alpha);}
+        function boss(g,b,t){var coreZ=b.kind==="eclipse"?74:b.kind==="cryowarden"?65:b.kind==="mothership"?56:52;var col=BOSS_VISUALS[b.kind].color,alpha=b.vanish>0?clamp(Math.abs(b.vanish-.28)/.28,.06,1):1;if(REDUCED&&b.state==="intro")alpha*=Math.min(1,(3-b.introC)/.3);
+            if(b.kind==="mothership")g.add("boss:mothership",b.x,b.y,0,b.phaseC?1.0:1.22,b.phaseC?1.4:1.22,1.22,b.state==="intro"&&!REDUCED?(3-b.introC)*Math.PI*2/3:0,0,0,col,col,alpha,true);
+            else g.add("boss:"+b.kind,b.x,b.y,0,b.phaseC?1.0:1.22,b.phaseC?1.4:1.22,1.22,b.state==="intro"&&!REDUCED?(3-b.introC)*Math.PI*2/3:0,.07,0,col,col,alpha,true);
+            if(!b.phaseC&&b.kind==="mothership")for(var side=-1;side<=1;side+=2)g.add("sphere",b.x+side*75,b.y,3,20,15,16,0,0,0,"#7799ac",col,alpha,true);
+            if(b.kind==="dreadnought"&&b.plates)for(var pi=0;pi<b.plates.length;pi++){var plate=b.plates[pi],pc=plate.hp>0?"#ffc972":"#201e1a";g.add(b.phaseC?"ring":"cube",b.x+plate.off*1.22,b.y+8,34,17,5,3,0,0,0,pc,pc,alpha,false);if(plate.hp>0)glow(g,b.x+plate.off*1.22,b.y+8,38,20,"#ff9d40",.18*alpha);}
             if(b.kind==="leviathan")for(var arm=0;arm<3;arm++)g.add("arm",b.x,b.y,5,1.22,1.22,1.22,b.rot+arm*2.094,0,0,col,col,alpha,true);
             if(b.kind==="cryowarden"&&b.shell>0)g.add("ring",b.x,b.y,26,76,76,65,t*.1,.3,0,col,col,.8,false);
             if(b.kind==="eclipse")for(var moon=0;moon<4;moon++)g.add("sphere",b.x+Math.sin(t+moon*1.571)*78,b.y+Math.cos(t+moon*1.571)*28,12,5,5,5,t,0,0,"#82739f",col,alpha,true);
             g.add("core",b.x,b.y+2,coreZ,13,13,13,0,0,0,col,col,alpha,false);glow(g,b.x,b.y+2,coreZ+14,55,col,.35*alpha);
-            g.add("ring",b.x,b.y+2,coreZ+14,17+Math.sin(t*5)*2.5,17+Math.sin(t*5)*2.5,17,0,0,0,"#ffd13c","#ffd13c",.85*alpha,false);
+            g.add("ring",b.x,b.y+2,coreZ+14,17+(REDUCED?0:Math.sin(t*5)*2.5),17+(REDUCED?0:Math.sin(t*5)*2.5),17,0,0,0,"#ffd13c","#ffd13c",.85*alpha,false);
             if(b.kind==="eclipse")for(var well=0;well<3;well++){var radius=150-((t*46+well*50)%130);g.add("ring",b.x,b.y,-3,radius,radius,20,0,0,0,col,col,radius/300,false);}
             if(b.enraged)glow(g,b.x,b.y,-3,240,"#ff2ea6",.17+Math.sin(t*7)*.05);
             if(b.state==="enter"||b.telegraph>0){g.add("ring",b.x,b.y,4,130,42,20,t*.5,.2,0,col,col,.75*alpha,false);}
@@ -9212,12 +9235,12 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
 
       /* ---- UX10 — run checkpoint, written at every wave start ---- */
       function saveCheckpoint(n) {
-        if (!G || G.mode !== "playing") return;
+        if (!G || G.mode !== "playing" || G.rushMode || G.dailyMode || G.eventMode) return;
         saveJSON("starfall-checkpoint-v1", { sector: n, score: G.score, run: G.run, rush: !!LAUNCH.rush });
       }
       function loadCheckpoint() {
         var cp = loadJSON("starfall-checkpoint-v1");
-        if (!cp || typeof cp.sector !== "number" || cp.sector < 1 || cp.sector > 5 || typeof cp.score !== "number" || cp.score < 0) return null;
+        if (!cp || cp.rush || typeof cp.sector !== "number" || cp.sector < 1 || cp.sector > 5 || typeof cp.score !== "number" || cp.score < 0) return null;
         return cp;
       }
       function clearCheckpoint() { try { localStorage.removeItem("starfall-checkpoint-v1"); } catch (e) {} }
@@ -9449,6 +9472,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
       function setLivery(id){if(!liveryUnlocked(id))return false;BatchB.liveries[LOADOUT.ship]=id;saveBatchB();return true;}
       var BATCH_ULT_NAMES=["NITRO BLADE — DASH SLASH","PHASE LANCE","AEGIS PULSE","NEEDLE RUN","BASTION SALVO","GHOST STEP","TEMPEST FAN","SALVAGE ARC","SOLAR FLARE","REAPER SCYTHE","FORGE BARRAGE","ECLIPSE NOVA","ATLAS SIEGE","WRAITH CLOAK","KESTREL WING"];
       function fireUltimate(){
+        if(G.mutator==="drones")return false;
         var p=G.player;if(G.mode!=="playing"||!p.alive||weaponsOffline()||BatchB.cooldown>0)return false;
         var index=SHIP_ORDER.indexOf(p.ship);BatchB.cooldown=30;
         addPopup(p.x,p.y-48,BATCH_ULT_NAMES[index],shipColorHex());
@@ -9535,6 +9559,339 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
       renderHangarMeta=function(){oldHangarMeta();var type=LOADOUT.drone,seconds=BatchB.flight[type]||0,tier=droneTier(type);evolution.textContent="ESCORT Mk "+["","I","II","III"][tier]+" · "+Math.floor(seconds/60)+" MIN FLOWN"+(tier<3?" · NEXT PLATING AT "+(tier===1?10:30)+" MIN":" · MAX PLATING");};renderHangarMeta();
       window.addEventListener("pagehide",saveBatchB);
       var style=document.createElement("style");style.textContent="#batch-flight-controls .btn{min-width:0;min-height:44px;padding:6px;font-size:10px;width:100%}.opt-card small{display:block}#batch-inspect{min-height:42px}";document.head.appendChild(style);flightControls.id="batch-flight-controls";
+      })();
+
+      /* Batch C — explicit new behaviours; campaign numeric balance stays frozen. */
+      (function(){var style=document.createElement("style");style.textContent="#boss-card.batch-c-intro.show{top:auto;bottom:116px;width:min(86%,320px);padding:12px;animation:none;transform:translateX(-50%);opacity:1}#boss-card.batch-c-intro #bc-canvas,#boss-card.batch-c-intro #bc-abilities,#boss-card.batch-c-intro #bc-bounty,#boss-card.batch-c-intro #bc-skip{display:none}#boss-card.batch-c-intro #bc-name{font-size:17px}#boss-card.batch-c-intro #bc-epi{font-size:11px;margin:4px}#boss-card.batch-c-intro .btn{min-height:44px;margin-top:8px}#stage:has(#boss-card.batch-c-intro.show) #coach,#stage:has(#boss-card.batch-c-intro.show) #batch-flight-controls,#stage:has(#boss-card.batch-c-intro.show) #hint{visibility:hidden}";document.head.appendChild(style);})();
+      var BatchC = {
+        daily: false,
+        events: false,
+        eventT: 0,
+        eventKind: 0,
+        eventAge: 0,
+        sector: 0,
+        game: null,
+        rocks: new Float32Array(24 * 3),
+        transportX: 0,
+        transportHP: 3,
+        rescued: false,
+      };
+      function dailyMutator() {
+        var date = todayStr(),
+          n = 0;
+        for (var i = 0; i < date.length; i++) n = (n * 31 + date.charCodeAt(i)) >>> 0;
+        return ["drones", "gravity", "glass"][n % 3];
+      }
+      function skipBossIntro() {
+        if (!G.boss || G.boss.state !== "intro") return;
+        G.boss.introC = 0;
+        G.boss.state = "fight";
+        G.boss.y = 140;
+        el("boss-card").classList.remove("show");
+      }
+      function bossHitC(b, damage, core, seconds) {
+        if (b.state === "intro" && b.introC > 0) return 0;
+        var bonus = b.staggerC > 0 ? 1.5 : 1;
+        if (core && !b.staggerC) {
+          b.focusC = (b.focusC || 0) + seconds;
+          if (b.focusC >= 1.2) {
+            b.focusC = 0;
+            b.staggerC = 2;
+            addPopup(b.x, b.y + 50, "STAGGER · ×1.5 DAMAGE", "#ffd374");
+          }
+        }
+        return damage * bonus;
+      }
+      // Escorts spend their own unchanged hull to intercept a carrier-bound bolt.
+      function shieldCarrierC(carrier, bolt) {
+        if (carrier.type !== "bulwark") return false;
+        for (var i = 0; i < G.enemies.length; i++) {
+          var e = G.enemies[i];
+          if (
+            e.type === "weaver" &&
+            e.hp > 0 &&
+            e.y > carrier.y &&
+            Math.hypot(e.x - carrier.x, e.y - carrier.y) < 85
+          ) {
+            e.hp -= (bolt.dmg || 1) * (G.dmgMul || 1);
+            e.flash = 0.08;
+            G.hits++;
+            if (e.hp <= 0) killEnemy(e, i);
+            return true;
+          }
+        }
+        return false;
+      }
+      function startEventC(kind) {
+        BatchC.eventKind = kind;
+        BatchC.eventAge = 0;
+        BatchC.transportX = W / 2;
+        BatchC.transportHP = 3;
+        BatchC.rescued = false;
+        for (var i = 0; i < 24; i++) {
+          BatchC.rocks[i * 3] = (i * 83 + 41) % W;
+          BatchC.rocks[i * 3 + 1] = -i * 33;
+          BatchC.rocks[i * 3 + 2] = 0;
+        }
+        showBanner(
+          "MID-WAVE EVENT",
+          [
+            "",
+            "ASTEROID STORM — DODGE THE DEBRIS",
+            "SOLAR FLARE — NAVIGATE THE HEAT",
+            "ESCORT — PROTECT THE TRANSPORT",
+          ][kind],
+        );
+      }
+      function tickEventC(dt) {
+        var c = BatchC;
+        c.eventAge += dt;
+        if (c.eventKind === 1)
+          for (var i = 0; i < 24; i++) {
+            var k = i * 3;
+            c.rocks[k + 1] += 210 * dt;
+            if (
+              !c.rocks[k + 2] &&
+              Math.hypot(G.player.x - c.rocks[k], G.player.y - c.rocks[k + 1]) < 20
+            ) {
+              c.rocks[k + 2] = 1;
+              damagePlayer(c.rocks[k], c.rocks[k + 1]);
+            }
+          }
+        if (c.eventKind === 2) {
+          G.player.tx = clamp(
+            G.player.tx + Math.sin(c.eventAge * 3) * dt * 20,
+            25,
+            W - 25,
+          );
+        }
+        if (c.eventKind === 3) {
+          c.transportX = W / 2 + Math.sin(c.eventAge * 0.5) * 55;
+          var ty = H - 150;
+          for (var i = G.ebullets.length - 1; i >= 0; i--) {
+            var q = G.ebullets[i];
+            if (Math.hypot(q.x - c.transportX, q.y - ty) < 30) {
+              retire(G.ebullets, i, G.ebulletsRetired);
+              c.transportHP = Math.max(0, c.transportHP - 1);
+            }
+          }
+        }
+        if (c.eventAge >= 8) {
+          if (c.eventKind === 3) {
+            c.rescued = c.transportHP > 0;
+            showBanner(
+              c.rescued ? "TRANSPORT SAVED" : "TRANSPORT LOST",
+              c.rescued ? "ESCORT COMPLETE" : "NO SURVIVORS",
+            );
+          }
+          c.eventKind = 0;
+        }
+      }
+      var updateCBase = update;
+      update = function (dt) {
+        if (BatchC.game !== G) {
+          BatchC.game = G;
+          BatchC.eventT = 0;
+          BatchC.eventKind = 0;
+          BatchC.sector = G.sector;
+        }
+        if (BatchC.sector !== G.sector) {
+          BatchC.sector = G.sector;
+          BatchC.eventT = 0;
+          BatchC.eventKind = 0;
+        }
+        if (G.mode === "playing" && G.player.alive) {
+          if (G.mutator === "gravity")
+            G.player.ty = clamp(G.player.ty - dt * 18, 50, H - 30);
+          if (G.eventMode && G.waveState === "active") {
+            BatchC.eventT += dt;
+            if (!BatchC.eventKind && BatchC.eventT >= 18) {
+              BatchC.eventT = 0;
+              startEventC(1 + ((G.sector - 1) % 3));
+            }
+            if (BatchC.eventKind) tickEventC(dt);
+          } else BatchC.eventKind = 0;
+          // Existing bulwarks act as carriers; weavers screen them, divers bomb in lines.
+          var carrier = null;
+          for (var i = 0; i < G.enemies.length; i++)
+            if (G.enemies[i].type === "bulwark") {
+              carrier = G.enemies[i];
+              break;
+            }
+          var slot = 0;
+          for (var i = 0; i < G.enemies.length; i++) {
+            var e = G.enemies[i];
+            if (carrier && e.type === "weaver") {
+              e.x +=
+                (carrier.x + ((slot++ % 3) - 1) * 24 - e.x) * Math.min(1, dt * 5);
+              e.y += (carrier.y + 42 - e.y) * Math.min(1, dt * 5);
+            }
+            if (e.type === "diver" && G.enemies.length >= 3) {
+              var lane = 40 + ((i % 5) * (W - 80)) / 4;
+              e.x += (lane - e.x) * Math.min(1, dt * 2);
+            }
+          }
+        }
+        updateCBase(dt);
+      };
+      var victoryCBase = victory;
+      victory = function () {
+        victoryCBase();
+        if (G.rushMode) {
+          var stars = G.runTime <= 180 ? 3 : G.runTime <= 300 ? 2 : 1;
+          var best = loadJSON("starfall-rush-c") || {};
+          if (!best.time || G.runTime < best.time)
+            saveJSON("starfall-rush-c", { time: G.runTime, stars: stars });
+          el("scr-win").querySelector("h2").textContent = "BOSS RUSH COMPLETE";
+          el("scr-win").querySelector(".tagline").textContent =
+            stars +
+            " / 3 RUSH STARS · " +
+            fmtTime(G.runTime) +
+            " · One hull · Five bosses · ★★★ ≤3m / ★★ ≤5m";
+        }
+      };
+      var renderCBase = render;
+      render = function () {
+        renderCBase();
+        if (G.mode !== "playing") return;
+        ctx.save();
+        ctx.setTransform(viewScale, 0, 0, viewScale, 0, 0);
+        ctx.textAlign = "center";
+        var b = G.boss;
+        if (b) {
+          ctx.strokeStyle = b.staggerC > 0 ? "#ffd374" : "#9affff";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(
+            b.x,
+            b.y + 2,
+            REDUCED ? 24 : 24 + Math.sin(G.time * 5) * 3,
+            0,
+            6.283,
+          );
+          ctx.stroke();
+          if (b.phaseC) {
+            ctx.strokeStyle = "#ff5da2";
+            for (var i = -1; i <= 1; i += 2) {
+              ctx.beginPath();
+              ctx.moveTo(b.x + i * 28, b.y - 20);
+              ctx.lineTo(b.x + i * 82, b.y + 60);
+              ctx.lineTo(b.x + i * 20, b.y + 35);
+              ctx.stroke();
+            }
+          }
+          if (b.introC > 0) {
+            ctx.fillStyle = "#eaffff";
+            ctx.font = "14px monospace";
+            ctx.fillText("BOSS ORBIT · TAP CARD / SPACE TO SKIP", W / 2, H * 0.6);
+          }
+        }
+        for (var i = 0; i < G.portals.length; i++) {
+          var p = G.portals[i];
+          ctx.strokeStyle = "#ba75ff";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          for (var j = 0; j < 9; j++) {
+            var x = p.x + (j % 2 ? 9 : -9) * (REDUCED ? 1 : Math.sin(p.t * 6) + 1),
+              y = p.y - 35 + j * 9;
+            if (j === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+        }
+        var c = BatchC;
+        if (c.eventKind === 1) {
+          ctx.fillStyle = "#b49f87";
+          for (var i = 0; i < 24; i++) {
+            var k = i * 3;
+            if (!c.rocks[k + 2]) {
+              ctx.beginPath();
+              ctx.arc(c.rocks[k], c.rocks[k + 1], 10, 0, 6.283);
+              ctx.fill();
+            }
+          }
+        }
+        if (c.eventKind === 2) {
+          ctx.strokeStyle = "rgba(255,176,70,.24)";
+          for (var i = 0; i < 12; i++) {
+            var y = 100 + i * 40;
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.quadraticCurveTo(
+              W / 2,
+              y + (REDUCED ? 0 : Math.sin(G.time * 3 + i) * 18),
+              W,
+              y,
+            );
+            ctx.stroke();
+          }
+        }
+        if (c.eventKind === 3 && c.transportHP > 0) {
+          ctx.fillStyle = "#7affcf";
+          ctx.fillRect(c.transportX - 25, H - 170, 50, 36);
+          ctx.font = "12px monospace";
+          ctx.fillText(
+            c.transportHP === 3
+              ? "TRANSPORT · 3"
+              : c.transportHP === 2
+                ? "TRANSPORT · 2"
+                : "TRANSPORT · 1",
+            c.transportX,
+            H - 180,
+          );
+        }
+        ctx.restore();
+      };
+      (function () {
+        var panel = document.createElement("div");
+        panel.className = "sec-block";
+        panel.innerHTML =
+          "<p>DAILY TWIST: " +
+          dailyMutator().toUpperCase() +
+          " · Optional events leave standard campaign unchanged.</p>";
+        var host = el("camp-list");
+        host.parentNode.insertBefore(panel, host);
+        panel.id = "batch-c-modes";
+        panel.style.cssText =
+          "flex-shrink:0;display:flex;flex-wrap:wrap;gap:6px;font-size:11px";
+        function button(label, fn) {
+          var b = document.createElement("button");
+          b.className = "btn ghost";
+          b.textContent = label;
+          b.onclick = fn;
+          panel.appendChild(b);
+        }
+        button("DAILY MISSION", function () {
+          BatchC.daily = true;
+          LAUNCH.rush = false;
+          LAUNCH.sector = 1;
+          startRun(1);
+          BatchC.daily = false;
+        });
+        button("EVENT EXPEDITION", function () {
+          BatchC.events = true;
+          LAUNCH.rush = false;
+          startRun(1);
+          BatchC.events = false;
+        });
+        button("BOSS RUSH · 5 BOSSES / 1 HULL", function () {
+          LAUNCH.rush = true;
+          startRun(1);
+          LAUNCH.rush = false;
+        });
+        var skip = document.createElement("button");
+        skip.type = "button";
+        skip.className = "btn ghost";
+        skip.textContent = "SKIP INTRO · SPACE";
+        skip.onclick = skipBossIntro;
+        el("boss-card").appendChild(skip);
+        el("boss-card").addEventListener("click", skipBossIntro);
+        window.addEventListener("keydown", function (e) {
+          if (e.code === "Space" && G.boss && G.boss.introC > 0) {
+            e.preventDefault();
+            skipBossIntro();
+          }
+        });
       })();
     </script>
   </body>

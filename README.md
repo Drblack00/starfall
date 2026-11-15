@@ -983,3 +983,36 @@ regression in the isolated comparison above. The broader startup/UI/play/capture
 session measured 16.7ms median / 16.8ms p95 with a 900ms maximum. Cold asset work,
 screenshots and shared-host scheduling can still stall; these measurements do
 not establish locked 60fps on all hardware.
+
+
+## Batch C — bosses, enemies and modes (#20–24, #30–32)
+
+Based on main `2bb229f` (Batch B / PR #13). Runtime remains entirely in `index.html`; no new runtime assets or requests.
+
+- At half HP, all five bosses shed ornamental plating, reshape their hull and switch their attack-pattern index. Existing half-HP enrage rates and defensive HP remain unchanged; Dreadnought plates become visible energy guards.
+- Pulsing cores build focus with sustained hits. Interrupted focus decays; enough focus pauses attacks for a two-second ×1.5 damage window. Base weapon numbers and the existing ×2 core multiplier stay unchanged.
+- Rift portal entrances retain original spawn timing/counts and gain tearing seams. Bulwarks are carriers, weavers spend their own hull intercepting carrier-bound bolts, and diver bombers align into diving lanes.
+- Three-second boss orbit, skip by button/card or Space. Reduced motion uses a fade and static core highlight. Combat is gated during the intro.
+- Campaign screen offers a five-boss, one-hull Rush with no between-boss repairs/resupply. Independent local best time and 1–3 Rush stars: three at ≤180 seconds, two at ≤300, otherwise one. Existing Rush half-bounty policy stays unchanged.
+- Daily Mission deterministically selects one date-based rule: drones-only (guarantees an offensive escort), low gravity (upward drift), or glass cannon (double outgoing shots/beam, fatal unshielded hull hit).
+- Event Expedition and Daily Mission opt into eight-second mid-wave asteroid storms, solar heat distortion, or transport protection. Standard campaign gets no mutator or event effects. Additive runs do not write campaign checkpoints, and old single-boss Rush checkpoints are rejected. Transport survival is a separate event outcome with no economy payout.
+
+### Explicit balance-lock re-baselines
+
+`tests/verify.cjs` hashes the exact shipped source slices. No restoration, reinsertion, replacement or normalization takes place before hashing. Only its status text changed to describe reviewed baselines accurately. The test-only browser exposure occurs after the shipped-byte checks.
+
+`BOSS_HPS`, `BOSS_BOUNTY`, `TOTAL_WAVES=5`, all eight locked declarations, and all other locked functions retain their previous hashes. These nine functions legitimately change for the requested new behavior:
+
+| Function | Justification | New SHA-256 of shipped bytes |
+| --- | --- | --- |
+| `playerShoot` | Drones-only daily mission suppresses player gun fire. | `02bfb18d0124318f03e8c1ea7a70022e8121c9cc466746f11802a13a00eae792` |
+| `fireCharged` | Drones-only daily mission suppresses charged player fire. | `203c1576a94d91ae6ff5d23872b88c8a2fbb6572f502d6829d5a46314bdcc9dc` |
+| `updateBeam` | Routes core hits into stagger, gates cinematic hits, and applies glass-cannon scaling only in that daily mode. | `a300dae3b51e846f98c2f6ea19266fdddde2732eb9fb2f3f13296494996eec5b` |
+| `damagePlayer` | Cinematic invulnerability and daily-only glass-cannon fatal hull hit. | `670eda7fd2829454ea63cdd59c5791ca8d16ce11556f76e4e97c1e90faa861d3` |
+| `finishWave` | Rush advances all five bosses without the campaign repair/resupply path. | `f032f7bfb93c539e78d72043a2156e3d57db7a5ce69203aa93c69945991ef6da` |
+| `updateBoss` | Three-second intro gate and temporary stagger pause; original five boss attack functions remain byte-identical. | `1b745f8959e72dc457aded6e922e54bb6f3acf67ead6e5ee7fa2bdfe0bb1c680` |
+| `detonateBomb` | Drones-only daily mission suppresses bombs. | `10ebb7cac5ab7e21d0b981748cd37d10f617d0d0d7721e9fe7cbbd7b391ad3fb` |
+| `resolveBombHit` | Prevents pending bomb shockwaves damaging the boss during its cinematic. | `e662f8c9419d7c116e97e4e9ead733ac9040019dd6ef839378dcbea8453f93fc` |
+| `update` | Core-hit stagger integration, cinematic collision gate, and carrier escort interception. Existing numeric damage, spawn and economy values are unchanged. | `aadc64f7b6dcd4cfd6480e6d9c623aaac27f630da0a23e9dc332e64f67dae869` |
+
+Validation: `tests/verify.cjs`, `tests/bosses-modes.cjs` (normal + reduced motion), and the Batch B `tests/ships-drones.cjs` regression suite, including frame-identical warp/skip comparison against merged Batch A. The phone-sized headless Chromium benchmark at 390×844 measured 0.4 ms median / 0.8 ms p95 work and 16.7 ms p95 frame intervals over 600 samples. This is a desktop headless viewport measurement, not a physical-phone hardware certification. New event storage uses a preallocated typed array, and render overlays reuse existing canvas/GPU resources.
