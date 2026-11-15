@@ -9,10 +9,61 @@ STARFALL is an original space shooter by Drblack Ventures: five skies, five boss
 - **Move:** drag on screen (or arrow keys / WASD on desktop), or enable TILT and lean the phone
 - **Fire:** automatic while playing
 - **Special power (smart bomb):** tap the bomb button, press B, or touch with two fingers
+- **Hull ultimate:** tap ULTIMATE or press U (30-second simulated combat cooldown)
+- **Drone formation:** tap the formation control or press F: V-screen → shield wall → orbit
+- **Target painting:** tap a boss core to aim drone bolts at that weak point
 - **Idle drift:** lift all fingers off the screen and the game eases down to a near-stop; touch again to resume full speed
 - **Pause:** the pause button, top-right (music and sound toggles live in the pause menu)
 
 The game is a single self-contained HTML file (`index.html`) — no build step. This repo is deployed as a static site on Render (see `render.yaml`).
+
+## Ships & drones — Batch B
+
+The hangar now includes Atlas Gunship (6 HP), Wraith Interceptor (2 HP), and
+Kestrel Carrier (4 HP, one bonus escort capped at the existing three-drone pool).
+All three are additional starting choices; existing hull entries are unchanged.
+Every hull has a signature ultimate: Nitro Blade dashes through an enemy line;
+other hulls use piercing lances, defensive pulses, needle runs, heavy salvos,
+phase steps, fans, salvage attraction, solar bursts, crescents, slow siege bolts,
+radial novas, an Atlas siege shell, Wraith cloaking, or a Kestrel wing overdrive.
+Starforge intentionally lays a slow siege wall: five shells at `vy = -45`, each
+with 260 units of range (about 5.8 seconds of travel), rather than a fast salvo.
+
+Per-hull liveries unlock at **2 / 5 / 8 career stars**: stealth black, gold trim,
+and Rift-captured purple. Stars are eligibility, never spent. Factory paint keeps
+the existing profile color. The inspector supports cockpit zoom up to 5×, part
+stat callouts and a hinged canopy. Flaps bank, radar spins and weapon doors open
+on firing. Damage adds scorch, smoke and sparks; the between-wave repair-bay
+scan is cosmetic and does not add healing to existing ships.
+
+Three new specialist escorts are available: each repair drone heals 1 HP per
+12-second cycle, capped at max hull; each jammer applies 45% slower vertical
+advance within 200 units for 2 seconds; each kamikaze dives every 6 seconds and
+deals 3 damage in a 65-unit blast. Abilities intentionally fire per drone instance:
+a carrier with two repair drones heals up to 2 HP per cycle, and three repair
+drones heal up to 3 HP. Two or three kamikazes perform two or three independent
+dives/blasts; overlapping blasts can each deal damage. Jammer slow percentages
+do not stack. A painted boss
+can also be targeted by a kamikaze; its blast uses the existing projectile/core
+and boss-shield rules. Existing drone weapon damage and cadence remain unchanged.
+Drone plating evolves visually at **10 / 30 minutes of active flight per type**
+(Mk I → II → III), persists locally, and confers no stat bonus. New rotating,
+blinking and repair-scan motion becomes static with reduced-motion enabled.
+
+Validation (serve this directory on port 8765; use `CHROMIUM_PATH` if needed):
+
+```sh
+node tests/verify.cjs
+node tests/visual-pass.cjs
+node tests/ships-drones.cjs
+```
+
+The last test also compares full and skipped warps against merged Batch A
+(`7289efe`) in normal and reduced-motion modes. The old warp envelope is removed
+from `update()`. VisualFX owns its final arrival-frame tail and subsequent reset.
+Verification hashes the shipped source directly. Only the `functions.update`
+lock entry is re-baselined for the deleted dead envelope; all other lock entries
+remain unchanged.
 
 ## Metallic surfaces and flight-deck refinement (build 3D-9)
 
