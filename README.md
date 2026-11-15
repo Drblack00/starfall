@@ -14,7 +14,103 @@ STARFALL is an original space shooter by Drblack Ventures: five skies, five boss
 
 The game is a single self-contained HTML file (`index.html`) — no build step. This repo is deployed as a static site on Render (see `render.yaml`).
 
-## Command deck and equipment bays (build 3D-6)
+## Smooth combat, drone bodies and action score (build 3D-7)
+
+The six escort slots now use distinct downloaded Quaternius drone/robot and turret
+bodies, adapted into hovering gun platforms. Curved surfaces use split smooth
+normals while mechanical edges remain hard. Source armature poses are baked for
+static game meshes, and hidden authoring objects are excluded. This also corrects
+combat models previously contaminated by a non-visible material-preview helper:
+geometry now uses only the source scene's visible objects and their correct bounds.
+The twelve existing player hulls stay intact.
+
+Blasters gains **six additional chassis**, giving three looks for each existing
+cannon. Chassis choices are cosmetic, persist per cannon and use the exact same
+mesh in the live viewer, home/hangar rig and flight. Mount height is sampled from
+the actual hull deck instead of its tallest fin/canopy. Hull/barrel geometry stays
+combined in bounded cached rigs; no per-frame attachment rebuilding.
+
+| Cannon | Existing chassis | Additional chassis / downloaded source |
+| --- | --- | --- |
+| Pulse | Classic | Railguard / AR_1; Vector / AR_4 |
+| Scatter | Classic | Breacher / SMG_1; Tempest / AR_6 |
+| Lance | Classic | Longshot / Sniper_1; Nightfall / Sniper_3 |
+
+**Settings → Graphics quality** offers two choices:
+
+- **Auto · Smooth:** the native 3D surface keeps the player and escorts sharp;
+  the whole scene uses full canvas resolution while frame time permits. Under
+  pressure, distant combat/background detail adapts down, the player/escorts stay
+  in a native-density moving window, and cached laser sleeves/beam cores draw on
+  the native HUD surface. No GPU readback/copy is used for these effects.
+- **HD · Sharp:** the whole battle stays on the full-resolution transparent 3D
+  surface. It costs more on slower GPUs; existing performance-mode canvas density
+  still applies. Both choices keep the same models, simulation and touch controls.
+
+The same two GPU contexts are reused. Previews use higher sampling density; the moving player/escort window keeps
+its native pixel density without a large multisampled framebuffer. A fast response to severe frame stalls prevents adaptive
+quality from getting stuck when intervals exceed the old sampling cutoff. Soft
+GPU laser sleeves have white-hot cores and fading caps; charged shots retain their
+imported 3D core. Pooled sparks use two-triangle soft geometry instead of the
+12-triangle round mesh, and card/weapon art stays cached. Equipment swaps ease in.
+
+Music is now an **original 128 BPM action score** with percussion, driving bass and
+minor arpeggios. Three synchronized mono buffers are synthesized once and loop on
+one audio clock. Gain changes bring in combat drums and boss lead, soften pause
+and menus, and fade mute/unmute without restarting or allocating new sources.
+There are no external recordings or music requests; sample generation uses its
+own deterministic noise, independent of gameplay randomness. Source headroom and
+loop seams are checked, with a limiter on the music output.
+
+**Gameplay balance changes: none.** All 34 frozen functions and eight data blocks
+match main; HP, damage, rates, projectile speeds, spawning, rewards, prices and
+collision radii are unchanged. All five assault/boss waves and unique boss kits
+remain. Existing selection/unlock rules, bullet/particle pools and swept collisions
+stay in place. The assets are detailed, optimized stylized meshes; this is not a
+photorealistic PBR pipeline.
+
+Provenance, exact triangle counts, transformations and source GLB hashes are in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and embedded metadata. Offline
+regeneration uses the same pinned source mirror. DracoPy is only needed to expand
+two compressed source models before Blender authoring; no decoder or GLB loader
+is shipped in the game:
+
+```sh
+python3 tools/decode-draco.py QUATERNIUS_GLB_ROOT /tmp/decoded
+blender --background --python tools/export-combat.py -- QUATERNIUS_SHIPS KENNEY_PACKS /tmp/combat.json QUATERNIUS_MODULAR_GUNS QUATERNIUS_GLB_ROOT /tmp/decoded
+python3 tools/pack-combat.py /tmp/combat.json index.html /tmp/combat-assets.json
+```
+
+Verified by serving locally and running `CHROMIUM_PATH=/usr/bin/chromium node
+tests/verify.cjs`: all checks green, including frozen balance, five boss simulations,
+WebGL1/WebGL2/recovery, Auto/HD density, hidden-object exclusion, all nine chassis,
+profile persistence, native escorts, pooled/cached rendering and audio phase/mute.
+The HD/audio checks were rerun after final stem-level normalization.
+
+The input-driven WebGL1 playthrough equipped Aegis, the Vector Pulse chassis and
+Guardian escort, then cleared an assault and Mothership with all four hull points,
+charge/special fire, pause/resume and no browser errors in **72.0 seconds**. The
+broader startup/navigation/screenshots/play window measured **16.7 ms median /
+50.0 ms p95 / 1,116.6 ms maximum** frame intervals.
+
+Recorded 600-frame Auto comparisons against main `c0f049e`, after warm-up:
+
+| Stress scene | Main frame median / p95 | Updated frame median / p95 |
+| --- | --- | --- |
+| 390×844 phone-size viewport | 16.7 / 50.0 ms | 16.7 / 50.0 ms |
+| 900×900, boss + 12 enemies | 33.3 / 50.1 ms | 33.3 / 50.1 ms |
+
+Draw calls remain 13 and 19 respectively; player/escort density stays native.
+GPU instance counts drop because Auto laser sleeves use the native 2D overlay,
+not because shots or effects were removed. JS p95 is 2.3/3.5 ms main/new in the
+phone sample and 2.1/2.9 ms in the crowded sample. Slow tail frames remain; HD
+costs more than Auto. Physical iPhone Safari and sustained mobile 60fps remain
+unverified. Home timing and maximum intervals are recorded in the PR.
+
+Single index.html plus unchanged existing assets, approximately **4.89 MB raw /
+2.11 MB gzip**. No framework, build step or runtime model download.
+
+## Command deck and equipment bays (build 3D-6, historical)
 
 The home screen has a larger live ship display, a cached astronomical backdrop,
 restrained blue/gold panels and four primary destinations: **Hangar, Blasters,

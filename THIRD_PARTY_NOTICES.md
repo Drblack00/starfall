@@ -123,3 +123,49 @@ also appear in `combat-assets`; model/source credit is in Settings.
 Research also rechecked the official Kenney Blaster Kit and Space Kit CC0 pages;
 the existing three ship-mounted cannons and six drone hulls remain from those
 packs. No additional license-restricted or account-gated models were included.
+
+
+# Drone bodies and additional blaster chassis (build 3D-7)
+
+**Quaternius**, from [Cyberpunk Game Kit](https://quaternius.com/packs/cyberpunkgamekit.html),
+[Ultimate Space Kit](https://quaternius.com/packs/ultimatespacekit.html) and
+[Sci-Fi Modular Gun Pack](https://quaternius.com/packs/scifimodularguns.html).
+The official pack pages identify these packs as [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/)
+and permit personal/commercial projects. Downloaded from the existing pinned
+[showcase mirror](https://github.com/trebeljahr/quaternius-showcase/tree/0128ca510d653bb04d6d1e4885bd8890b5050b4f/public/glb),
+revision `0128ca510d653bb04d6d1e4885bd8890b5050b4f`; no mirror application code is included.
+
+| Role | Source file | Triangles | Original GLB SHA-256 |
+| --- | --- | ---: | --- |
+| drone:scout | cyberpunk_pack/Enemy_Flying.glb | 1198 | `7e3a27532b43807b375e3d3ad9cbe1f7e20d8bb723f2dcc2a3c9efb38da73a5b` |
+| drone:wasp | cyberpunk_pack/Enemy_Flying_Gun.glb | 1198 | `af82b5b458530b31ce9694cf0461649839e1e822a922203faa16f4c32c21e595` |
+| drone:twin | ultimate_space_pack/Enemy_Flying-transformed.glb | 1200 | `d3ebd094f1c571eec7da8d7c67f47c8c24b30abc9a0801ba20cdbaf2e3a371d1` |
+| drone:phantom | cyberpunk_pack/Turret_GunDouble.glb | 1199 | `06dbb0e4f89a5a94827f522d518097db73bc00239ffa59902fdc3728ebc9e72a` |
+| drone:guardian | cyberpunk_pack/Turret_Cannon.glb | 1199 | `1c731f445be1f70124d666a42fc70c7387de39ed7ad73b3af8604e3e79a8f4bd` |
+| drone:swarm | ultimate_space_pack/Enemy_ExtraSmall-transformed.glb | 1200 | `178d4479b08fe0cbdf953e288f5b21c8f1483c9578db5d726ad4985c7334c414` |
+| frame:ar1 | AR_1.glb | 1200 | `0370edb381d2f298efbc9ac7dd4ec11d22d3b0137bb135df1b89a2a284af9125` |
+| frame:ar4 | AR_4.glb | 1199 | `d249dddf433609cccf01d1abe4f8f13d9eee4e1ba33a4bd9617598e6e6a0af60` |
+| frame:ar6 | AR_6.glb | 1199 | `0bb077776559d354b41834595c9c92ddd93318c1a893718ccf53e93f7e0a35ac` |
+| frame:smg | SMG_1.glb | 1199 | `4a92c6765ce2e7688afd962ec1b741c95ace183a90d448d7e094a342d62114f2` |
+| frame:sniper1 | Sniper_1.glb | 1199 | `f802c0ba8fbc02e87329883b8486ed50c1f7d12eb2b0e5604ffcf247e77dfcd5` |
+| frame:sniper3 | Sniper_3.glb | 1199 | `963ed4310d791f2035aecd241e6fd64444398e92c5ac4def6be1f4faff622f3e` |
+
+Modifications: source armature poses baked for static escorts; non-visible objects
+excluded (including the importer's material-preview helper); triangulated and
+adapted to approximately 1,200 triangles; smooth curved surfaces with sharp
+mechanical edges; source materials sampled into metal/livery/glass vertex channels;
+normalized to the existing escort/weapon extents; outward winding and indexed
+16-bit packing. The six drone slots replace their earlier Kenney hull visuals;
+abilities and numbers remain unchanged. Source turret bodies are adapted into
+hovering escorts. Six new gun bodies become cosmetic alternatives for the three
+existing cannons, with deck-sampled mounting and shared cached rigs.
+
+The offline Draco expansion helper requires DracoPy/numpy; two Ultimate Space
+source files use Draco compression. No decoder, source archive, animation rig or
+runtime model request is shipped. Source object and excluded-object names are
+recorded with original file hashes in `combat-assets`. The original player hulls
+and their licenses remain unchanged. No endorsement by Quaternius or the mirror
+maintainer is implied.
+
+The new procedural action score is original project-authored synthesis; it uses
+no third-party recording, sample or composition.
