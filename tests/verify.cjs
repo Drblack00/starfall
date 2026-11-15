@@ -48,7 +48,7 @@ console.log(
   const end = src.lastIndexOf("})();");
   src =
     src.slice(0, end) +
-    `window.t={get g(){return G},startRun,startSector,spawnBoss,update,render,emitBullets,emitParts,emitEbullets,resolveBombHit,updateBoss,createEnemy,killEnemy,showScreen,drawShipModel,drawShip,paintShipCanvas,LOADOUT,SHIP_ART,Input,explode,openLaunchConfirm,hideLaunchConfirm,stationSprite,enemyMaterial,bossArmorSprite,equipmentSprite,getDroneSprite,MATERIAL_CACHE,playerBoltSprite};` +
+    `window.t={get g(){return G},startRun,startSector,spawnBoss,update,render,renderLegacy2D,emitBullets,emitParts,emitEbullets,resolveBombHit,updateBoss,createEnemy,killEnemy,showScreen,drawShipModel,drawShip,paintShipCanvas,SF3D,LOADOUT,SHIP_ART,Input,explode,openLaunchConfirm,hideLaunchConfirm,stationSprite,enemyMaterial,bossArmorSprite,equipmentSprite,getDroneSprite,MATERIAL_CACHE,playerBoltSprite};` +
     src.slice(end);
   await p.route("**/test.html", (r) =>
     r.fulfill({ body: src, contentType: "text/html" }),
@@ -188,6 +188,8 @@ console.log(
       ok(!g.parts.at(-1).bloom, "Recycled particles clear the new bloom flag");
 
       // Verify the actual home and flight call paths share the same cached hull.
+      const originalThumbnail = t.SF3D.thumbnail;
+      t.SF3D.thumbnail = () => null;
       const originalSprite = getShipSprite,
         usedSprites = [];
       getShipSprite = function (...args) {
@@ -214,6 +216,7 @@ console.log(
       t.LOADOUT.ship = selectedShip;
       previewCanvas.remove();
       getShipSprite = originalSprite;
+      t.SF3D.thumbnail = originalThumbnail;
       // Every new render path is cached, stable after warm-up, and visually distinct.
       const fingerprints = new Set();
       for (let sector = 1; sector <= 5; sector++) {
@@ -278,7 +281,7 @@ console.log(
       );
       g = reset();
       t.emitBullets(200, -19, 0, -500, 1);
-      t.render();
+      t.renderLegacy2D();
       const retiredBolt = g.bullets[0];
       ok(
         !!retiredBolt.material,
@@ -466,6 +469,7 @@ console.log(
     await touch.detach();
     console.log("Phone HUD and touch checks passed at " + width + "px");
   }
+  await require("./webgl.cjs")(b, p, src);
   const reduced = await b.newPage({ viewport: { width: 375, height: 812 } });
   reduced.on("pageerror", (e) => errors.push(e.message));
   await reduced.emulateMedia({ reducedMotion: "reduce" });

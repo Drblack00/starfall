@@ -14,6 +14,81 @@ STARFALL is an original space shooter by Drblack Ventures: five skies, five boss
 
 The game is a single self-contained HTML file (`index.html`) — no build step. This repo is deployed as a static site on Render (see `render.yaml`).
 
+## Top-down 3D test ship
+
+The primary renderer now uses native WebGL2: perspective-projected, lit triangle
+meshes for ships, enemies, five distinct bosses, drones, equipment, projectiles,
+and environment geometry. The original top-down controls and XY simulation stay
+unchanged. HUD text and touch input remain on the full-resolution overlay.
+There is no framework, runtime download, or build step. Browsers without WebGL2
+use the existing 2D compatibility renderer with a visible notice; context loss
+also uses that renderer until WebGL recovers.
+
+The Vanguard uses **Nitro Blade by VertaScan**, supplied by the user under CC
+Attribution. The embedded preview mesh has 15,213 triangles; its flight LOD has
+1,881 triangles. Both derive from the same supplied OBJ and use the same shaders
+and material groups. The grill texture is embedded too. The archive lacked its
+referenced MTL, so metal/glass/emissive materials were reconstructed. This is a
+first 3D test integration, rather than a claim that the archive included complete
+PBR materials. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for attribution,
+source and modifications. The other eleven ships and all five bosses have
+procedural 3D meshes; no additional third-party models were downloaded.
+
+Meshes and fixed-capacity instance buffers are warmed before combat. Rendering
+reuses existing bullet/particle pools and uploads used ranges of typed arrays.
+On slow graphics devices, dynamic raster resolution falls from 100% toward 30%;
+projected shadows are disabled below 75%. HUD/input resolution and all gameplay
+numbers remain unchanged. Resolution recovers on returning home. This policy
+prioritizes motion on weak devices and can visibly soften the 3D scene.
+
+Run the existing checks with the repository served on port 8765:
+
+```sh
+python3 -m http.server 8765
+# In a second terminal with Playwright installed:
+CHROMIUM_PATH=/usr/bin/chromium node tests/verify.cjs
+CHROMIUM_PATH=/usr/bin/chromium node tests/benchmark.cjs
+```
+
+`tests/verify.cjs` includes the original balance/collision/pooling/UI checks plus
+`tests/webgl.cjs`: embedded mesh decoding/depth, shared preview/flight provenance,
+LOD, five boss geometries, charger aim/rush/elite cues, finite warp transforms,
+steady instance-buffer reuse, GL errors, context recovery, and compatibility
+fallback. Phone HUD/touch tests cover 320/375/430px. All checks pass. The 34 frozen
+combat/economy functions and eight data declarations remain byte-for-byte locked:
+**no balance, speed, scoring, price, spawn or collision-radius changes**.
+
+Served-page Playwright input completed the first assault and Mothership fight in
+67.8 seconds with three hull points remaining, including home/hangar navigation,
+charge releases, bomb input, and pause/resume. No gameplay fixtures were applied
+to that play session; no browser errors occurred. All five boss presentations
+were captured separately. Physical phone/gyro testing and a full five-wave
+manual clear remain unverified.
+
+An isolated seeded comparison against main (`67df524`) used 600 frames after
+120 warm-up frames in headless Chromium with the cloud software WebGL renderer:
+
+| Measurement | Main (2D) | This branch (3D) |
+| --- | ---: | ---: |
+| Frame interval median / p95 | 16.7 / 33.4 ms | 16.7 / 33.4 ms |
+| Frame interval maximum | 50.0 ms | 116.7 ms |
+| Update/render CPU median / p95 | 0.9 / 1.6 ms | 0.4 / 0.7 ms |
+| Update/render CPU maximum | 7.9 ms | 27.4 ms |
+
+The 3D renderer settled at 31.6% raster resolution on this software device,
+with 11 geometry draws and 248 instances in the final stress frame. This is a
+real quality tradeoff: the 3D scene softens while the HUD stays full resolution.
+An early unoptimized version missed the target substantially; lower-detail
+flight/projectile/ring meshes, prewarmed buffers, conditional shadows and stable
+dynamic resolution brought median/p95 back to the baseline. Maximum stalls
+remain worse. These measurements establish neither locked 60fps nor console
+fidelity on every device; hardware GPU/physical-phone verification is still
+needed. The broader home/play/pause/capture run measured 16.7 ms median,
+50.1 ms p95 and a 1116.7 ms maximum, including startup/captures and concurrent
+verification work; use the isolated comparison for steady-state assessment.
+
+The older sections that follow describe previous 2D revisions.
+
 ## Verification for the performance/gameplay pass
 
 The supplied revision has **five waves, one distinct boss per wave** (`TOTAL_WAVES = 5`),
