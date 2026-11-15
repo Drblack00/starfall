@@ -142,16 +142,17 @@ module.exports = async function verifyWebGL(browser, page, source) {
   }));
   console.log(await page.evaluate(async()=>{
     const w=t.SF3D,check=(x,message)=>{if(!x)throw Error(message)};await w.ready;
-    check(w.combat.models.length===17&&w.combat.license==='CC0-1.0','Seventeen licensed combat model adaptations');
+    check(w.combat.models.length===20&&w.combat.license==='CC0-1.0','Twenty licensed combat model adaptations');
     t.startRun(1);t.g.spawnQueue=[];t.g.waveState='active';t.g.player.invuln=1000;
     const atlas=new Set(),savedGun=t.LOADOUT.gun;
     for(const asset of w.combat.models){const mesh=w.getGeometry(asset.key);
       check(mesh.assetId&&mesh.count===asset.triangles*3&&mesh.indices.length===mesh.count,'Imported combat mesh '+asset.key);
       check(mesh.vertices.every(Number.isFinite)&&mesh.indices.every(i=>i<mesh.uniqueVertices),'Finite valid combat geometry '+asset.key);
       check(mesh.count<=1920,'Fixed combat triangle budget '+asset.key);
+      if(asset.key.startsWith('mount:')){const extent=[0,1,2].map(c=>{let lo=Infinity,hi=-Infinity;for(let n=c;n<mesh.vertices.length;n+=12){lo=Math.min(lo,mesh.vertices[n]);hi=Math.max(hi,mesh.vertices[n]);}return hi-lo;});check(extent[1]>extent[0]&&extent[1]>extent[2]&&mesh.count<=720,'Drone barrel points toward local nose within budget '+asset.key);}
       const key=asset.key.split(':')[1];
       if(asset.key.startsWith('enemy:')){t.g.enemies=[];const e=t.createEnemy(key,210);e.y=200;e.spawnT=0;e.elite=true;t.g.enemies.push(e);t.render();const batch=w.renderer.batches[asset.key];check(batch.count===1&&batch.textureReady,'Textured enemy is submitted '+key);atlas.add(batch.texture);}
-      else if(asset.key.startsWith('drone:')){t.g.player.droneType=key;t.g.player.drones=1;t.render();check(w.renderer.batches[asset.key].count===1,'Imported drone in live flight '+key);}
+      else if(asset.key.startsWith('drone:')){t.g.player.droneType=key;t.g.player.drones=1;t.render();const batch=w.renderer.batches[asset.key],rig=w.getDroneRig(key);check(batch.count===1&&batch.source===rig&&rig.hull===mesh&&rig.weapon===w.getGeometry('mount:'+({phantom:'lance',guardian:'scatter'}[key]||'pulse')),'Imported drone and mounted cannon in live flight '+key);const buffer=batch.records;w.thumbnail(asset.key,'#aaffee','#aaffee',1,0);check(w.preview.batches[asset.key].source===rig,'Exact drone preview/flight rig '+key);check(rig.vertices.slice(0,mesh.vertices.length).every((v,n)=>v===mesh.vertices[n])&&rig.indices.slice(0,mesh.count).every((v,n)=>v===mesh.indices[n]),'Unchanged drone hull prefix '+key);t.render();check(batch.records===buffer&&w.getDroneRig(key)===rig,'Drone buffers and rig reused '+key);}
       else if(asset.key.startsWith('equipment:')){t.g.player.gunType=key;t.LOADOUT.gun=key;t.render();check(w.foreground.batches['ship:'+t.g.player.ship].source.weapon===mesh,'Mounted imported weapon '+key);w.thumbnail('vanguard','#ddf6ff','#77ddff',1,0);check(w.preview.batches['ship:vanguard'].source.weapon===mesh,'Same mounted weapon mesh at home '+key);}
       check(w.thumbnail(asset.key,'#aaffee','#aaffee',1,0),'Shared combat model preview '+asset.key);
     }

@@ -1,13 +1,17 @@
 """Optional Blender authoring for CC0 combat meshes. No runtime dependency.
-blender --background --python tools/export-combat.py -- QUATERNIUS_DIR KENNEY_PACKS OUTPUT_JSON
+blender --background --python tools/export-combat.py -- QUATERNIUS_DIR KENNEY_PACKS OUTPUT_JSON [QUATERNIUS_MODULAR_GUN_DIR]
 """
 import bpy,sys,json,hashlib,math
 from pathlib import Path
 from mathutils import Vector
-source,kenney,output=map(Path,sys.argv[sys.argv.index('--')+1:])
+args=sys.argv[sys.argv.index('--')+1:]
+source,kenney,output=map(Path,args[:3])
+modular=Path(args[3]) if len(args)>3 else None
 models=[('enemy:diver',source/'Dispatcher.glb',600,38,'y'),('enemy:weaver',source/'Spitfire.glb',600,42,'y'),('enemy:charger',source/'Striker.glb',600,42,'y'),('enemy:sentinel',source/'Omen.glb',600,42,'y'),('enemy:lancer',source/'Zenith.glb',600,44,'y'),('enemy:bulwark',source/'Challenger.glb',600,48,'y')]
 for key,name,size in [('scout','craft-speedera',16),('wasp','craft-speederb',16),('twin','craft-speederc',16),('phantom','craft-speederd',17),('guardian','craft-miner',22),('swarm','craft-racer',13)]:models.append(('drone:'+key,kenney/'space-kit'/(name+'.glb'),480,size,'y'))
 for key,pack,name,size,axis in [('pulse','blaster-kit','blaster-a',32,'y'),('scatter','blaster-kit','blaster-h',32,'y'),('lance','blaster-kit','blaster-e',32,'y'),('bomb','blaster-kit','grenade-a',2,'z'),('round','blaster-kit','bullet-foam-tip',1,'y')]:models.append((('equipment:'+key if key in ['pulse','scatter','lance'] else key),kenney/pack/(name+'.glb'),640 if key in ['pulse','scatter','lance'] else (12 if key=='round' else 96),size,axis))
+if modular:
+ for key,name in [('pulse','Barrel_AR_1'),('scatter','Barrel_Grenade_1'),('lance','Barrel_Sniper_1')]:models.append(('mount:'+key,modular/(name+'.glb'),240,10,'y'))
 result=[]
 for key,path,budget,size,axis in models:
  bpy.ops.object.select_all(action='SELECT');bpy.ops.object.delete(use_global=False)
@@ -48,9 +52,12 @@ for key,path,budget,size,axis in models:
      elif max(rgb)<.07:tag=4
     # Blender is Z-up; source ships point -Y after glTF import.
     px=(v.x-center.x)*scale;py=-(v.y-center.y)*scale;pz=(v.z-lo.z)*scale
+    if key.startswith('mount:'):
+     # Modular barrel source points along +X; game craft nose is local +Y.
+     px,py=-py,px;n=Vector((n.y,-n.x,n.z))
     if key=='round':
      py=(v.z-center.z)/(hi.z-lo.z);px=(v.x-center.x)/(hi.x-lo.x);pz=-(v.y-center.y)/(hi.y-lo.y);n=Vector((n.x,-n.z,-n.y))
     rows.extend([px,py,pz,n.x,-n.y,n.z,*rgb,tag,float(u.x),float(u.y)])
- result.append({'key':key,'name':path.stem,'creator':'Quaternius' if key.startswith('enemy:') else 'Kenney','sourceFile':str(path.relative_to(source if key.startswith('enemy:') else kenney)),'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'triangles':len(rows)//36,'rows':rows})
+ result.append({'key':key,'name':path.stem,'creator':'Quaternius' if key.startswith(('enemy:','mount:')) else 'Kenney','sourceFile':str(path.relative_to(modular if key.startswith('mount:') else source if key.startswith('enemy:') else kenney)),'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'triangles':len(rows)//36,'rows':rows})
  print('EXPORTED',key,len(rows)//36)
 output.write_text(json.dumps(result,separators=(',',':')))
