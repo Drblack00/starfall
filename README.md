@@ -14,7 +14,67 @@ STARFALL is an original space shooter by Drblack Ventures: five skies, five boss
 
 The game is a single self-contained HTML file (`index.html`) — no build step. This repo is deployed as a static site on Render (see `render.yaml`).
 
-## Top-down 3D test ship
+## Visible 3D flight (build 3D-3)
+
+The home preview and gameplay now use the **exact same 5,068-triangle Nitro Blade
+hull**, rendered by the same live GPU craft/engine renderer. This game-ready
+adaptation replaces the earlier mismatch between a 15,213-triangle home preview
+and a coarse 1,881-triangle flight mesh. The previous 1,881-triangle adaptation
+remains embedded as source data but is not substituted for the player in flight.
+
+The player's view reuses the existing menu-preview GPU surface at native pixel
+density and follows the gameplay coordinates with a cropped perspective view.
+The surrounding world, enemies, five unique bosses, drones, projectiles and
+pooled effects remain live 3D with adaptive 30–100% raster resolution. No third
+GPU context or per-frame GPU-to-HUD image copy is introduced. Returning home
+pauses the hidden world renderer while the live ship preview continues.
+
+All static meshes use indexed geometry, with source triangles, normals, UVs and
+material seams retained. Face winding and procedural hull normals are corrected,
+so opaque geometry can use back-face culling. Buffers and upload views are
+cached/prewarmed, and supported 3D devices skip unused 2D flight textures.
+
+The ship has a 1.35x **visual-only** scale, neutral metal, painted accents, stronger
+fill/specular/rim lighting, and attached volumetric engine plumes. Invulnerability
+pulses a highlight while the hull remains opaque. Soft stars, distance fog and
+removal of floating black shadows improve depth. Contextual hints sit below the
+upper HUD, away from the default ship/charge lane. All gameplay positions,
+collision radii, health, damage, movement, rates, spawn counts/timing, scores,
+rewards and prices are unchanged; all frozen balance checks remain green.
+
+Verification checks the indexed mesh against packed source triangles, outward
+face winding, exact active preview/flight geometry identity, actual lit ship
+pixels, native player pixel density at minimum world quality, alignment across
+the playfield while banking, both GPU backends, and graphics recovery. Existing
+phone, five-boss, pooling, transition and compatibility checks remain green.
+Final validation used a locally served page in Chromium. `tests/verify.cjs`
+passed every check. An input-driven WebGL1 playthrough visited home, cleared the
+first assault and Mothership, and paused/resumed, finishing with three hull
+points and no browser errors in 59.3 seconds. This run used no gameplay fixtures.
+
+A separate 600-frame benchmark (after 120 warm-up frames) compared merged main
+`e8d9a2e` with this build on the same cloud browser:
+
+| Measurement | Main | Build 3D-3 |
+| --- | ---: | ---: |
+| Frame interval, median | 16.7 ms | 16.7 ms |
+| Frame interval, p95 | 33.3 ms | 33.4 ms |
+| Frame interval, maximum | 50.1 ms | 50.1 ms |
+| JavaScript frame work, median / p95 | 0.4 / 0.8 ms | 0.5 / 1.0 ms |
+| JavaScript frame work, maximum | 4.5 ms | 29.9 ms |
+
+Both runs reached approximately 32% world resolution; the new player surface
+stayed at native density. These results match the baseline frame profile, but
+p95 still misses the 16.7 ms target. The broader playthrough measured 16.7 ms
+median / 33.4 ms p95, with a 1.13-second maximum across startup and screenshot
+capture. Neither measurement proves sustained 60fps on an iPhone; physical
+Safari testing remains outstanding. The self-contained HTML is about 1.36 MB
+(0.40 MB with HTTP gzip), down from main's 2.32 MB (0.72 MB gzip).
+
+The older sections that follow record earlier revisions; their coarse player
+LOD and whole-scene low-resolution descriptions no longer describe flight.
+
+## Initial top-down 3D test ship (historical)
 
 The primary renderer uses native WebGL2, with native WebGL1 compatibility: perspective-projected, lit triangle
 meshes for ships, enemies, five distinct bosses, drones, equipment, projectiles,
