@@ -13,6 +13,10 @@ const fs = require("fs");
       args: ["--no-sandbox"],
     });
     let p = await b.newPage({ viewport: { width: 900, height: 900 } });
+    if(process.env.STARFALL_WEBGL1==="1")await p.addInitScript(()=>{
+      const old=HTMLCanvasElement.prototype.getContext;
+      HTMLCanvasElement.prototype.getContext=function(type,...args){return type==="webgl2"?null:old.call(this,type,...args)};
+    });
     await p.addInitScript(() => {
       let seed = 123456;
       Math.random = () =>
