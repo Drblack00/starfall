@@ -17,54 +17,6 @@ STARFALL is an original space shooter by Drblack Ventures: five skies, five boss
 
 The game is a single self-contained HTML file (`index.html`) — no build step. This repo is deployed as a static site on Render (see `render.yaml`).
 
-## UI cleanup
-
-Home centers the selected ship, loadout, destination and Play. Repeated command
-captions and navigation subtitles are removed. The overlapping command-deck
-miniature, moving crew and its repeated shared-GPU preview copies are removed;
-the actual native 3D ship and sky remain. Healthy graphics/build labels no longer
-occupy the ship header. Settings → Graphics Status opens diagnostics in place;
-errors still expose recovery on Home automatically.
-
-Photo Mode and Cockpit View live under Pause → View & Photo Tools. The P shortcut
-and photo save/share remain. Ultimate, formation, bomb, pause, hull, charge, boss
-and objective cues stay available in combat; the diagnostic PERF MODE badge is
-hidden. Hangar suppresses duplicate/current navigation entries, and Ship Systems
-& Liveries opens the retained technical controls on demand. Equipment catalogs wrap into
-three readable columns, including the six-hull first row added in Batch B; names
-no longer collide. Repeated role slogans and illustrative bars are hidden while
-short stats, prices/unlocks and comparison tools remain. Mission Details
-contains briefing art, enemy/environment intel and repeated loadout information;
-the destination, boss and launch/cancel actions stay prominent. More Game Modes
-keeps daily/events/NG+ available without crowding campaign selection. Run Details
-contains the extended result breakdown. Home still ends at Play.
-
-Gameplay, economy, models, abilities, modes and unlocks are unchanged. No balance
-lock changes, new assets, dependencies or build step. All changes are in the
-single HTML architecture and UI tests. `tests/declutter.cjs` exercises the actual
-page, including photo controls and diagnostics while paused; the ships/drones
-test explicitly opens the newly folded ship-system controls.
-
-Validation: `tests/verify.cjs`, `tests/ships-drones.cjs`,
-`tests/bosses-modes.cjs`, `tests/home-deck.cjs` and `tests/declutter.cjs` pass.
-The latter covers real clicks through optional modes, mission/system disclosures,
-Pause camera controls, photo return and diagnostics without losing the paused
-run. Existing frozen gameplay/economy baselines are unchanged.
-
-A serial 600-frame home comparison after 120 warm-up frames against main
-`c5a5fc6` measured updated/main median 16.7/16.7 ms, p95 16.7/16.8 ms and maximum
-50.0/50.0 ms. This is a shared Cloud Chromium sample, not a physical-phone or
-locked-60fps guarantee. The steady home path no longer generates the miniature
-planet preview, copies it into another canvas or restores the ship a second time
-on a 100 ms cadence.
-
-A real served WebGL1 play-through selected Aegis/Guardian/Vector, cleared the full
-first assault and Mothership in 122.1 s with 4/4 hull, and exercised charge,
-special and pause/resume. There were no runtime errors. Whole-session median/p95
-frame intervals were 16.7/50.0 ms; max 1,266.7 ms includes startup/navigation and
-screenshot work. Final catalog layout checks pass at 320, 375 and 430 px, and
-home/inspector/faction captures show no browser errors.
-
 ## Ships & drones — Batch B
 
 The hangar now includes Atlas Gunship (6 HP), Wraith Interceptor (2 HP), and
