@@ -2187,6 +2187,33 @@
       #combo-box {border-radius:8px;}
       #chargebar {border-color:#ffe6a87d;}
       @media(prefers-reduced-motion:reduce){#btn-play,.btn,.opt-card,.meta-key,.ref-shortcuts button {transition:none;}}
+
+      /* Quiet default UI: essentials first, details available on demand. */
+      #scr-loadout .opt-row {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;}
+      #scr-loadout .opt-card {width:100%;min-width:0;}
+      #scr-loadout .opt-card .lo-cv {max-width:100%;height:auto;}
+      #scr-loadout .opt-name {font-size:13px;line-height:1.25;white-space:normal;overflow-wrap:anywhere;}
+      #scr-loadout .opt-role,#scr-loadout .stat-bars {display:none;}
+
+      #scr-start .ck-topbar {justify-content:flex-end;}
+      #scr-start .ref-shortcuts button {min-height:54px;height:54px;gap:5px;}
+      #scr-start .ref-shortcuts small,#scr-start .ref-mission-copy p {display:none;}
+      #scr-start .ref-ship header {min-height:36px;}
+      #graphics-panel[data-state="ready"]:not([open]) {display:none;}
+      #graphics-panel[open] {max-width:135px;}
+      #graphics-panel summary span:last-child {display:none;}
+      #graphics-panel summary {font-size:10px;}
+      #scr-start .ref-ship .ck-stage::before,.inspector-viewport .hg-ring {display:none;}
+      .meta-nav .meta-key.on {display:none;}
+      #scr-loadout[data-sec="hangar"] .meta-nav [data-nav="arsenal"],#scr-loadout[data-sec="hangar"] .meta-nav [data-nav="drones"] {display:none;}
+      #launch-details {margin:10px 0;border-top:1px solid #688ca444;}
+      .run-details summary,#optional-modes summary,#pause-view-tools summary,#launch-details summary,#ship-system-details summary {min-height:44px;display:list-item;align-content:center;cursor:pointer;font:700 12px "Rajdhani",sans-serif;letter-spacing:.08em;padding:10px 2px;color:#b9d6e5;}
+      #launch-details #brief-preview-d {margin-bottom:8px;}
+      #ship-system-details {text-align:left;}
+      #pause-view-tools {width:100%;max-width:320px;text-align:center;margin-top:12px;}
+      #pause-view-tools>button,#ship-system-details>button {margin:4px 3px;min-height:44px;}
+      #perf-ind {display:none;}
+      #settings-graphics-status {width:100%;min-height:44px;margin:8px 0;}
     </style>
   </head>
   <body>
@@ -2259,7 +2286,7 @@
         </section>
         <canvas id="reference-backdrop" width="768" height="1280" aria-hidden="true"></canvas><div class="ck-scroll">
           <div class="ck-topbar">
-            <span class="deck-location"><i></i> ORBITAL COMMAND</span>
+
             <div class="ck-wallet">
               <span class="ck-wal"><span class="coin"></span><span id="hub-credits">0</span><small>CR</small></span>
               <span class="ck-wal cores"><span class="core"></span><span id="hub-cores">0</span><small>CORES</small></span>
@@ -2267,14 +2294,14 @@
           </div>
 
 
-          <div class="ref-brand"><div><small>FLIGHT COMMAND / 01</small><strong>STARFALL</strong></div><button data-nav="pilots" class="deck-profile" aria-label="Pilot and player profile"><span class="hp-name" id="home-player-name">PLAYER</span><small>PILOT PROFILE ↗</small></button></div>
+          <div class="ref-brand"><div><strong>STARFALL</strong></div><button data-nav="pilots" class="deck-profile" aria-label="Pilot and player profile"><span class="hp-name" id="home-player-name">PLAYER</span><small>PILOT</small></button></div>
           <nav class="ref-shortcuts" aria-label="Main systems">
-            <button data-nav="hangar"><span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m16 3 6 15 6 6-9-2-3 6-3-6-9 2 6-6Z"/><path d="M16 10v10M10 24l-2 4m16-4 2 4"/></svg></span><b>HANGAR</b><small>SHIP FLEET</small></button>
-            <button data-nav="arsenal"><span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 13h16v8H6zM10 10h9v3m3 2h6v4h-6M9 21v6h6l-2-6M4 15v4"/></svg></span><b>BLASTERS</b><small>WEAPON BAY</small></button>
-            <button data-nav="drones"><span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m16 7 7 9-7 9-7-9ZM4 6h5v5H4zm19 0h5v5h-5zM4 22h5v5H4zm19 0h5v5h-5zM9 11l3 3m8 0 3-3M9 22l3-3m8 0 3 3"/></svg></span><b>DRONES</b><small>ESCORT WING</small></button>
-            <button data-nav="settings"><span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m13 4 6 0 1 4 4 2 4-1 2 5-3 3 0 4-5 3-3-2-4 0-3 2-5-3 0-4-3-3 2-5 4 1 4-2Z"/><circle cx="16" cy="16" r="5"/></svg></span><b>SETTINGS</b><small>PREFERENCES</small></button>
+            <button data-nav="hangar"><span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m16 3 6 15 6 6-9-2-3 6-3-6-9 2 6-6Z"/><path d="M16 10v10M10 24l-2 4m16-4 2 4"/></svg></span><b>HANGAR</b></button>
+            <button data-nav="arsenal"><span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 13h16v8H6zM10 10h9v3m3 2h6v4h-6M9 21v6h6l-2-6M4 15v4"/></svg></span><b>BLASTERS</b></button>
+            <button data-nav="drones"><span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m16 7 7 9-7 9-7-9ZM4 6h5v5H4zm19 0h5v5h-5zM4 22h5v5H4zm19 0h5v5h-5zM9 11l3 3m8 0 3-3M9 22l3-3m8 0 3 3"/></svg></span><b>DRONES</b></button>
+            <button data-nav="settings"><span><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m13 4 6 0 1 4 4 2 4-1 2 5-3 3 0 4-5 3-3-2-4 0-3 2-5-3 0-4-3-3 2-5 4 1 4-2Z"/><circle cx="16" cy="16" r="5"/></svg></span><b>SETTINGS</b></button>
           </nav>
-          <section class="ref-card ref-ship"><header><h2>READY TO FLY</h2><details class="graphics-panel" id="graphics-panel" data-state="loading"><summary id="graphics-details" aria-controls="graphics-diagnostics"><span id="graphics-status" role="status" aria-live="polite">STARTING 3D…</span><span>GRAPHICS · BUILD 3D-9</span></summary></details><button data-nav="livery">APPEARANCE ↗</button></header>
+          <section class="ref-card ref-ship"><header><h2>READY TO FLY</h2><details class="graphics-panel" id="graphics-panel" data-state="loading"><summary id="graphics-details" aria-controls="graphics-diagnostics"><span id="graphics-status" role="status" aria-live="polite">STARTING 3D…</span><span>GRAPHICS · BUILD 3D-9</span></summary></details><button data-nav="livery">PAINT</button></header>
             <div class="ref-ship-body"><div class="ck-stage">
             <canvas id="home-planet-cv" width="144" height="144" aria-hidden="true"></canvas>
             <div class="ck-padwrap">
@@ -2320,12 +2347,12 @@
             </div>
           </div><button class="ref-upgrade" data-nav="engineering">UPGRADES</button></div></div>
           </section>
-          <section class="ref-card ref-mission"><header><h2>DEPLOYMENT</h2><button data-nav="quests">CONTRACTS ↗</button></header>
+          <section class="ref-card ref-mission"><header><h2>DEPLOYMENT</h2><button data-nav="quests">CONTRACTS</button></header>
           <div class="ref-mission-body"><div class="hub-plate" id="resume-plate" hidden><span class="hp-txt" id="resume-txt">RESUME — WAVE 2</span><span class="hp-btns"><button class="hp-btn go" id="btn-resume-run">RESUME</button><button class="hp-btn" id="btn-resume-dismiss">DISCARD</button></span></div><div class="ref-world"><canvas id="mission-world" width="192" height="192"></canvas><span>CAMPAIGN<br>5 WAVES</span></div><div class="ref-mission-copy"><div class="ck-bossplate">
             <svg class="skull" viewBox="0 0 24 24"><path d="M12 2a8 8 0 0 0-8 8c0 2.9 1.6 5 3.5 6.3V20a1.5 1.5 0 0 0 1.5 1.5h6A1.5 1.5 0 0 0 16.5 20v-3.7C18.4 15 20 12.9 20 10a8 8 0 0 0-8-8zM8.5 13.5a2 2 0 1 1 2-2 2 2 0 0 1-2 2zm7 0a2 2 0 1 1 2-2 2 2 0 0 1-2 2z"/></svg>
             <span class="bp-meta"><span class="bp-k">NEXT BOSS — <span id="ck-boss-sky">WAVE 1 · DEEP SPACE</span></span><span class="bp-v" id="home-objective">VOID MOTHERSHIP</span></span>
             <span class="bp-bounty"><span id="ck-boss-bounty">3,000</span><small>PTS BOUNTY</small></span>
-          </div><p>Defend the orbital line.<br>Clear the assault. Break the flagship.</p><button data-nav="campaign">SELECT DESTINATION →</button></div></div></section>
+          </div><button data-nav="campaign">DESTINATION</button></div></div></section>
 
 
           <div class="ck-launchwrap">
@@ -8770,7 +8797,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
             detail=(renderer.legacy?"WebGL1":"WebGL2")+" scene active. "+(selected?selected.source:"Imported fleet")+" uses the same model, materials and renderer in home and flight. Build 3D-9.";
           }
           var panel=document.getElementById("graphics-panel");
-          if((failed||assetFailed||previewFailed)&&panel.dataset.state!==state){panel.open=true;document.getElementById("graphics-diagnostics").hidden=false;}
+          if((failed||assetFailed||previewFailed)&&panel.dataset.state!==state){document.getElementById("scr-start").prepend(document.getElementById("graphics-diagnostics"));panel.open=true;document.getElementById("graphics-diagnostics").hidden=false;}
           var inspectionEnabled=!!renderer&&modelReady&&!failed&&!assetFailed&&!previewFailed,view=document.getElementById("inspector-viewport"),controls=document.querySelectorAll(".inspector-controls button");
           if(view){view.setAttribute("aria-disabled",String(!inspectionEnabled));document.getElementById("inspector-help").textContent=inspectionEnabled?"Drag to rotate & tilt · Two fingers to pan & zoom":modelReady?"3D inspection unavailable — Retry 3D on Home.":"Preparing your 3D ship…";for(var ci=0;ci<controls.length;ci++)controls[ci].disabled=!inspectionEnabled;}
           panel.dataset.state=state;
@@ -9616,11 +9643,13 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
       window.addEventListener("keydown",function(e){if(e.repeat||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;if(e.code==="KeyU")fireUltimate();if(e.code==="KeyF")cycleFormation();});
       function cycleFormation(){BatchB.formation=BatchB.formation==="v"?"wall":BatchB.formation==="wall"?"orbit":"v";formationButton.textContent={v:"V-SCREEN",wall:"SHIELD WALL",orbit:"ORBIT"}[BatchB.formation];}
       function batchButton(text,parent,fn){var b=document.createElement("button");b.className="btn ghost";b.textContent=text;b.type="button";b.addEventListener("click",fn);parent.appendChild(b);return b;}
-      var batchPanel=document.createElement("div");batchPanel.className="set-panel sec-block";batchPanel.dataset.sec="hangar";
+      var batchPanel=document.createElement("div");batchPanel.className="set-panel sec-block";batchPanel.dataset.sec="hangar";batchPanel.id="ship-systems";
       batchPanel.innerHTML='<p>SHIP SYSTEMS · U: ultimate (30s cooldown) · F: formation. Tap a boss core to focus drones. Drone plating: Mk II at 10 min, Mk III at 30 min flown per type.</p><p id="batch-inspect" aria-live="polite">Tap the cockpit, wings or engines for a stat callout. Pinch or wheel to inspect.</p>';
       el("inspector-viewport").parentNode.appendChild(batchPanel);
       batchButton("CANOPY OPEN / CLOSE",batchPanel,function(){BatchB.canopy=!BatchB.canopy;el("batch-inspect").textContent="CANOPY "+(BatchB.canopy?"OPEN":"CLOSED");});
       for(var skin in BATCH_LIVERIES)(function(id){batchButton(({stock:"FACTORY",black:"STEALTH BLACK",gold:"GOLD TRIM",rift:"RIFT-CAPTURED PURPLE"}[id])+" · "+BATCH_LIVERIES[id].stars+" STARS",batchPanel,function(){el("batch-inspect").textContent=setLivery(id)?"LIVERY: "+id.toUpperCase():"LOCKED — EARN "+BATCH_LIVERIES[id].stars+" CAREER STARS";});})(skin);
+      var shipDetails=document.createElement("details"),shipSummary=document.createElement("summary");shipDetails.id="ship-system-details";shipSummary.textContent="SHIP SYSTEMS & LIVERIES";
+      while(batchPanel.firstChild)shipDetails.appendChild(batchPanel.firstChild);shipDetails.insertBefore(shipSummary,shipDetails.firstChild);batchPanel.appendChild(shipDetails);
       flightControls=document.createElement("div");flightControls.style.cssText="position:absolute;right:8px;bottom:76px;z-index:25;display:none;flex-direction:column;gap:6px;width:128px;pointer-events:auto";el("stage").appendChild(flightControls);
       ultimateButton=batchButton("ULTIMATE · U",flightControls,function(e){fireUltimate();});
       formationButton=batchButton("V-SCREEN",flightControls,cycleFormation);
@@ -10321,80 +10350,21 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
           ctx.restore();
         }
       };
-      function paintDeckPreviewD(cv, t, brief) {
-        var c = cv.getContext("2d"),
-          w = cv.width,
-          h = cv.height,
-          sector = clamp(LAUNCH.sector || 1, 1, 5),
-          col = DeckD.accents[sector - 1];
-        c.clearRect(0, 0, w, h);
-        if (brief) {
-          c.fillStyle = "#04101d";
-          c.fillRect(0, 0, w, h);
-        }
-        var planet = SF3D.thumbnail("planet", col, col, t, 0, 192);
-        if (planet) {
-          if (brief) c.drawImage(planet, w - 142, -18, 150, 150);
-          else c.drawImage(planet, w * 0.36 - 36, h * 0.76 - 90, 72, 72);
-        }
-        c.strokeStyle = col;
-        c.globalAlpha = 0.45;
-        c.beginPath();
-        c.ellipse(w * 0.36, h * 0.76, w * 0.32, h * 0.13, 0, 0, Math.PI * 2);
-        c.stroke();
-        c.globalAlpha = 1;
-        if (brief) {
-          var kind = BOSS_KINDS[sector - 1],
-            boss = SF3D.thumbnail("boss:" + kind, "#080d16", "#080d16", 0, 0, 128);
-          if (boss) {
-            c.filter = "brightness(.18)";
-            c.drawImage(boss, 4, 0, 132, 132);
-            c.filter = "none";
-          }
-          return;
-        }
-        // The selected ship already occupies the native dock above this table.
-        for (var i = 0; i < 3; i++) {
-          var a = REDUCED ? i * 2 : t * 0.5 + i * 2,
-            x = w * 0.36 + Math.cos(a) * w * 0.24,
-            y = h * 0.6 + Math.sin(a) * h * 0.18;
-          c.fillStyle = col;
-          c.fillRect(x, y, 7, 3);
-        }
-        // Crew silhouettes walk behind the holo-table. Reduced motion keeps them still.
-        c.fillStyle = "#152936";
-        for (var i = 0; i < 3; i++) {
-          var x = REDUCED ? i * 100 : ((i * 107 + t * 8) % (w + 24)) - 12;
-          c.beginPath();
-          c.arc(x, 30, 4, 0, 7);
-          c.fill();
-          c.fillRect(x - 4, 35, 8, 20);
-        }
-        c.fillStyle = col;
-        c.font = "9px monospace";
-        c.fillText("COMMAND DECK · " + DeckD.weather[sector - 1], 8, h - 7);
+      function paintDeckPreviewD(cv, t) {
+        var c=cv.getContext("2d"),w=cv.width,h=cv.height,sector=clamp(LAUNCH.sector||1,1,5),col=DeckD.accents[sector-1];
+        c.clearRect(0,0,w,h);c.fillStyle="#04101d";c.fillRect(0,0,w,h);
+        var planet=SF3D.thumbnail("planet",col,col,t,0,192);
+        if(planet)c.drawImage(planet,w-142,-18,150,150);
+        var boss=SF3D.thumbnail("boss:"+BOSS_KINDS[sector-1],"#080d16","#080d16",0,0,128);
+        if(boss){c.filter="brightness(.18)";c.drawImage(boss,4,0,132,132);c.filter="none";}
       }
-      var deckHomeBase = tickMenuArt;
-      tickMenuArt = function (now) {
-        deckHomeBase(now);
-        if (!REDUCED && now - (DeckD.previewAt || 0) < 100) return;
-        var key =
-          (LAUNCH.sector || 1) + ":" + LOADOUT.ship + ":" + SF3D.metrics.revision;
-        if (REDUCED && DeckD.previewKey === key) return;
-        DeckD.previewAt = now;
-        DeckD.previewKey = key;
-        var t = REDUCED ? 0 : now / 1000;
-        if (screens.start.classList.contains("on"))
-          paintDeckPreviewD(el("deck-preview-d"), t, false);
-        if (launchConfirmOpen()) paintDeckPreviewD(el("brief-preview-d"), t, true);
-        // Thumbnail uses the shared preview GPU; restore the native dock before compositing.
-        if (screens.start.classList.contains("on"))
-          paintShipCanvas(el("hero-canvas"), t, 0.44);
-      };
       (function wireDeckD() {
+        var diagnostics=document.createElement("button");diagnostics.id="settings-graphics-status";diagnostics.className="btn ghost";diagnostics.textContent="GRAPHICS STATUS";
+        diagnostics.onclick=function(){var info=el("graphics-diagnostics");diagnostics.after(info);info.hidden=false;};
+        el("about-game").before(diagnostics);
+
         var style = document.createElement("style");
         style.textContent = `
-                      #deck-preview-d{position:absolute;bottom:0;left:0;width:55%;height:42%;pointer-events:none;opacity:.8}
                       #scr-start .ref-ship{position:relative}#brief-preview-d{width:100%;height:104px;display:block;border-radius:8px}
                       #launch-confirm .lc-card{max-height:90%;overflow:auto}#brief-intel-d{font-size:10px;line-height:1.5;display:flex;gap:5px;margin:6px 0}#brief-intel-d span{flex:1;border:1px solid #376178;padding:5px}
                       .results-d{display:grid;grid-template-columns:1fr 1fr;gap:8px;font:11px monospace;margin:10px 0}.results-d b{display:block;color:#91eaff;font-size:18px}
@@ -10415,12 +10385,6 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
           host.appendChild(b);
           return b;
         }
-        var cv = document.createElement("canvas");
-        cv.id = "deck-preview-d";
-        cv.width = 240;
-        cv.height = 150;
-        cv.setAttribute("aria-label", "Live command deck and dock");
-        document.querySelector(".ref-ship").appendChild(cv);
         var brief = document.createElement("canvas");
         brief.id = "brief-preview-d";
         brief.width = 360;
@@ -10431,6 +10395,11 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
         var intel = document.createElement("div");
         intel.id = "brief-intel-d";
         card.insertBefore(intel, brief.nextSibling);
+        var more=document.createElement("details");more.id="launch-details";
+        var title=document.createElement("summary");title.textContent="MISSION DETAILS";more.appendChild(title);
+        card.insertBefore(more,brief);more.appendChild(brief);more.appendChild(intel);
+        var rows=card.querySelectorAll(".lc-row");for(var ri=2;ri<rows.length;ri++)more.appendChild(rows[ri]);
+
         var oldOpen = openLaunchConfirm;
         openLaunchConfirm = function () {
           oldOpen();
@@ -10470,7 +10439,9 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
             item.appendChild(count);
             row.appendChild(item);
           }
-          el(prefix + "-score").after(row);
+          var breakdown=document.createElement("details");breakdown.className="run-details";
+          var breakdownTitle=document.createElement("summary");breakdownTitle.textContent="RUN DETAILS";breakdown.appendChild(breakdownTitle);breakdown.appendChild(row);
+          el(prefix + "-score").after(breakdown);
         }
         var message = document.createElement("p");
         message.id = "win-wave-d";
@@ -10496,24 +10467,12 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
         panel.addEventListener("pointerdown", function (e) {
           e.stopPropagation();
         });
-        var controls = document.createElement("div");
-        controls.id = "deck-flight-d";
-        stageEl.appendChild(controls);
-        button("photo-open-d", "PHOTO", controls, enterPhotoD);
-        button("cockpit-d", "COCKPIT", controls, function () {
-          DeckD.cockpit = !DeckD.cockpit;
-          this.setAttribute("aria-pressed", String(DeckD.cockpit));
-        });
-        button("pause-photo-d", "PHOTO MODE", el("scr-pause"), enterPhotoD);
-        var baseRender = render;
-        render = function () {
-          baseRender();
-          var visible = G.mode === "playing" && !DeckD.photo;
-          if (controls._visible !== visible) {
-            controls._visible = visible;
-            controls.style.display = visible ? "flex" : "none";
-          }
-        };
+        var tools=document.createElement("details");tools.id="pause-view-tools";
+        var toolsTitle=document.createElement("summary");toolsTitle.textContent="VIEW & PHOTO TOOLS";tools.appendChild(toolsTitle);el("scr-pause").appendChild(tools);
+        button("pause-photo-d", "PHOTO MODE", tools, enterPhotoD);
+        var cockpit=button("cockpit-d", "COCKPIT VIEW", tools, function(){
+          DeckD.cockpit=!DeckD.cockpit;this.setAttribute("aria-pressed",String(DeckD.cockpit));
+        });cockpit.setAttribute("aria-pressed",String(DeckD.cockpit));
         window.addEventListener(
           "keydown",
           function (e) {
@@ -10560,6 +10519,9 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
               },
             );
           })(skin);
+        var modes=document.createElement("details");modes.id="optional-modes";
+        var modesTitle=document.createElement("summary");modesTitle.textContent="MORE GAME MODES";modes.appendChild(modesTitle);
+        var modePanel=el("batch-c-modes");modePanel.before(modes);modes.appendChild(modePanel);modes.appendChild(ng);
         BATCH_LIVERIES.aurora = { stars: 0, color: "#61ffc4" };
         BATCH_LIVERIES.solar = { stars: 0, color: "#ffac45" };
         var oldUnlocked = liveryUnlocked;
@@ -10592,7 +10554,6 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
           "beforeend",
           '<p style="font-size:11px">HD Cinematic adds a finer planet mesh, cloud detail and particles. Effects adapt automatically when frame time rises.</p>',
         );
-        paintDeckPreviewD(cv, 0, false);
       })();
     </script>
   </body>
