@@ -2809,7 +2809,7 @@
         </div>
 
         <div class="set-panel">
-          <div class="lo-label">GRAPHICS QUALITY</div><div class="seg-row" role="group" aria-label="Graphics quality"><button class="seg-btn" data-graphics="auto">SMOOTH</button><button class="seg-btn" data-graphics="hd">EXTRA CRISP</button></div><div class="set-note">Both modes keep ships and enemies sharp. Extra Crisp adds finer edges when your device has spare power.</div>
+          <div class="lo-label">GRAPHICS QUALITY</div><div class="seg-row" role="group" aria-label="Graphics quality"><button class="seg-btn" data-graphics="auto">SMOOTH</button><button class="seg-btn" data-graphics="hd">EXTRA CRISP</button></div><div class="set-note">Both modes keep ships and enemies sharp. HD Cinematic adds a finer planet mesh and extra weather and fog particles when your device has spare power.</div>
           <div class="lo-label">DISPLAY &amp; SOUND</div>
           <div class="set-row" style="margin-top:2px; justify-content:flex-start">
             <button class="set-btn on" data-set="shake">SCREEN SHAKE</button>
@@ -6649,15 +6649,19 @@
         return NEBULA_CACHE[key] = cv;
       }
       var SPACE_BACKDROP_CACHE={};
-      function spaceBackdrop(sector){
-        if(SPACE_BACKDROP_CACHE[sector])return SPACE_BACKDROP_CACHE[sector];
+      function spaceBackdrop(sector,cinematic){
+        var cacheKey=sector+(cinematic?5:0);
+        if(SPACE_BACKDROP_CACHE[cacheKey])return SPACE_BACKDROP_CACHE[cacheKey];
         var cv=document.createElement("canvas");cv.width=512;cv.height=1024;var c=cv.getContext("2d"),env=ENVS[sector-1],palettes=[["#13294e","#43aabd"],["#3b254e","#e6a95a"],["#24234c","#7ae0c1"],["#1e3154","#a9d9ff"],["#211b43","#bc9bdc"]],palette=palettes[sector-1];
         var sky=c.createLinearGradient(0,0,430,1024);sky.addColorStop(0,palette[0]);sky.addColorStop(1,"#0a1430");c.fillStyle=sky;c.fillRect(0,0,512,1024);
         c.globalAlpha=.32;c.drawImage(nebulaSprite(env),-120,-90,850,1120);c.globalAlpha=1;
+        if(!cinematic){
         c.drawImage(planetSprite(["deep","ember","rift","cryo","eclipse"][sector-1],256),350,48,180,180);
         c.strokeStyle="#a7cfef";c.globalAlpha=.18;c.lineWidth=3;c.beginPath();c.ellipse(440,145,115,25,-.25,0,Math.PI*2);c.stroke();
+        }
+
         c.save();c.globalAlpha=.12;c.translate(140,710);c.rotate(-.5);c.drawImage(stationSprite(sector),-215,-280,430,560);c.restore();c.globalAlpha=1;
-        return SPACE_BACKDROP_CACHE[sector]=cv;
+        return SPACE_BACKDROP_CACHE[cacheKey]=cv;
       }
       var BOSS_VISUALS = {
         mothership: { color: "#71dfff", signal: "01 / CARRIER SIGNATURE" },
@@ -8321,7 +8325,7 @@
           for(var vi=2;vi<mesh.vertices.length;vi+=12)mesh.roof=Math.max(mesh.roof,mesh.vertices[vi]);return mesh;
         }
         function get(key) {
-          if(geometry[key])return geometry[key];var b=new Builder(),parts=key.split(":"),type=parts[1];
+          if(key==="fog")return geometry.fog||(geometry.fog=get("glow"));if(geometry[key])return geometry[key];var b=new Builder(),parts=key.split(":"),type=parts[1];
           if(parts[0]==="ship")return ship(key,SHIP_ART[type]||SHIP_ART.vanguard);
           if(parts[0]==="enemy")return factionMesh(key,type,false);
           if(parts[0]==="drone") {var d=DRONE_ART[type],r=d.r;b.plate([[-r,0],[-r*.5,r],[r*.5,r],[r,0],[r*.6,-r],[-r*.6,-r]],0,5,d.body);b.sphere(0,0,5,r*.5,d.core,4,12);b.box(-r*.7,-1,4,2,r,2,d.ring,2);b.box(r*.7,-1,4,2,r,2,d.ring,2);b.box(0,-r,1,4,2,2,"#ffffff",3);return b.finish(key);}
@@ -8336,7 +8340,7 @@
           if(key==="exhaust"){for(var jet=0;jet<8;jet++){var ja=jet*Math.PI/4,jb=(jet+1)*Math.PI/4;b.tri([Math.cos(ja)*.5,0,Math.sin(ja)*.5],[0,-1,0],[Math.cos(jb)*.5,0,Math.sin(jb)*.5],"#ffffff",10);}return b.finish(key);}
           else if(key==="bullet"){var poles=[[0,0,1],[0,0,-1]],rim=[[1,0,0],[0,1,0],[-1,0,0],[0,-1,0]];for(var bi=0;bi<4;bi++){b.tri(poles[0],rim[bi],rim[(bi+1)%4],"#ffffff",3);b.tri(poles[1],rim[(bi+1)%4],rim[bi],"#ffffff",3);}}
           else if(key==="sphere")b.sphere(0,0,0,1,"#ffffff",0,16);
-          else if(key==="planet")b.sphere(0,0,0,1,"#ffffff",5,24);
+          else if(key==="planet"||key==="planet:hd")b.sphere(0,0,0,1,"#ffffff",5,key==="planet:hd"?48:24);
           else if(key==="core")b.sphere(0,0,0,1,"#ffffff",3,12);
           else if(key==="ring")b.ring(1,.018,"#ffffff",3);
           else if(key==="glow"||key==="laser"){var tag=key==="laser"?11:7;b.tri([-.5,-.5,0],[.5,-.5,0],[.5,.5,0],"#ffffff",tag);b.tri([-.5,-.5,0],[.5,.5,0],[-.5,.5,0],"#ffffff",tag);}
@@ -8358,7 +8362,7 @@
         var fragment=`#version 300 es
           precision highp float;
           in vec3 vNormal;in vec3 vWorld;in vec4 vMaterial;in vec4 vTint;in vec4 vEngine;in vec2 vUV;in vec3 vLocal;
-          uniform vec4 uBattle;uniform vec3 uBattleColor;uniform vec2 uFinish;uniform sampler2D uHullNormal;
+          uniform vec4 uMist;uniform vec4 uBattle;uniform vec3 uBattleColor;uniform vec2 uFinish;uniform sampler2D uHullNormal;
           uniform float uShadow;uniform float uTime;uniform float uTextured;uniform sampler2D uGrill;out vec4 result;
           void main(){if(uShadow>.5){result=vec4(.005,.012,.022,.22*vTint.a);return;}
             // A draw-uniform fast path keeps imported hulls out of procedural effect branches.
@@ -8372,7 +8376,11 @@
               float metal=uFinish.x*(1.-paint*.4);spec=pow(h,mix(110.,12.,uFinish.y));vec3 environment=mix(vec3(.025,.05,.09),vec3(.18,.3,.43),N.z*.5+.5);
               vec3 lit=base*(vec3(.18,.22,.29)+vec3(1.,.91,.77)*diffuse*.95+vec3(.42,.7,1.)*fill*.3)+environment*metal*.22+vec3(.85,.95,1.)*spec*(.8+metal*.4)+vec3(.16,.43,.65)*rim;
               vec3 delta=uBattle.xyz-vWorld;float fall=max(0.,1.-length(delta)/180.);lit+=base*uBattleColor*uBattle.w*fall*fall*max(.15,dot(N,normalize(delta)));lit=lit/(vec3(.7)+lit);if(vWorld.z< -40.)lit=mix(vec3(.01,.025,.045),lit,clamp((vWorld.z+230.)/230.,.25,1.));
-              result=vec4(mix(lit,sqrt(max(lit,vec3(0.))),.3)+vec3(max(0.,vTint.a-1.)*.8),min(vTint.a,1.));return;
+
+#ifdef SF_CINEMATIC
+lit=mix(lit,uMist.rgb,uMist.a*pow(max(0.,sin((370.-vWorld.y)*.009-uTime*.32)),4.));
+#endif
+result=vec4(mix(lit,sqrt(max(lit,vec3(0.))),.3)+vec3(max(0.,vTint.a-1.)*.8),min(vTint.a,1.));return;
             }
             vec3 base=vMaterial.rgb;float tag=vMaterial.a;float alpha=min(vTint.a,1.);
             if(tag>6.5&&tag<7.5){vec2 q=(vUV-.5)*2.;float r=dot(q,q);float falloff=max(0.,1.-r);alpha*=falloff*falloff*falloff;result=vec4(vEngine.rgb*1.4,alpha);return;}
@@ -8380,7 +8388,12 @@
             if(tag>10.5){vec2 p=abs((vUV-.5)*2.);float sleeve=1.-smoothstep(.12,1.,p.x);float caps=1.-smoothstep(.7,1.,p.y);float core=1.-smoothstep(.04,.26,p.x);result=vec4(mix(vEngine.rgb,vec3(1.),core*.9),alpha*sleeve*sleeve*caps);return;}
             if(tag>9.5){float flame=clamp(-vLocal.y,0.,1.);result=vec4(mix(vec3(1.),vEngine.rgb,smoothstep(0.,.35,flame))*1.4,alpha*(1.-smoothstep(.35,1.,flame)));return;}
             if(tag>5.5){base*=texture(uGrill,vUV).rgb*2.;}
-            else if(tag>4.5){vec3 terrain=texture(uGrill,vUV).rgb;float land=smoothstep(.42,.58,terrain.r);base=mix(vec3(.015,.055,.14),vTint.rgb*.58,land);base*=.75+.25*terrain.b;base=mix(base,vec3(.64,.78,.87),smoothstep(.48,.75,terrain.g)*.65);}
+
+#ifdef SF_CINEMATIC
+else if(tag>4.5){vec2 worldUV=vec2(fract(vUV.x+uTime*.009+vTint.r*.31),vUV.y);vec3 terrain=texture(uGrill,worldUV).rgb;float land=smoothstep(.42,.58,terrain.r);base=mix(vec3(.015,.055,.14),vTint.rgb*.58,land);base*=.75+.25*terrain.b;base=mix(base,vec3(.64,.78,.87),smoothstep(.48,.75,terrain.g)*.65);}
+#else
+else if(tag>4.5){vec3 terrain=texture(uGrill,vUV).rgb;float land=smoothstep(.42,.58,terrain.r);base=mix(vec3(.015,.055,.14),vTint.rgb*.58,land);base*=.75+.25*terrain.b;base=mix(base,vec3(.64,.78,.87),smoothstep(.48,.75,terrain.g)*.65);}
+#endif
             else if(tag>2.5&&tag<3.5){result=vec4(vEngine.rgb*1.6,alpha);return;}
             else if(tag>1.5&&tag<2.5)base=vTint.rgb;
             float craft=step(1.5,vEngine.a);
@@ -8388,9 +8401,21 @@
             vec3 detail=texture(uHullNormal,fract(vLocal.xy*.012)).xyz*2.-1.;vec3 N=normalize(vNormal+vec3(detail.xy*.24,0.));vec3 L=normalize(vec3(-.5,.65,1.));vec3 V=normalize(vec3(0.,0.,1050.)-vWorld);
             float diffuse=max(dot(N,L),0.);float fill=max(dot(N,normalize(vec3(.65,-.45,.8))),0.);float spec=pow(max(dot(N,normalize(L+V)),0.),tag>3.5&&tag<4.5?100.:mix(110.,12.,uFinish.y));
             float rim=pow(1.-max(dot(N,V),0.),3.);float panel=tag<1.5?(.94+.06*smoothstep(.06,.12,abs(sin(vLocal.y*1.7)))):1.;base*=panel;vec3 lit=base*(vec3(.2,.23,.29)+vec3(1.,.91,.78)*diffuse*.95+vec3(.44,.7,1.)*fill*.3)+mix(vec3(.04),base,uFinish.x)*spec*(1.+craft)+vec3(.16,.4,.6)*rim;
+
+#ifdef SF_CINEMATIC
+            if(tag>4.5&&tag<5.5){
+              float cloud=smoothstep(.52,.72,texture(uGrill,vec2(fract(vUV.x-uTime*.016),vUV.y)).g);
+              float night=1.-smoothstep(-.2,.25,dot(N,L));
+              float cities=step(.96,fract(sin(dot(floor(vec2(fract(vUV.x+uTime*.009+vTint.r*.31),vUV.y)*180.),vec2(12.9898,78.233)))*43758.5453));
+              lit=mix(lit,vec3(.85,.93,1.)*(.3+diffuse),cloud*.45);
+              lit+=vec3(1.,.62,.19)*cities*night*.9+vTint.rgb*rim*1.8;
+            }
+#else
             if(tag>4.5&&tag<5.5)lit+=vec3(.06,.38,.8)*rim*1.8;
+#endif
             vec3 delta=uBattle.xyz-vWorld;float fall=max(0.,1.-length(delta)/180.);lit+=base*uBattleColor*uBattle.w*fall*fall*max(.15,dot(N,normalize(delta)));lit=lit/(vec3(.7)+lit);if(vWorld.z< -40.)lit=mix(vec3(.01,.025,.045),lit,clamp((vWorld.z+230.)/230.,.25,1.));result=vec4(pow(lit,vec3(.83))+vec3(max(0.,vTint.a-1.)*.8),alpha);}`;
-        function program(gl,vs,fs,legacy) {
+        function program(gl,vs,fs,legacy,cinematic) {
+          if(cinematic){vs=vs.replace("#version 300 es","#version 300 es\n#define SF_CINEMATIC");fs=fs.replace("#version 300 es","#version 300 es\n#define SF_CINEMATIC");}
           if(legacy) {
             // The same material/lighting shaders on WebGL1, without runtime libraries.
             vs=vs.replace(/#version 300 es\s*/, "").replace(/layout\(location=\d+\)\s*/g, "").replace(/\bin\b/g,"attribute").replace(/\bout\b/g,"varying");
@@ -8402,6 +8427,27 @@
           for(var n=0;n<names.length;n++)gl.bindAttribLocation(p,slots[n],names[n]);
           gl.linkProgram(p);gl.deleteShader(v);gl.deleteShader(f);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(p));return p;
         }
+        var effectVertex=`#version 300 es
+precision highp float;layout(location=0) in vec3 aPosition;layout(location=3) in vec2 aUV;layout(location=4) in mat4 iModel;layout(location=8) in vec4 iTint;layout(location=9) in vec4 iEngine;
+uniform vec2 uSize;uniform vec2 uOffset;uniform float uCamera;out vec2 fxUV;out vec4 fxColor;out float localY;
+void main(){vec4 p=iModel*vec4(aPosition,1.);fxUV=aUV;fxColor=vec4(iEngine.rgb,min(iTint.a,1.));localY=aPosition.y;float z=p.z-uCamera;gl_Position=vec4(p.x*2.*uCamera/uSize.x+uOffset.x*2.*(-z)/uSize.x,p.y*2.*uCamera/uSize.y+uOffset.y*2.*(-z)/uSize.y,-1.0008*z-2.0008,-z);}`, effectFragment=`#version 300 es
+precision highp float;in vec2 fxUV;in vec4 fxColor;in float localY;uniform float effectType;out vec4 result;
+void main(){
+#ifdef SF_CINEMATIC
+if(effectType>3.5){vec2 p=(fxUV-.5)*2.;float f=max(0.,1.-dot(p,p));float n=.5+.25*sin(p.x*11.+sin(p.y*9.))+.15*sin(p.y*23.+p.x*17.);result=vec4(fxColor.rgb,fxColor.a*f*f*n);return;}
+#endif
+if(effectType<.5){vec2 p=(fxUV-.5)*2.;float f=max(0.,1.-dot(p,p));result=vec4(fxColor.rgb*1.4,fxColor.a*f*f*f);}else if(effectType<1.5){vec2 p=abs((fxUV-.5)*2.);float s=1.-smoothstep(.12,1.,p.x),c=1.-smoothstep(.7,1.,p.y),h=1.-smoothstep(.04,.26,p.x);result=vec4(mix(fxColor.rgb,vec3(1.),h*.9),fxColor.a*s*s*c);}else if(effectType<2.5){result=vec4(fxColor.rgb*1.6,fxColor.a);}else{float f=clamp(-localY,0.,1.);result=vec4(mix(vec3(1.),fxColor.rgb,smoothstep(0.,.35,f))*1.4,fxColor.a*(1.-smoothstep(.35,1.,f)));}}`;
+        var toonVertex=`#version 300 es
+precision highp float;layout(location=0) in vec3 aPosition;layout(location=1) in vec3 aNormal;layout(location=2) in vec4 aMaterial;layout(location=4) in mat4 iModel;layout(location=8) in vec4 iTint;layout(location=9) in vec4 iEngine;uniform vec4 uMist;uniform float uMistTime;uniform vec4 uBattle;uniform vec3 uBattleColor;uniform vec2 uSize;uniform vec2 uOffset;uniform float uCamera;out mediump vec4 toonColor;
+void main(){vec4 p=iModel*vec4(aPosition,1.);vec3 N=normalize(mat3(iModel)*(aNormal*vec3(iModel[0].w,iModel[1].w,iModel[2].w)));vec3 L=vec3(-.408,.408,.816);float d=max(0.,dot(N,L));float fill=max(0.,dot(N,vec3(.62,-.48,.62)));float h=max(0.,dot(N,vec3(-.22,.23,.948)));float h2=h*h,h4=h2*h2,h8=h4*h4,spec=h8*h8;float rim=1.-abs(N.z);rim=rim*rim;
+float elite=step(.12,dot(abs(iTint.rgb-iEngine.rgb),vec3(1.)));vec3 base=aMaterial.rgb*(aMaterial.a<1.5?iTint.rgb:vec3(1.));float luminance=dot(base,vec3(.2126,.7152,.0722));base=mix(base,vec3(luminance),.32);vec3 ink=mix(base,iTint.rgb,mix(.12,.7,elite));vec3 lit=ink*(vec3(.12,.17,.25)+vec3(1.,.86,.69)*d*1.05+vec3(.22,.46,.72)*fill*.42)+vec3(.7,.85,1.)*spec*.65+vec3(.16,.48,.72)*rim*.25;
+if(aMaterial.a>2.5&&aMaterial.a<3.5)lit=mix(aMaterial.rgb,iEngine.rgb,.35)*1.4;
+vec3 delta=uBattle.xyz-p.xyz;float fall=max(0.,1.-length(delta)/180.);lit+=base*uBattleColor*uBattle.w*fall*fall*max(.15,dot(N,normalize(delta)));
+#ifdef SF_CINEMATIC
+lit=mix(lit,uMist.rgb,uMist.a*pow(max(0.,sin((370.-p.y)*.009-uMistTime*.32)),4.));
+#endif
+toonColor=vec4(sqrt(max(lit,vec3(0.)))*.9+vec3(max(0.,iTint.a-1.)*.8),min(iTint.a,1.));float z=p.z-uCamera;gl_Position=vec4(p.x*2.*uCamera/uSize.x+uOffset.x*2.*(-z)/uSize.x,p.y*2.*uCamera/uSize.y+uOffset.y*2.*(-z)/uSize.y,-1.0008*z-2.0008,-z);}`, toonFragment=`#version 300 es
+precision mediump float;in mediump vec4 toonColor;out vec4 result;void main(){result=toonColor;}`;
         function GPU(cv,legacyOnly) {
           this.canvas=cv;
           var options={alpha:cv.id!=="world3d",antialias:false,premultipliedAlpha:false,preserveDrawingBuffer:false};
@@ -8419,23 +8465,12 @@
           }
           this.program=program(gl,vertex,fragment,this.legacy);gl.useProgram(this.program);this.batches={};this.textureCache=new WeakMap();this.draws=0;this.instances=0;
           this.size=gl.getUniformLocation(this.program,"uSize");this.offset=gl.getUniformLocation(this.program,"uOffset");this.camera=gl.getUniformLocation(this.program,"uCamera");this.shadow=gl.getUniformLocation(this.program,"uShadow");this.time=gl.getUniformLocation(this.program,"uTime");this.grillLocation=gl.getUniformLocation(this.program,"uGrill");this.textured=gl.getUniformLocation(this.program,"uTextured");
-          this.battle=gl.getUniformLocation(this.program,"uBattle");this.battleColor=gl.getUniformLocation(this.program,"uBattleColor");this.finish=gl.getUniformLocation(this.program,"uFinish");
+          this.battle=gl.getUniformLocation(this.program,"uBattle");this.battleColor=gl.getUniformLocation(this.program,"uBattleColor");this.finish=gl.getUniformLocation(this.program,"uFinish");this.mist=gl.getUniformLocation(this.program,"uMist");
           this.hullNormal=gl.createTexture();gl.activeTexture(gl.TEXTURE2);gl.bindTexture(gl.TEXTURE_2D,this.hullNormal);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,512,512,0,gl.RGBA,gl.UNSIGNED_BYTE,hullNormals);gl.generateMipmap(gl.TEXTURE_2D);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);gl.uniform1i(gl.getUniformLocation(this.program,"uHullNormal"),2);gl.activeTexture(gl.TEXTURE0);
-          this.effects=program(gl,`#version 300 es
-precision highp float;layout(location=0) in vec3 aPosition;layout(location=3) in vec2 aUV;layout(location=4) in mat4 iModel;layout(location=8) in vec4 iTint;layout(location=9) in vec4 iEngine;
-uniform vec2 uSize;uniform vec2 uOffset;uniform float uCamera;out vec2 fxUV;out vec4 fxColor;out float localY;
-void main(){vec4 p=iModel*vec4(aPosition,1.);fxUV=aUV;fxColor=vec4(iEngine.rgb,min(iTint.a,1.));localY=aPosition.y;float z=p.z-uCamera;gl_Position=vec4(p.x*2.*uCamera/uSize.x+uOffset.x*2.*(-z)/uSize.x,p.y*2.*uCamera/uSize.y+uOffset.y*2.*(-z)/uSize.y,-1.0008*z-2.0008,-z);}`,`#version 300 es
-precision highp float;in vec2 fxUV;in vec4 fxColor;in float localY;uniform float effectType;out vec4 result;
-void main(){if(effectType<.5){vec2 p=(fxUV-.5)*2.;float f=max(0.,1.-dot(p,p));result=vec4(fxColor.rgb*1.4,fxColor.a*f*f*f);}else if(effectType<1.5){vec2 p=abs((fxUV-.5)*2.);float s=1.-smoothstep(.12,1.,p.x),c=1.-smoothstep(.7,1.,p.y),h=1.-smoothstep(.04,.26,p.x);result=vec4(mix(fxColor.rgb,vec3(1.),h*.9),fxColor.a*s*s*c);}else if(effectType<2.5){result=vec4(fxColor.rgb*1.6,fxColor.a);}else{float f=clamp(-localY,0.,1.);result=vec4(mix(vec3(1.),fxColor.rgb,smoothstep(0.,.35,f))*1.4,fxColor.a*(1.-smoothstep(.35,1.,f)));}}`,this.legacy);
-          this.toonProgram=program(gl,`#version 300 es
-precision highp float;layout(location=0) in vec3 aPosition;layout(location=1) in vec3 aNormal;layout(location=2) in vec4 aMaterial;layout(location=4) in mat4 iModel;layout(location=8) in vec4 iTint;layout(location=9) in vec4 iEngine;uniform vec4 uBattle;uniform vec3 uBattleColor;uniform vec2 uSize;uniform vec2 uOffset;uniform float uCamera;out mediump vec4 toonColor;
-void main(){vec4 p=iModel*vec4(aPosition,1.);vec3 N=normalize(mat3(iModel)*(aNormal*vec3(iModel[0].w,iModel[1].w,iModel[2].w)));vec3 L=vec3(-.408,.408,.816);float d=max(0.,dot(N,L));float fill=max(0.,dot(N,vec3(.62,-.48,.62)));float h=max(0.,dot(N,vec3(-.22,.23,.948)));float h2=h*h,h4=h2*h2,h8=h4*h4,spec=h8*h8;float rim=1.-abs(N.z);rim=rim*rim;
-float elite=step(.12,dot(abs(iTint.rgb-iEngine.rgb),vec3(1.)));vec3 base=aMaterial.rgb*(aMaterial.a<1.5?iTint.rgb:vec3(1.));float luminance=dot(base,vec3(.2126,.7152,.0722));base=mix(base,vec3(luminance),.32);vec3 ink=mix(base,iTint.rgb,mix(.12,.7,elite));vec3 lit=ink*(vec3(.12,.17,.25)+vec3(1.,.86,.69)*d*1.05+vec3(.22,.46,.72)*fill*.42)+vec3(.7,.85,1.)*spec*.65+vec3(.16,.48,.72)*rim*.25;
-if(aMaterial.a>2.5&&aMaterial.a<3.5)lit=mix(aMaterial.rgb,iEngine.rgb,.35)*1.4;
-vec3 delta=uBattle.xyz-p.xyz;float fall=max(0.,1.-length(delta)/180.);lit+=base*uBattleColor*uBattle.w*fall*fall*max(.15,dot(N,normalize(delta)));toonColor=vec4(sqrt(max(lit,vec3(0.)))*.9+vec3(max(0.,iTint.a-1.)*.8),min(iTint.a,1.));float z=p.z-uCamera;gl_Position=vec4(p.x*2.*uCamera/uSize.x+uOffset.x*2.*(-z)/uSize.x,p.y*2.*uCamera/uSize.y+uOffset.y*2.*(-z)/uSize.y,-1.0008*z-2.0008,-z);}`,`#version 300 es
-precision mediump float;in mediump vec4 toonColor;out vec4 result;void main(){result=toonColor;}`,this.legacy);
+          this.effects=program(gl,effectVertex,effectFragment,this.legacy);
+          this.toonProgram=program(gl,toonVertex,toonFragment,this.legacy);
           this.toonBattle=gl.getUniformLocation(this.toonProgram,"uBattle");this.toonBattleColor=gl.getUniformLocation(this.toonProgram,"uBattleColor");
-          this.toonSize=gl.getUniformLocation(this.toonProgram,"uSize");this.toonOffset=gl.getUniformLocation(this.toonProgram,"uOffset");this.toonCamera=gl.getUniformLocation(this.toonProgram,"uCamera");
+          this.toonMist=gl.getUniformLocation(this.toonProgram,"uMist");this.toonMistTime=gl.getUniformLocation(this.toonProgram,"uMistTime");this.toonSize=gl.getUniformLocation(this.toonProgram,"uSize");this.toonOffset=gl.getUniformLocation(this.toonProgram,"uOffset");this.toonCamera=gl.getUniformLocation(this.toonProgram,"uCamera");
           this.effectSize=gl.getUniformLocation(this.effects,"uSize");this.effectOffset=gl.getUniformLocation(this.effects,"uOffset");this.effectCamera=gl.getUniformLocation(this.effects,"uCamera");this.effectType=gl.getUniformLocation(this.effects,"effectType");
           var tex=this.grill=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([180,180,180,255]));gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,this.legacy?gl.CLAMP_TO_EDGE:gl.REPEAT);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,this.legacy?gl.CLAMP_TO_EDGE:gl.REPEAT);
           var image=new Image();image.onload=function(){if(gl.isContextLost())return;gl.bindTexture(gl.TEXTURE_2D,tex);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,image);};image.src=document.getElementById("nitro-grill").textContent.trim();
@@ -8452,8 +8487,34 @@ precision mediump float;in mediump vec4 toonColor;out vec4 result;void main(){re
 precision highp float;layout(location=0) in vec2 aPosition;out vec2 uv;void main(){uv=aPosition*.5+.5;gl_Position=vec4(aPosition,.999,1.);}`,`#version 300 es
 precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D previousSky;uniform float skyBlend;out vec4 result;void main(){vec2 p=vec2(uv.x,1.-uv.y);vec4 col=texture(currentSky,p);if(skyBlend<.999)col=mix(texture(previousSky,p),col,skyBlend);result=col;}`,this.legacy);
           this.skyCurrent=gl.getUniformLocation(this.skyProgram,"currentSky");this.skyPrevious=gl.getUniformLocation(this.skyProgram,"previousSky");this.skyBlend=gl.getUniformLocation(this.skyProgram,"skyBlend");this.skyTextures={};
+          this.cinematic=false;this.materialVariants=[this.captureMaterials(),null];
 
         }
+        var MATERIAL_UNIFORMS={size:"uSize",offset:"uOffset",camera:"uCamera",shadow:"uShadow",time:"uTime",grillLocation:"uGrill",textured:"uTextured",battle:"uBattle",battleColor:"uBattleColor",finish:"uFinish",mist:"uMist"};
+        var TOON_UNIFORMS={toonBattle:"uBattle",toonBattleColor:"uBattleColor",toonMist:"uMist",toonMistTime:"uMistTime",toonSize:"uSize",toonOffset:"uOffset",toonCamera:"uCamera"};
+        var EFFECT_UNIFORMS={effectSize:"uSize",effectOffset:"uOffset",effectCamera:"uCamera",effectType:"effectType"};
+        GPU.prototype.captureMaterials=function(){
+          var bundle={program:this.program,toonProgram:this.toonProgram,effects:this.effects};
+          for(var key in MATERIAL_UNIFORMS)bundle[key]=this[key];
+          for(var key in TOON_UNIFORMS)bundle[key]=this[key];
+          for(var key in EFFECT_UNIFORMS)bundle[key]=this[key];
+          return bundle;
+        };
+        GPU.prototype.setCinematic=function(enabled){
+          if(this.cinematic===enabled)return;
+          var gl=this.gl,bundle=this.materialVariants[enabled?1:0];
+          if(!bundle){
+            this.program=program(gl,vertex,fragment,this.legacy,true);
+            this.toonProgram=program(gl,toonVertex,toonFragment,this.legacy,true);
+            this.effects=program(gl,effectVertex,effectFragment,this.legacy,true);
+            for(var key in MATERIAL_UNIFORMS)this[key]=gl.getUniformLocation(this.program,MATERIAL_UNIFORMS[key]);
+            for(var key in TOON_UNIFORMS)this[key]=gl.getUniformLocation(this.toonProgram,TOON_UNIFORMS[key]);
+            for(var key in EFFECT_UNIFORMS)this[key]=gl.getUniformLocation(this.effects,EFFECT_UNIFORMS[key]);
+            gl.useProgram(this.program);gl.uniform1i(gl.getUniformLocation(this.program,"uHullNormal"),2);
+            bundle=this.materialVariants[1]=this.captureMaterials();
+          }else for(var key in bundle)this[key]=bundle[key];
+          this.cinematic=enabled;
+        };
         GPU.prototype.batch=function(key,source){
           var data=source||get(key),old=this.batches[key],gl=this.gl;if(old&&old.source===data)return old;
           if(old){gl.deleteBuffer(old.vertex);gl.deleteBuffer(old.instance);gl.deleteBuffer(old.index);if(old.textureEntry&&--old.textureEntry.users===0&&old.source.image!==data.image){gl.deleteTexture(old.texture);this.textureCache.delete(old.source.image);}this.deleteVAO(old.vao);}
@@ -8480,7 +8541,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
           this.batches[key]=b;return b;
         };
         GPU.prototype.skyTexture=function(sector){
-          var cached=this.skyTextures[sector];if(cached)return cached;var gl=this.gl,texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,texture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,spaceBackdrop(sector));gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);return this.skyTextures[sector]=texture;
+          var cacheKey=sector+(this.cinematicSky?5:0),cached=this.skyTextures[cacheKey];if(cached)return cached;var gl=this.gl,texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,texture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,spaceBackdrop(sector,this.cinematicSky));gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);return this.skyTextures[cacheKey]=texture;
         };
         GPU.prototype.begin=function(width,height,clear,sector,time,offscreen,preserve){
           var gl=this.gl;if(!offscreen&&(this.canvas.width!==width||this.canvas.height!==height)){this.canvas.width=width;this.canvas.height=height;}
@@ -8509,9 +8570,17 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
           var c=color(tint||"#ffffff"),e=color(engine||tint||"#ffffff");a[i+16]=c[0];a[i+17]=c[1];a[i+18]=c[2];a[i+19]=alpha===undefined?1:alpha;
           a[i+20]=e[0];a[i+21]=e[1];a[i+22]=e[2];a[i+23]=(cast?1:0)+((key.indexOf("ship:")===0||key.indexOf("drone:")===0||key.indexOf("enemy:")===0||b.source.assetId)?2:0);b.cast=b.cast||!!cast;if(alpha!==undefined&&alpha<1)b.blended=true;this.instances++;return b;
         };
-        var EFFECT_TYPES={glow:0,laser:1,spark:1,round:2,bullet:2,core:2,ring:2,exhaust:3};
+        var EFFECT_TYPES={fog:4,glow:0,laser:1,spark:1,round:2,bullet:2,core:2,ring:2,exhaust:3};
         GPU.prototype.flush=function(time,shadows){
-          var gl=this.gl,boundTexture=this.grill,boundMaterial=false,boundBlend=true;gl.useProgram(this.toonProgram);gl.uniform2f(this.toonSize,(this.cropWidth||W)/(this.zoom||1),(this.cropHeight||(this.isPreview?W:H))/(this.zoom||1));gl.uniform2f(this.toonOffset,this.offsetX||0,this.offsetY||0);gl.uniform1f(this.toonCamera,1050);gl.useProgram(this.effects);gl.uniform2f(this.effectSize,(this.cropWidth||W)/(this.zoom||1),(this.cropHeight||(this.isPreview?W:H))/(this.zoom||1));gl.uniform2f(this.effectOffset,this.offsetX||0,this.offsetY||0);gl.uniform1f(this.effectCamera,1050);gl.useProgram(this.program);gl.uniform2f(this.size,(this.cropWidth||W)/(this.zoom||1),(this.cropHeight||(this.isPreview?W:H))/(this.zoom||1));gl.uniform2f(this.offset,this.offsetX||0,this.offsetY||0);gl.uniform1f(this.camera,1050);gl.uniform1f(this.time,time);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.grill);gl.uniform1i(this.grillLocation,0);gl.uniform1f(this.textured,0);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
+          this.setCinematic(this.isPreview?!!(this.batches.planet&&this.batches.planet.count):!!this.cinematicSky);
+          var gl=this.gl,boundTexture=this.grill,boundMaterial=false,boundBlend=true;gl.useProgram(this.toonProgram);gl.uniform2f(this.toonSize,(this.cropWidth||W)/(this.zoom||1),(this.cropHeight||(this.isPreview?W:H))/(this.zoom||1));gl.uniform2f(this.toonOffset,this.offsetX||0,this.offsetY||0);gl.uniform1f(this.toonCamera,1050);gl.useProgram(this.effects);gl.uniform2f(this.effectSize,(this.cropWidth||W)/(this.zoom||1),(this.cropHeight||(this.isPreview?W:H))/(this.zoom||1));gl.uniform2f(this.effectOffset,this.offsetX||0,this.offsetY||0);gl.uniform1f(this.effectCamera,1050);gl.useProgram(this.program);gl.uniform2f(this.size,(this.cropWidth||W)/(this.zoom||1),(this.cropHeight||(this.isPreview?W:H))/(this.zoom||1));gl.uniform2f(this.offset,this.offsetX||0,this.offsetY||0);gl.uniform1f(this.camera,1050);gl.uniform1f(this.time,REDUCED?0:time);if(this.cinematic){var mist=typeof DeckD!=="undefined"?DeckD:null,mc=mist?mist.colors[G.sector-1]:null;gl.uniform4f(this.mist,mc?mc[0]:0,mc?mc[1]:0,mc?mc[2]:0,this.isPreview||!mist?0:(REDUCED?.05:.26));gl.useProgram(this.toonProgram);gl.uniform4f(this.toonMist,mc?mc[0]:0,mc?mc[1]:0,mc?mc[2]:0,this.isPreview||!mist?0:(REDUCED?.05:.26));gl.uniform1f(this.toonMistTime,REDUCED?0:time);gl.useProgram(this.program);}gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.grill);gl.uniform1i(this.grillLocation,0);gl.uniform1f(this.textured,0);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
+          if(!this.isPreview&&typeof DeckD!=="undefined"&&DeckD.photo){
+            var co=Math.cos(DeckD.yaw),si=Math.sin(DeckD.yaw),cp=Math.cos(DeckD.pitch),sp=Math.sin(DeckD.pitch),px=G.player.x-W/2,py=H/2-G.player.y;
+            for(var orbitKey in this.batches){var ob=this.batches[orbitKey],oa=ob.records;for(var oi=0;oi<ob.count;oi++)for(var col=0;col<4;col++){
+              var off=oi*24+col*4,ox=oa[off]-(col===3?px:0),oy=oa[off+1]-(col===3?py:0),oz=oa[off+2],rx=co*ox+si*oz,rz=-si*ox+co*oz;
+              oa[off]=rx;oa[off+1]=cp*oy-sp*rz;oa[off+2]=sp*oy+cp*rz;
+            }}
+          }
           for(var key in this.batches){var b=this.batches[key];if(!b.count)continue;gl.bindBuffer(gl.ARRAY_BUFFER,b.instance);if(this.legacy)gl.bufferSubData(gl.ARRAY_BUFFER,0,b.uploadRanges[b.count]);else gl.bufferSubData(gl.ARRAY_BUFFER,0,b.records,0,b.count*24);}
           gl.depthMask(false);gl.uniform1f(this.shadow,1);
           if(shadows)for(var key in this.batches){var b=this.batches[key];if(!b.count||!b.cast)continue;this.bindVAO(b.vao);this.drawInstances(gl.TRIANGLES,b.source.count,gl.UNSIGNED_SHORT,0,b.count);this.draws++;}
@@ -8526,7 +8595,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
             var effect=EFFECT_TYPES[key],kind=shadows?0:effect!==undefined?1:b.source.family==="rift"||b.source.toon?2:0;
             if(kind!==boundProgram){gl.useProgram(kind===2?this.toonProgram:kind===1?this.effects:this.program);boundProgram=kind;}
             if(kind===1)gl.uniform1f(this.effectType,effect);
-            else if(kind===0){var finishId=key.indexOf("ship:")===0?(b.source.finishId||0):0;gl.uniform2f(this.finish,finishId===1?.35:finishId===2?1:finishId===3?.08:.8,finishId===1?.72:finishId===2?.12:finishId===3?.94:.4);var material=b.source.image?1:0;if(material!==boundMaterial){gl.uniform1f(this.textured,material);boundMaterial=material;}var texture=b.texture||(key==="planet"?this.nebula:this.grill);if(texture!==boundTexture){gl.bindTexture(gl.TEXTURE_2D,texture);boundTexture=texture;}}
+            else if(kind===0){var finishId=key.indexOf("ship:")===0?(b.source.finishId||0):0;gl.uniform2f(this.finish,finishId===1?.35:finishId===2?1:finishId===3?.08:.8,finishId===1?.72:finishId===2?.12:finishId===3?.94:.4);var material=b.source.image?1:0;if(material!==boundMaterial){gl.uniform1f(this.textured,material);boundMaterial=material;}var texture=b.texture||(key.indexOf("planet")===0?this.nebula:this.grill);if(texture!==boundTexture){gl.bindTexture(gl.TEXTURE_2D,texture);boundTexture=texture;}}
             this.bindVAO(b.vao);this.drawInstances(gl.TRIANGLES,b.source.count,gl.UNSIGNED_SHORT,0,b.count);this.draws++;
           }
           gl.depthMask(true);this.bindVAO(null);
@@ -8612,6 +8681,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
             if(b.flash>0&&SETTINGS.flash&&!REDUCED)glow(g,b.x,b.y,35,60,"#ffffff",.45);
           }
         function environment(g){
+          if(typeof DeckD!=="undefined")DeckD.world(g,qualityScale);
           var t=G.time,p=G.player,env=ENVS[G.sector-1],accent=BOSS_VISUALS[BOSS_KINDS[G.sector-1]].color;
           for(var l=0;l<3;l++)for(var i=0;i<G.stars[l].length;i+=qualityScale<.5?2:1){var star=G.stars[l][i];g.add("glow",star.x,star.y,-230+l*40,3+l,3+l,1,0,0,0,"#bedfff","#bedfff",.45+l*.15,false);}
           if(G.warpW>0&&G.warpStars)for(var wi=0;wi<G.warpStars.length;wi++){var ws=G.warpStars[wi],dist=((ws.d+G.time*G.warpW*.85)%1)*Math.max(W,H)*.75*(1-.35*Math.max(0,1-G.warpP/.22)),dx=Math.cos(ws.a)*dist,dy=Math.sin(ws.a)*dist*.72,len=G.warpW*dist*.85;g.add("spark",W/2+dx+(G.warpShake||0),H*.42+dy,-20,ws.s*(1+G.warpW*.6),Math.max(1,len),1,-Math.atan2(dx,-dy),0,0,"#bceaff","#bceaff",G.warpW,false);}
@@ -8621,6 +8691,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
         }
         function playerCraft(g){
           var p=G.player,t=G.time;
+            if(typeof DeckD!=="undefined"&&DeckD.cockpit&&!DeckD.photo)return;
             var a=p.invuln>0&&Math.floor(t*14)%2===0?1.18:1;
             if(typeof BatchB!=="undefined"&&BatchB&&BatchB.cloakT>0)a=.35;
             // The exact preview mesh and craft renderer stay full resolution in flight.
@@ -8675,7 +8746,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
           for(key in ENEMY_MATERIALS)g.batch("enemy:"+key);
           for(key in DRONE_ART)g.batch("drone:"+key,getDroneRig(key));
           for(var wi=0;wi<5;wi++){g.batch("boss:"+BOSS_KINDS[wi]);g.batch("station:"+(wi+1));}
-          var common=["arm","sphere","planet","core","bullet","ring","glow","spark","cube","exhaust","bomb","round","laser","equipment:power","equipment:cannon","equipment:pulse","equipment:scatter","equipment:lance"];
+          var common=["fog","arm","sphere","planet:hd","planet","core","bullet","ring","glow","spark","cube","exhaust","bomb","round","laser","equipment:power","equipment:cannon","equipment:pulse","equipment:scatter","equipment:lance"];
           for(var wi=0;wi<common.length;wi++)g.batch(common[wi]);
           if(geometry["ship:vanguard"]&&geometry["ship:vanguard"].assetId)g.batch("ship:vanguard");
         }
@@ -8770,12 +8841,17 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
           var g=renderer;if(!g)return null;g.isPreview=false;g.zoom=1-(G.warpW||0)*.045;g.cropWidth=g.cropHeight=g.offsetX=g.offsetY=0;
           if(g.flightRevision!==metrics.revision){warm(g);g.flightRevision=metrics.revision;}return g;
         }
-        var qualityScale=1,frameStart=0,qualityMs=0,qualityFrames=0,qualityStable=0;
+        var qualityScale=1,frameStart=0,qualityMs=0,qualityFrames=0,qualityStable=0,presentedAt=0,presentedGap=0;
+        function presentFrame(now){
+          var gap=now-presentedAt;
+          presentedGap=G.mode==="playing"&&!document.hidden&&presentedAt&&gap>0&&gap<250?gap:0;
+          presentedAt=now;
+        }
         function draw(){init();if(!renderer)return false;var g=renderer,now=performance.now();
-          // Dynamic resolution changes raster cost only; HUD and simulation stay full resolution.
-          if(G.mode==="playing"&&frameStart){var gap=now-frameStart;if(gap>80){qualityScale=Math.max(.3,qualityScale*.75);qualityStable=0;}if(gap>5){qualityMs+=Math.min(gap,80);qualityFrames++;}
+          // Watch presented cadence and render-start gaps; keep native combat pixels unchanged.
+          if(G.mode==="playing"&&frameStart){var gap=Math.max(now-frameStart,presentedGap);metrics.presentedFrameMs=presentedGap;presentedGap=0;if(gap>80){qualityScale=Math.max(.3,qualityScale*.75);qualityStable=0;}if(gap>5){qualityMs+=Math.min(gap,80);qualityFrames++;}
             if(qualityFrames>=30){var mean=qualityMs/qualityFrames;
-              if(mean>22){qualityScale=Math.max(.3,qualityScale*.75);qualityStable=0;}
+              if(mean>18.5){qualityScale=Math.max(.3,qualityScale*.75);qualityStable=0;}
               else if(mean<17.5){if(++qualityStable>=4){qualityScale=Math.min(1,qualityScale+.05);qualityStable=0;}}
               else qualityStable=0;
               qualityMs=0;qualityFrames=0;}}
@@ -8786,7 +8862,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
           if(!active&&preview&&preview.canvas.isConnected&&!preview.canvas.hidden)preview.canvas.hidden=true;
           var sharpness=PROFILE.graphics==="hd"&&qualityScale>.75?1.25:1,width=Math.round(canvas.width*sharpness),height=Math.round(canvas.height*sharpness),activeGPU=hero||g;
           if(g.canvas.hidden)g.canvas.hidden=false;
-          activeGPU.begin(width,height,true,G.sector,G.time);environment(activeGPU);scene(activeGPU,false);activeGPU.flush(G.time,false);
+          activeGPU.cinematicSky=PROFILE.graphics==="hd"&&qualityScale>.75&&!G.perf;activeGPU.begin(width,height,true,G.sector,G.time);environment(activeGPU);scene(activeGPU,false);activeGPU.flush(G.time,false);
           metrics.draws=activeGPU.draws;metrics.instances=activeGPU.instances;metrics.backgroundWidth=width;metrics.backgroundHeight=height;metrics.backgroundDetail=qualityScale;metrics.resolution=width/canvas.width;metrics.combatWidth=width;metrics.combatHeight=height;metrics.playerWidth=Math.round(128*width/W);metrics.playerHeight=Math.round(160*height/H);metrics.playerDensity=width/W;
           metrics.nativePlayer=!!hero;metrics.frames++;return true;}
         function thumbnail(model,tip,thrust,time,angle,resolution,view){
@@ -8796,10 +8872,10 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
             if(!previewGPU())return null;
             preview.isPreview=true;preview.cropWidth=preview.cropHeight=preview.offsetX=preview.offsetY=0;
             preview.begin(resolution||320,resolution||320,false,1,time);
-            var key=model==="bomb"||model==="round"?model:model.indexOf(":")>=0?model:"ship:"+model;
+            var key=model==="planet"||model==="bomb"||model==="round"?model:model.indexOf(":")>=0?model:"ship:"+model;
             preview.zoom=view?view.zoom:key.indexOf("boss:")===0?1.5:1;if(view){preview.offsetX=view.panX;preview.offsetY=view.panY;}
             if(key.indexOf("boss:")===0)boss(preview,{kind:key.slice(5),x:W/2,y:H/2,rot:.7,state:"fight",flash:0,shell:0,vanish:0,telegraph:0,flameT:0,flameTele:0},time);
-            else {var scale=key==="bomb"?75:key==="round"?160:key.indexOf("drone:")===0?17:key.indexOf("ship:")===0?6:7,roll=REDUCED?0:Math.sin(time*.7)*.07;
+            else {var scale=key==="planet"?100:key==="bomb"?75:key==="round"?160:key.indexOf("drone:")===0?17:key.indexOf("ship:")===0?6:7,roll=REDUCED?0:Math.sin(time*.7)*.07;
               if(key.indexOf("ship:")===0)craft(preview,key.slice(5),W/2,H/2,0,scale,time,view?view.yaw:angle||0,view?view.pitch:.18,view?0:roll,tip,thrust,1);
               else if(key.indexOf("drone:")===0)droneCraft(preview,key.slice(6),W/2,H/2,scale,angle||0,.32,roll,tip);
               else preview.add(key,W/2,H/2,0,scale,scale,scale,angle||0,.32,roll,tip,thrust,1,false);}
@@ -8872,7 +8948,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
           await loadFleet();await loadCombat();if(renderer)warm(renderer);modelReady=true;assetFailed=false;metrics.revision++;document.getElementById("stage").classList.add("models-ready");if(screens.loadout.classList.contains("on"))paintLoadoutArt();publishStatus();return true;
           }catch(e){modelReady=false;assetFailed=true;metrics.revision++;metrics.error="Model load: "+(e.message||String(e));document.getElementById("stage").classList.add("models-ready");publishStatus();return false;}}
         var ready=loadModel();
-        return {draw:draw,thumbnail:thumbnail,presentPreview:presentPreview,freezePreview:freezePreview,getRig:getRig,getDroneRig:getDroneRig,getGeometry:get,metrics:metrics,retry:retry,get ready(){return ready;},asset:assetMeta,fleet:fleetMeta,combat:combatMeta,get renderer(){return renderer;},get preview(){return preview;},get combatGPU(){return renderer;},get foreground(){return renderer&&!failed&&metrics.nativePlayer&&!metrics.menuActive?renderer:null;}};
+        return {draw:draw,presentFrame:presentFrame,thumbnail:thumbnail,presentPreview:presentPreview,freezePreview:freezePreview,getRig:getRig,getDroneRig:getDroneRig,getGeometry:get,metrics:metrics,retry:retry,get ready(){return ready;},asset:assetMeta,fleet:fleetMeta,combat:combatMeta,get renderer(){return renderer;},get preview(){return preview;},get combatGPU(){return renderer;},get foreground(){return renderer&&!failed&&metrics.nativePlayer&&!metrics.menuActive?renderer:null;}};
       })();
       // Fixed visual pools: effects never own or mutate combat entities.
       var VisualFX = (function(){
@@ -8939,6 +9015,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
         if(!SF3D.draw()){renderLegacy2D();return;}
         if(SF3D.metrics.menuActive){if(G.mode==="start"&&!render._menu){ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);}render._menu=true;return;}render._menu=false;
         ctx.setTransform(viewScale,0,0,viewScale,0,0);ctx.clearRect(0,0,W,H);
+        if(typeof DeckD!=="undefined"&&DeckD.photo)return;
         // Text remains a lightweight screen-space overlay; combat geometry is WebGL.
         VisualFX.overlay();
         ctx.textAlign="center";
@@ -8958,6 +9035,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
         if (el._meterValue !== value) { el._meterValue = value; el.style.width = (value / 10) + "%"; }
       }
       function loop(now) {
+        SF3D.presentFrame(now);
         requestAnimationFrame(loop);
         var elapsed = (now - last) / 1000;
         var dt = Math.min(0.033, elapsed); last = now;
@@ -9892,6 +9970,629 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
             skipBossIntro();
           }
         });
+      })();
+      /* Batch D: presentation and explicit NG+ additions; frozen campaign blocks unchanged. */
+      var DeckD = {
+        photo: false,
+        cockpit: false,
+        yaw: 0,
+        pitch: 0,
+        ng: false,
+        ngArmed: false,
+        ngT: 0,
+        best: 0,
+        lost: 0,
+        lastDrones: 0,
+        game: null,
+        resultStart: 0,
+        resultPrefix: "",
+        resultValues: new Float64Array(5),
+        colors: [
+          [0.22, 0.55, 1],
+          [1, 0.36, 0.12],
+          [0.18, 0.9, 0.7],
+          [0.5, 0.9, 1],
+          [0.72, 0.25, 1],
+        ],
+        accents: ["#388dff", "#ff5c20", "#2ee6b2", "#80e6ff", "#b840ff"],
+        weather: [
+          "ION STORM",
+          "DUST HAZE",
+          "RIFT SPARKLE",
+          "CRYSTAL FIELD",
+          "ECLIPSE STATIC",
+        ],
+        density: function (y, t) {
+          return REDUCED
+            ? 0.18
+            : Math.pow(Math.max(0, Math.sin(y * 0.009 - t * 0.32)), 4);
+        },
+        world: function (g, q) {
+          // Smooth and governor fallback submit no cinematic planet, fog or weather.
+          if(PROFILE.graphics!=="hd"||q<=.75||G.perf)return;
+          var t = REDUCED ? 0 : G.time,
+            col = this.accents[G.sector - 1],
+            extra = PROFILE.graphics === "hd" && q > 0.75 && !G.perf && !REDUCED;
+          g.add(
+            extra ? "planet:hd" : "planet",
+            W * 0.78,
+            H * 0.19,
+            -180,
+            92,
+            92,
+            92,
+            t * 0.025,
+            0.18,
+            0,
+            col,
+            col,
+            1,
+            false,
+          );
+          // Three depth slabs move from behind the craft to in front of it, expanding in perspective.
+          for (var i = 0; i < (extra ? 12 : q < 0.5 || G.perf ? 2 : 6); i++) {
+            var phase = REDUCED ? i / 6 : (t * 0.035 + i / 6) % 1,
+              z = -220 + phase * 340;
+            var x = W * (0.5 + 0.43 * Math.sin(i * 4.1)),
+              y = REDUCED
+                ? H * 0.6
+                : ((t * 0.32 + Math.PI / 2) % (Math.PI * 2)) / 0.009 +
+                  (((i % 3) - 1) * Math.PI * 2) / 0.009;
+            g.add(
+              "fog",
+              x,
+              y,
+              z,
+              180 + phase * 180,
+              90 + phase * 100,
+              1,
+              0,
+              0,
+              0,
+              col,
+              col,
+              0.035 + phase * 0.045,
+              false,
+            );
+          }
+          if (REDUCED) return;
+          if (G.sector === 1 || G.sector === 5) {
+            if (SETTINGS.flash && Math.sin(t * 0.73) > 0.994)
+              for (var j = 0; j < 5; j++)
+                g.add(
+                  "spark",
+                  W * 0.18 + j * 13,
+                  H * 0.12 + j * 23,
+                  -60,
+                  2,
+                  28,
+                  1,
+                  j % 2 ? 0.4 : -0.4,
+                  0,
+                  0,
+                  col,
+                  col,
+                  0.35,
+                  false,
+                );
+          } else if (G.sector === 2) {
+            for (var j = 0; j < (extra ? 16 : 6); j++)
+              g.add(
+                "glow",
+                (j * 137 + t * 12) % W,
+                (j * 79 + t * 8) % H,
+                -90,
+                90,
+                18,
+                1,
+                0.3,
+                0,
+                0,
+                col,
+                col,
+                0.055,
+                false,
+              );
+          } else
+            for (var j = 0; j < (extra ? 24 : 8); j++)
+              g.add(
+                "spark",
+                (j * 137 + t * 6) % W,
+                (j * 79 + t * 14) % H,
+                -70,
+                2,
+                4,
+                1,
+                t + j,
+                0,
+                0,
+                col,
+                col,
+                0.2 + 0.2 * Math.sin(t + j),
+                false,
+              );
+        },
+      };
+      var deckStartBase = startRun;
+      startRun = function (run) {
+        DeckD.ng = DeckD.ngArmed && CAREER.victories > 0;
+        DeckD.ngArmed = false;
+        DeckD.ngT = 0;
+        deckStartBase(run);
+        DeckD.game = G;
+        DeckD.best = DeckD.lost = 0;
+        DeckD.lastDrones = G.player.drones;
+        if (DeckD.ng) el("run-tag").textContent = "NG+ SKIES · CROSS-FIRE PATTERNS";
+      };
+      function tickDeckD(dt) {
+        DeckD.best = Math.max(DeckD.best, G.combo);
+        DeckD.lost += Math.max(0, DeckD.lastDrones - G.player.drones);
+        DeckD.lastDrones = G.player.drones;
+        if (
+          !DeckD.ng ||
+          G.mode !== "playing" ||
+          !G.player.alive ||
+          (G.waveState !== "active" && G.waveState !== "boss")
+        )
+          return;
+        DeckD.ngT += dt;
+        if (DeckD.ngT >= 3) {
+          DeckD.ngT = 0;
+          for (var side = -1; side <= 1; side += 2)
+            emitEbullets(W / 2 + side * W * 0.4, 35, -side * 65, 125, 4);
+        }
+      }
+      var deckUpdateBase = update;
+      update = function (dt) {
+        if (DeckD.photo) return;
+        deckUpdateBase(dt);
+        if (G.mode === "playing") tickDeckD(dt);
+      };
+      // Persist the additive mode in checkpoints so Resume cannot silently downgrade it.
+      var deckSaveCheckpoint = saveCheckpoint;
+      saveCheckpoint = function (n) {
+        deckSaveCheckpoint(n);
+        var cp = loadJSON("starfall-checkpoint-v1");
+        if (cp) {
+          cp.ng = DeckD.ng;
+          saveJSON("starfall-checkpoint-v1", cp);
+        }
+      };
+      var deckResume = resumeRun;
+      resumeRun = function () {
+        var cp = loadCheckpoint();
+        DeckD.ngArmed = !!(cp && cp.ng);
+        deckResume();
+      };
+      var deckWinBase = victory;
+      victory = function () {
+        el("win-wave-d").textContent = "";
+        deckWinBase();
+        if (DeckD.ng) {
+          try {
+            saveJSON("starfall-ng-livery", { unlocked: true });
+          } catch (e) {}
+          el("win-wave-d").textContent =
+            "NG+ EXCLUSIVE LIVERIES UNLOCKED · AURORA / SOLAR";
+        }
+      };
+      var deckKillBase = killEnemy;
+      killEnemy = function (e, i) {
+        deckKillBase(e, i);
+        DeckD.best = Math.max(DeckD.best, G.combo);
+      };
+      var deckResultBase = fillResults;
+      fillResults = function (prefix, won) {
+        DeckD.lost += Math.max(0, DeckD.lastDrones - G.player.drones);
+        DeckD.lastDrones = G.player.drones;
+        deckResultBase(prefix, won);
+        DeckD.resultPrefix = prefix;
+        DeckD.resultStart = performance.now();
+        DeckD.resultValues[0] = G.shots
+          ? Math.min(100, Math.round((G.hits / G.shots) * 100))
+          : 0;
+        DeckD.resultValues[1] = DeckD.best;
+        DeckD.resultValues[2] = DeckD.lost;
+        DeckD.resultValues[3] = won ? Math.max(0, Math.round(300 - G.runTime)) : 0;
+        DeckD.resultValues[4] = G.score + DeckD.resultValues[3];
+        paintDeckResults(REDUCED ? 1 : 0);
+      };
+      function paintDeckResults(f) {
+        var p = DeckD.resultPrefix;
+        if (!p) return;
+        for (var i = 0; i < 5; i++) {
+          var node = el(p + "-d-" + i),
+            v = Math.round(DeckD.resultValues[i] * f);
+          if (node && node._v !== v) {
+            node._v = v;
+            node.textContent = v + (i === 0 ? "%" : "");
+          }
+        }
+      }
+      function enterPhotoD() {
+        if (
+          DeckD.photo ||
+          !G.player.alive ||
+          (G.mode !== "playing" && G.mode !== "paused")
+        )
+          return;
+        DeckD.previous = G.mode;
+        DeckD.photo = true;
+        DeckD.yaw = DeckD.pitch = 0;
+        el("photo-yaw-d").value = el("photo-pitch-d").value = 0;
+        G.mode = "paused";
+        Input.dragging = false;
+        showScreen(null);
+        stageEl.classList.add("photo-d");
+        el("photo-panel-d").hidden = false;
+        el("photo-exit-d").focus();
+      }
+      function leavePhotoD() {
+        if (!DeckD.photo) return;
+        DeckD.photo = false;
+        stageEl.classList.remove("photo-d");
+        el("photo-panel-d").hidden = true;
+        G.mode = DeckD.previous;
+        showScreen(G.mode === "paused" ? "pause" : null);
+      }
+      function photoCanvasD() {
+        render();
+        var out = document.createElement("canvas");
+        out.width = canvas.width;
+        out.height = canvas.height;
+        var c = out.getContext("2d"),
+          world = SF3D.renderer && SF3D.renderer.canvas;
+        if (world && !world.hidden) c.drawImage(world, 0, 0, out.width, out.height);
+        c.drawImage(canvas, 0, 0);
+        return out;
+      }
+      function capturePhotoD() {
+        photoCanvasD().toBlob(function (blob) {
+          if (!blob) return;
+          var a = document.createElement("a"),
+            url = URL.createObjectURL(blob);
+          a.href = url;
+          a.download = "starfall-photo.png";
+          a.click();
+          setTimeout(function () {
+            URL.revokeObjectURL(url);
+          }, 1000);
+          el("photo-status-d").textContent = "Photo saved locally.";
+        }, "image/png");
+      }
+      // Invoked only by the separate share button; never called by capture or render.
+      async function sharePhotoD() {
+        try {
+          var blob = await new Promise(function (resolve) {
+            photoCanvasD().toBlob(resolve, "image/png");
+          });
+          if (!blob) return;
+          var file = new File([blob], "starfall-photo.png", { type: "image/png" });
+          if (navigator.canShare && navigator.canShare({ files: [file] }))
+            await navigator.share({ files: [file], title: "Starfall" });
+          else
+            el("photo-status-d").textContent =
+              "File sharing unavailable. Use Save photo.";
+        } catch (e) {
+          el("photo-status-d").textContent =
+            e.name === "AbortError"
+              ? "Share cancelled."
+              : "Share unavailable. Use Save photo.";
+        }
+      }
+      var deckRenderBase = render;
+      render = function () {
+        deckRenderBase();
+        if (DeckD.resultPrefix && (G.mode === "win" || G.mode === "over"))
+          paintDeckResults(
+            REDUCED ? 1 : Math.min(1, (performance.now() - DeckD.resultStart) / 900),
+          );
+        if (DeckD.cockpit && !DeckD.photo && G.mode === "playing") {
+          var world = SF3D.renderer && SF3D.renderer.canvas;
+          ctx.save();
+          ctx.setTransform(viewScale, 0, 0, viewScale, 0, 0);
+          ctx.beginPath();
+          ctx.moveTo(0, H);
+          ctx.lineTo(W * 0.09, H * 0.35);
+          ctx.quadraticCurveTo(W * 0.5, H * 0.12, W * 0.91, H * 0.35);
+          ctx.lineTo(W, H);
+          ctx.closePath();
+          ctx.clip();
+          if (world && !world.hidden) {
+            ctx.globalAlpha = 0.13;
+            ctx.translate(W, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(world, 0, H * 0.12, W, H * 0.7);
+            ctx.setTransform(viewScale, 0, 0, viewScale, 0, 0);
+          }
+          ctx.globalAlpha = 0.35;
+          ctx.strokeStyle = "#8cddff";
+          ctx.lineWidth = 3;
+          ctx.stroke();
+          ctx.globalAlpha = 0.14;
+          ctx.fillStyle = "#a5efff";
+          ctx.fillRect(
+            W * 0.15,
+            H * 0.7 + (REDUCED ? 0 : Math.sin(G.time) * 8),
+            W * 0.23,
+            2,
+          );
+          ctx.fillRect(W * 0.62, H * 0.72, W * 0.16, 2);
+          ctx.restore();
+        }
+      };
+      function paintDeckPreviewD(cv, t, brief) {
+        var c = cv.getContext("2d"),
+          w = cv.width,
+          h = cv.height,
+          sector = clamp(LAUNCH.sector || 1, 1, 5),
+          col = DeckD.accents[sector - 1];
+        c.clearRect(0, 0, w, h);
+        if (brief) {
+          c.fillStyle = "#04101d";
+          c.fillRect(0, 0, w, h);
+        }
+        var planet = SF3D.thumbnail("planet", col, col, t, 0, 192);
+        if (planet) {
+          if (brief) c.drawImage(planet, w - 142, -18, 150, 150);
+          else c.drawImage(planet, w * 0.36 - 36, h * 0.76 - 90, 72, 72);
+        }
+        c.strokeStyle = col;
+        c.globalAlpha = 0.45;
+        c.beginPath();
+        c.ellipse(w * 0.36, h * 0.76, w * 0.32, h * 0.13, 0, 0, Math.PI * 2);
+        c.stroke();
+        c.globalAlpha = 1;
+        if (brief) {
+          var kind = BOSS_KINDS[sector - 1],
+            boss = SF3D.thumbnail("boss:" + kind, "#080d16", "#080d16", 0, 0, 128);
+          if (boss) {
+            c.filter = "brightness(.18)";
+            c.drawImage(boss, 4, 0, 132, 132);
+            c.filter = "none";
+          }
+          return;
+        }
+        // The selected ship already occupies the native dock above this table.
+        for (var i = 0; i < 3; i++) {
+          var a = REDUCED ? i * 2 : t * 0.5 + i * 2,
+            x = w * 0.36 + Math.cos(a) * w * 0.24,
+            y = h * 0.6 + Math.sin(a) * h * 0.18;
+          c.fillStyle = col;
+          c.fillRect(x, y, 7, 3);
+        }
+        // Crew silhouettes walk behind the holo-table. Reduced motion keeps them still.
+        c.fillStyle = "#152936";
+        for (var i = 0; i < 3; i++) {
+          var x = REDUCED ? i * 100 : ((i * 107 + t * 8) % (w + 24)) - 12;
+          c.beginPath();
+          c.arc(x, 30, 4, 0, 7);
+          c.fill();
+          c.fillRect(x - 4, 35, 8, 20);
+        }
+        c.fillStyle = col;
+        c.font = "9px monospace";
+        c.fillText("COMMAND DECK · " + DeckD.weather[sector - 1], 8, h - 7);
+      }
+      var deckHomeBase = tickMenuArt;
+      tickMenuArt = function (now) {
+        deckHomeBase(now);
+        if (!REDUCED && now - (DeckD.previewAt || 0) < 100) return;
+        var key =
+          (LAUNCH.sector || 1) + ":" + LOADOUT.ship + ":" + SF3D.metrics.revision;
+        if (REDUCED && DeckD.previewKey === key) return;
+        DeckD.previewAt = now;
+        DeckD.previewKey = key;
+        var t = REDUCED ? 0 : now / 1000;
+        if (screens.start.classList.contains("on"))
+          paintDeckPreviewD(el("deck-preview-d"), t, false);
+        if (launchConfirmOpen()) paintDeckPreviewD(el("brief-preview-d"), t, true);
+        // Thumbnail uses the shared preview GPU; restore the native dock before compositing.
+        if (screens.start.classList.contains("on"))
+          paintShipCanvas(el("hero-canvas"), t, 0.44);
+      };
+      (function wireDeckD() {
+        var style = document.createElement("style");
+        style.textContent = `
+                      #deck-preview-d{position:absolute;bottom:0;left:0;width:55%;height:42%;pointer-events:none;opacity:.8}
+                      #scr-start .ref-ship{position:relative}#brief-preview-d{width:100%;height:104px;display:block;border-radius:8px}
+                      #launch-confirm .lc-card{max-height:90%;overflow:auto}#brief-intel-d{font-size:10px;line-height:1.5;display:flex;gap:5px;margin:6px 0}#brief-intel-d span{flex:1;border:1px solid #376178;padding:5px}
+                      .results-d{display:grid;grid-template-columns:1fr 1fr;gap:8px;font:11px monospace;margin:10px 0}.results-d b{display:block;color:#91eaff;font-size:18px}
+                      #photo-panel-d{position:absolute;inset:auto 8px 10px;z-index:120;background:#061422eb;border:1px solid #75bfe8;padding:10px;border-radius:12px;color:#d7edff}
+                      #photo-panel-d[hidden]{display:none}#photo-panel-d .photo-actions{display:flex;flex-wrap:wrap;gap:6px}#photo-panel-d button{min-height:44px;flex:1;font-size:11px}#photo-panel-d label{display:flex;align-items:center;gap:8px;font-size:12px}#photo-panel-d input{flex:1;min-height:44px;min-width:0}
+                      .photo-d #hud,.photo-d #batch-flight-controls,.photo-d #coach,.photo-d #banner,.photo-d #boss-card,.photo-d #hint,.photo-d #bossbar,.photo-d #combo-box,.photo-d #objective-box,.photo-d #objective-sliver,.photo-d #wave-results,.photo-d #perf-ind,.photo-d #obj-toast,.photo-d #idle-hint{visibility:hidden!important}
+                      #deck-flight-d{position:absolute;left:8px;bottom:76px;z-index:26;display:flex;gap:5px}#deck-flight-d button{min-height:44px;font-size:10px;padding:5px}.photo-d #deck-flight-d{display:none!important}
+                      #ng-panel-d{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0;font-size:11px}#ng-panel-d .btn{min-height:44px}#photo-status-d{font-size:11px;min-height:14px;margin:4px 0}
+                    `;
+        document.head.appendChild(style);
+        function button(id, label, host, fn) {
+          var b = document.createElement("button");
+          b.id = id;
+          b.type = "button";
+          b.className = "btn ghost";
+          b.textContent = label;
+          b.onclick = fn;
+          host.appendChild(b);
+          return b;
+        }
+        var cv = document.createElement("canvas");
+        cv.id = "deck-preview-d";
+        cv.width = 240;
+        cv.height = 150;
+        cv.setAttribute("aria-label", "Live command deck and dock");
+        document.querySelector(".ref-ship").appendChild(cv);
+        var brief = document.createElement("canvas");
+        brief.id = "brief-preview-d";
+        brief.width = 360;
+        brief.height = 120;
+        brief.setAttribute("aria-label", "Mission planet and boss silhouette");
+        var card = document.querySelector("#launch-confirm .lc-card");
+        card.insertBefore(brief, card.children[1]);
+        var intel = document.createElement("div");
+        intel.id = "brief-intel-d";
+        card.insertBefore(intel, brief.nextSibling);
+        var oldOpen = openLaunchConfirm;
+        openLaunchConfirm = function () {
+          oldOpen();
+          var n = clamp(LAUNCH.sector || 1, 1, 5);
+          intel.innerHTML =
+            "<span>ENVIRONMENT<br>" +
+            DeckD.weather[n - 1] +
+            "</span><span>ENEMY INTEL<br>" +
+            [
+              "DIVERS · AIMED BURSTS",
+              "CHARGERS · BROADSIDE",
+              "WEAVERS · RIFT MINES",
+              "LANCERS · CRYO SHELL",
+              "SENTINELS · GRAVITY WELLS",
+            ][n - 1] +
+            "</span>";
+          DeckD.previewKey = "";
+          paintDeckPreviewD(brief, 0, true);
+          if (screens.start.classList.contains("on"))
+            paintShipCanvas(el("hero-canvas"), 0, 0.44);
+        };
+        for (var prefix of ["win", "over"]) {
+          var row = document.createElement("div");
+          row.className = "results-d";
+          for (var i = 0; i < 5; i++) {
+            var item = document.createElement("div");
+            item.textContent = [
+              "ACCURACY",
+              "BEST COMBO",
+              "DRONES LOST",
+              "TIME BONUS · ACTION SCORE ONLY",
+              "ACTION SCORE · SCORE + TIME BONUS",
+            ][i];
+            var count = document.createElement("b");
+            count.id = prefix + "-d-" + i;
+            count.textContent = "0";
+            item.appendChild(count);
+            row.appendChild(item);
+          }
+          el(prefix + "-score").after(row);
+        }
+        var message = document.createElement("p");
+        message.id = "win-wave-d";
+        el("win-score").after(message);
+        var panel = document.createElement("div");
+        panel.id = "photo-panel-d";
+        panel.setAttribute("role", "dialog");
+        panel.setAttribute("aria-label", "Photo mode camera and capture");
+        panel.hidden = true;
+        panel.innerHTML =
+          '<label>ORBIT <input id="photo-yaw-d" aria-label="Orbit camera" type="range" min="-180" max="180" value="0"></label><label>ELEVATION <input id="photo-pitch-d" aria-label="Camera elevation" type="range" min="-60" max="60" value="0"></label><div class="photo-actions" id="photo-actions-d"></div><p id="photo-status-d" role="status"></p>';
+        stageEl.appendChild(panel);
+        var actions = el("photo-actions-d");
+        button("photo-save-d", "SAVE PHOTO", actions, capturePhotoD);
+        button("photo-share-d", "SHARE…", actions, sharePhotoD);
+        button("photo-exit-d", "RETURN", actions, leavePhotoD);
+        el("photo-yaw-d").oninput = function () {
+          DeckD.yaw = (+this.value * Math.PI) / 180;
+        };
+        el("photo-pitch-d").oninput = function () {
+          DeckD.pitch = (+this.value * Math.PI) / 180;
+        };
+        panel.addEventListener("pointerdown", function (e) {
+          e.stopPropagation();
+        });
+        var controls = document.createElement("div");
+        controls.id = "deck-flight-d";
+        stageEl.appendChild(controls);
+        button("photo-open-d", "PHOTO", controls, enterPhotoD);
+        button("cockpit-d", "COCKPIT", controls, function () {
+          DeckD.cockpit = !DeckD.cockpit;
+          this.setAttribute("aria-pressed", String(DeckD.cockpit));
+        });
+        button("pause-photo-d", "PHOTO MODE", el("scr-pause"), enterPhotoD);
+        var baseRender = render;
+        render = function () {
+          baseRender();
+          var visible = G.mode === "playing" && !DeckD.photo;
+          if (controls._visible !== visible) {
+            controls._visible = visible;
+            controls.style.display = visible ? "flex" : "none";
+          }
+        };
+        window.addEventListener(
+          "keydown",
+          function (e) {
+            if (e.repeat || /INPUT|SELECT|TEXTAREA/.test(e.target.tagName)) return;
+            if (e.code === "KeyP") {
+              e.preventDefault();
+              DeckD.photo ? leavePhotoD() : enterPhotoD();
+            }
+            if ((e.code === "Escape" || e.code === "Space") && DeckD.photo) {
+              e.preventDefault();
+              e.stopImmediatePropagation();
+              leavePhotoD();
+            }
+          },
+          true,
+        );
+        var ng = document.createElement("div");
+        ng.id = "ng-panel-d";
+        el("camp-list").before(ng);
+        var ngButton = button(
+          "ng-launch-d",
+          "NG+ SKIES · CLEAR CAMPAIGN TO UNLOCK",
+          ng,
+          function () {
+            if (CAREER.victories < 1) return;
+            BatchC.daily = BatchC.events = false;
+            LAUNCH.rush = false;
+            LAUNCH.sector = 1;
+            DeckD.ngArmed = true;
+            startRun(1);
+          },
+        );
+        for (var skin of ["aurora", "solar"])
+          (function (id) {
+            button(
+              "ng-" + id + "-d",
+              id.toUpperCase() + " LIVERY · NG+ CLEAR",
+              ng,
+              function () {
+                if (!loadJSON("starfall-ng-livery")) return;
+                setLivery(id);
+                menuArtKeys.hangar = "";
+                syncHome();
+              },
+            );
+          })(skin);
+        BATCH_LIVERIES.aurora = { stars: 0, color: "#61ffc4" };
+        BATCH_LIVERIES.solar = { stars: 0, color: "#ffac45" };
+        var oldUnlocked = liveryUnlocked;
+        liveryUnlocked = function (id) {
+          return id === "aurora" || id === "solar"
+            ? !!loadJSON("starfall-ng-livery")
+            : oldUnlocked(id);
+        };
+        var oldScreen = showScreen;
+        showScreen = function (name) {
+          if (DeckD.photo && name !== null) {
+            DeckD.photo = false;
+            stageEl.classList.remove("photo-d");
+            panel.hidden = true;
+          }
+          oldScreen(name);
+          if (name === "campaign") {
+            ngButton.disabled = CAREER.victories < 1;
+            el("ng-aurora-d").disabled = el("ng-solar-d").disabled =
+              !loadJSON("starfall-ng-livery");
+            ngButton.textContent =
+              CAREER.victories > 0
+                ? "LAUNCH NG+ SKIES · EXTRA CROSS-FIRE"
+                : "NG+ SKIES · CLEAR CAMPAIGN TO UNLOCK";
+          }
+          if (name === "start") DeckD.resultPrefix = "";
+        };
+        document.querySelector("[data-graphics=hd]").textContent = "HD CINEMATIC";
+        el("graphics-diagnostics").insertAdjacentHTML(
+          "beforeend",
+          '<p style="font-size:11px">HD Cinematic adds a finer planet mesh, cloud detail and particles. Effects adapt automatically when frame time rises.</p>',
+        );
+        paintDeckPreviewD(cv, 0, false);
       })();
     </script>
   </body>
