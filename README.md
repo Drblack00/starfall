@@ -17,6 +17,43 @@ STARFALL is an original space shooter by Drblack Ventures: five skies, five boss
 
 The game is a single self-contained HTML file (`index.html`) — no build step. This repo is deployed as a static site on Render (see `render.yaml`).
 
+## Pre-flight hub visual system
+
+The restored build and metallic navigation icons now share one flight-deck
+palette across Home, Hangar, Blasters, Drones, Pilot/Profile, Engineering,
+Appearance, Campaign, Contracts and Settings. Teal display surfaces, champagne
+primary actions, section-specific accents, consistent typography, visible focus
+rings and restrained hover/press feedback establish the hierarchy. Existing
+screen fades and reduced-motion behavior remain.
+
+Home gives more space to the native 3D ship and a proper planet display beside
+the next mission. The catalog wraps additional hulls into readable three-column
+rows. Live equipment/ship viewers share a subtle static display grid; selection
+cards, upgrade prices, mission readiness, rewards, avatar/livery selection and
+settings toggles keep their existing data and behavior. No menu, mode, upgrade,
+weapon, drone, profile control or unlock was removed. Home still ends at Play.
+
+All six embedded script blocks, including the game and embedded model data, are
+byte-for-byte identical to the restored post-PR #14 build. The changes are HTML
+labels and CSS; no gameplay balance, animation scheduler, renderer, pooled object,
+model or economy changes. Single HTML + existing assets, no new dependencies or
+runtime downloads. UI-only SVG icons remain inline.
+
+`tests/hub.cjs`, included in `tests/verify.cjs`, exercises real navigation through
+nine sections at 320/375/430 px, checks readable fleet wrapping, usable Back
+controls and no horizontal overflow, and guards the mission planet against
+collapsed sizing. Solar Gold, Sunset and Eclipse retain distinct panel/button
+palettes, verified through the actual theme controls. Full verification covers frozen balance, touch, GPU/fallback,
+menu/flight identity, inspector gestures, pause/resume and reduced motion.
+
+Served-browser `CHROMIUM_PATH=/usr/bin/chromium node tests/verify.cjs` passes,
+including the integrated new hub checks and all prior regression checks. Ten
+actual section previews were captured and visually reviewed. A final serial
+600-frame home comparison (120 warm-up frames) against the pre-rework icon build
+measured both versions at 16.7 ms median / 50.0 ms p95 / 83.4 ms maximum, with zero
+steady GPU-to-canvas preview copies. Rare stalls remain; shared Cloud Chromium
+measurements are not a locked-60fps or physical iPhone Safari guarantee.
+
 ## Ships & drones — Batch B
 
 The hangar now includes Atlas Gunship (6 HP), Wraith Interceptor (2 HP), and

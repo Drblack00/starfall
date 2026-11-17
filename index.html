@@ -2201,6 +2201,123 @@
         #scr-start .ref-shortcuts button span {width:30px;height:30px;}
       }
       @media(prefers-reduced-motion:reduce){#scr-start .ref-shortcuts button span {transition:none;}#scr-start .ref-shortcuts button:hover span {transform:none;}}
+
+      /* Flight-deck collection: one visual system for every pre-flight section. */
+      :root {--hub-base:#07131e;--hub-surface:#102636;--hub-edge:#a7c8d32e;--hub-text:#edf4ed;--hub-muted:#a5bcc8;--hub-accent:#86d9d3;}
+      #scr-start {--hub-accent:#d8bf8b;--hub-pane:#163343ef;--hub-pane-deep:#0a1c2cf7;--hub-button:#1d3b4b;--hub-button-deep:#102333;--hub-launch:#eed9a3;--hub-launch-end:#c6a46a;}
+      #scr-start.theme-sunset {--hub-pane:#3c2c3fee;--hub-pane-deep:#1b2034f7;--hub-button:#5b3c51;--hub-button-deep:#242b42;--hub-launch:#edc3a9;--hub-launch-end:#cfa17e;}
+      #scr-start.theme-eclipse {--hub-pane:#2d2c4aef;--hub-pane-deep:#121b31f7;--hub-button:#424361;--hub-button-deep:#202c44;--hub-launch:#cfc3ec;--hub-launch-end:#8f8bc1;}
+      #stage #scr-start {background:#07131e;color:var(--hub-text);}
+      #reference-backdrop {opacity:.38;}
+      #scr-start .ck-topbar {margin-bottom:0;}
+      #scr-start .ck-scroll {padding-bottom:20px;}
+      #scr-start .deck-location {font:600 8px "Rajdhani",sans-serif;letter-spacing:.17em;color:#a9c6d1;}
+      #scr-start .ref-brand {align-items:center;margin:0;}
+      #scr-start .ref-brand strong {font-size:31px;letter-spacing:.16em;color:#f5ecd4;text-shadow:0 2px #284451;}
+      #scr-start .ref-brand small {font-size:7px;letter-spacing:.14em;}
+      #scr-start .ck-wal,#scr-start .ref-brand .deck-profile {background:linear-gradient(135deg,#244452,#0e2536);border:1px solid #86b2c24d;border-radius:11px;box-shadow:inset 0 1px #e6faff16,0 3px 9px #0003;}
+      #scr-start .ref-shortcuts {gap:7px;}
+      #scr-start .ref-shortcuts button {background:linear-gradient(145deg,var(--hub-button),var(--hub-button-deep));border:1px solid #91bec055;border-radius:15px;box-shadow:inset 0 1px #e4f5e71c,0 4px 9px #0003;}
+      #scr-start .ref-shortcuts button:nth-child(n) {background:linear-gradient(145deg,var(--hub-button),var(--hub-button-deep));border-color:#91bec055;}
+      #scr-start .ref-shortcuts button:hover {background:linear-gradient(145deg,#2a5060,#183344);border-color:#a7e5df;}
+      #scr-start .ref-shortcuts button b {color:#f0e9d7;letter-spacing:.09em;}
+      #scr-start .ref-shortcuts button small {color:#a4bdc7;letter-spacing:.04em;}
+      #scr-start .ref-card {background:linear-gradient(135deg,var(--hub-pane),var(--hub-pane-deep));border:1px solid #a7c8d34d;border-radius:18px;box-shadow:inset 0 1px #e4f5f318,0 7px 20px #0003;overflow:hidden;}
+      #scr-start .ref-card header {min-height:36px;background:linear-gradient(90deg,#a3c9cf0d,transparent);border-bottom:1px solid #a7c8d326;padding:10px 13px;}
+      #scr-start .ref-card header h2 {font-size:12px;font-weight:700;letter-spacing:.16em;color:#d9cba8;}
+      #scr-start .ref-card header button {color:#a8c6cd;font-size:9px;letter-spacing:.09em;}
+      #scr-start .ref-ship-body {grid-template-columns:44% 56%;}
+      #scr-start .ref-ship .ck-stage {border-right:1px solid #a7c8d31a;background:radial-gradient(ellipse at 45% 40%,#6bb7c42b,transparent 67%),linear-gradient(150deg,#244b5a22,#07152255);}
+      #scr-start .ref-ship .ck-stage::before {border:1px solid #8dcdd12b;transform:rotate(-16deg);}
+      #scr-start .ref-ship-info {padding:15px 12px;justify-content:center;gap:14px;}
+      #scr-start .glance-grid {gap:12px;}
+      #scr-start .glance-k {font:600 8px "Rajdhani",sans-serif;letter-spacing:.18em;color:#9bb8c4;}
+      #scr-start .glance-v {font:700 18px "Rajdhani",sans-serif;letter-spacing:.07em;color:#dfeeea;}
+      #scr-start .glance-cell:first-child .glance-v {font-size:24px;color:#f2dba7;}
+      #scr-start .ref-upgrade {min-height:36px;background:linear-gradient(135deg,#41696f,#254751);border:1px solid #a2d9d15c;border-radius:9px;color:#e1f6ea;box-shadow:inset 0 1px #e4fff21a;font:700 10px "Rajdhani",sans-serif;letter-spacing:.13em;}
+      #scr-start .ref-mission-body {grid-template-columns:27% minmax(0,1fr);gap:12px;padding:12px;align-items:center;}
+      #scr-start .ref-world {min-height:72px;height:auto;align-self:stretch;background:radial-gradient(ellipse,#284652,#0b1b29);border:1px solid #82b5c04d;border-radius:12px;overflow:hidden;}
+      #scr-start .ref-world canvas {width:100%;height:auto;left:0;top:-5%;}
+      #scr-start .ref-world>span {font:600 8px/1.4 "Rajdhani",sans-serif;letter-spacing:.07em;color:#bfd2d5;}
+      #scr-start .ref-mission-copy .bp-k {font:600 8px "Rajdhani",sans-serif;letter-spacing:.08em;color:#a7c4cd;}
+      #scr-start .ref-mission-copy .bp-v {font:700 18px/1.15 "Rajdhani",sans-serif;letter-spacing:.04em;color:#f0d8a2;}
+      #scr-start .ref-mission-copy p {font:500 12px/1.4 "Rajdhani",sans-serif;color:#a8c1cb;margin:7px 0;}
+      #scr-start .ref-mission-copy button {color:#bce5df;font:700 10px "Rajdhani",sans-serif;letter-spacing:.1em;min-height:30px;}
+      #stage #scr-start #btn-play {border:1px solid #fff0c4;border-radius:13px;background:linear-gradient(135deg,var(--hub-launch),var(--hub-launch-end));color:#172a36;box-shadow:inset 0 2px #fff7d970,0 5px 0 #735b3d,0 8px 20px #0004;letter-spacing:.22em;}
+      #stage #scr-start #btn-play:hover {background:linear-gradient(135deg,#fff0c0,#dfbf80);letter-spacing:.22em;}
+      #scr-loadout,#scr-settings,#scr-quests,#scr-campaign {--hub-accent:#86d9d3;background:radial-gradient(ellipse at 100% 0%,#3b7b8730,transparent 55%),linear-gradient(150deg,#102b3c,#071420 75%);color:var(--hub-text);padding-left:18px;padding-right:18px;}
+      #scr-loadout[data-sec="hangar"] {--hub-accent:#e0c18d;}
+      #scr-loadout[data-sec="arsenal"] {--hub-accent:#e8ab8d;}
+      #scr-loadout[data-sec="drones"] {--hub-accent:#81dce6;}
+      #scr-loadout[data-sec="pilots"] {--hub-accent:#c4b6e6;}
+      #scr-loadout[data-sec="engineering"] {--hub-accent:#a8d9ac;}
+      #scr-loadout[data-sec="livery"] {--hub-accent:#a5caec;}
+      :is(#scr-loadout,#scr-settings,#scr-quests,#scr-campaign)>h2 {font:700 30px/1.2 "Rajdhani",sans-serif;letter-spacing:.16em;color:#f0ead8;margin-bottom:0;text-shadow:0 2px #0003;}
+      :is(#scr-loadout,#scr-settings,#scr-quests,#scr-campaign)>h2::after {content:"";display:block;width:38px;height:2px;margin:10px auto 0;background:var(--hub-accent);}
+      :is(#scr-loadout,#scr-settings,#scr-quests,#scr-campaign)>.subtitle {font:500 13px/1.45 "Rajdhani",sans-serif;color:#abc3cf;letter-spacing:.04em;max-width:320px;}
+      .screen .meta-nav {max-width:100%;padding:5px;gap:4px;border:1px solid #93b4c22e;background:#07162399;border-radius:12px;box-shadow:inset 0 1px #d9eeed0c;}
+      .screen .meta-key {min-height:42px;border:1px solid transparent!important;background:transparent!important;border-radius:8px!important;box-shadow:none;font:700 10px "Rajdhani",sans-serif;color:#a9c2cc;letter-spacing:.04em;}
+      .screen .meta-key.on {background:#8bc9cf1c!important;border-color:#9bcdd944!important;color:#e4eddf;box-shadow:inset 0 -2px var(--hub-accent);}
+      .section-actions {gap:7px;margin:10px 0 0;}
+      .section-actions button {min-height:40px;background:#254655;border:1px solid #92b6c13d;border-radius:9px;box-shadow:none;font:700 10px "Rajdhani",sans-serif;letter-spacing:.07em;color:#d5e6e3;}
+      #scr-loadout .ship-inspector,.equipment-viewer {border:1px solid #9ac2cd55;border-radius:17px;background:radial-gradient(ellipse at 50% 35%,#5c9cad2b,transparent 65%),repeating-linear-gradient(0deg,transparent 0 47px,#aacdd209 47px 48px),#0b2132;box-shadow:inset 0 1px #d7f0e019,0 8px 20px #0003;}
+      #scr-loadout .inspector-viewport {background:radial-gradient(ellipse at 50% 95%,#8fc6cc17,transparent 55%);}
+      #scr-loadout .inspector-controls {background:#163442;border-top:1px solid #8db2c431;gap:6px;}
+      #scr-loadout .inspector-controls button {border:1px solid #91bbc84d;background:#264957;border-radius:8px;box-shadow:inset 0 1px #e0f5e413;color:#d8e9e6;}
+      #scr-loadout .inspector-controls button[aria-pressed="true"] {background:#cdb789;color:#182c36;border-color:#efdab2;}
+      #scr-loadout #inspector-help {color:#a8c2ca;font-size:11px;}
+      #scr-loadout .lo-group,#scr-loadout .set-panel,#scr-settings .set-panel,#scr-quests .q-sec {width:100%;border:1px solid #9abaca2b;border-radius:15px;background:linear-gradient(130deg,#203d4c66,#0c1f2d88);padding:13px 12px;box-shadow:inset 0 1px #e0f3ef0c;}
+      #scr-loadout .lo-label,#scr-settings .lo-label,#scr-quests .lo-label {font:700 10px/1.4 "Rajdhani",sans-serif;letter-spacing:.15em;color:var(--hub-accent);margin-bottom:12px;}
+      #scr-loadout .opt-row {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;}
+      #scr-loadout .opt-card {min-width:0;width:100%;border:1px solid #93b7c13b;border-radius:12px;background:linear-gradient(145deg,#23425199,#102635cc);box-shadow:inset 0 1px #d7eeed15;padding:10px 6px;gap:6px;}
+      #scr-loadout .opt-card.sel {background:radial-gradient(ellipse at 50% 20%,#a8dbd329,transparent 70%),#244554;border:1px solid var(--hub-accent);box-shadow:inset 0 -2px var(--hub-accent),0 3px 12px #0003;}
+      #scr-loadout .opt-card .lo-cv {max-width:100%;height:auto;}
+      #scr-loadout .opt-name {font:700 12px/1.25 "Rajdhani",sans-serif;letter-spacing:.05em;white-space:normal;overflow-wrap:anywhere;color:#f0e8d2;}
+      #scr-loadout .opt-stat {font:500 10px/1.5 "Rajdhani",sans-serif;color:#b7ccd4;}
+      #scr-loadout .opt-role {display:none;}
+      #scr-loadout .stat-bars {gap:4px;margin-top:5px;}
+      #scr-loadout .sb em {font:600 6px "Rajdhani",sans-serif;letter-spacing:.05em;}
+      #scr-loadout .sb i {height:3px;background:#071420;box-shadow:none;}
+      #scr-loadout .sb b {box-shadow:none;}
+      .screen .frame-card {border:1px solid #93b7c140;border-radius:11px;background:linear-gradient(145deg,#244655,#102535);box-shadow:none;padding:6px;}
+      .screen .frame-card[aria-pressed="true"] {border-color:var(--hub-accent);box-shadow:inset 0 -2px var(--hub-accent);}
+      .screen .set-note,.screen .frame-note {font:500 12px/1.5 "Rajdhani",sans-serif;color:#a9c2ce;letter-spacing:.02em;}
+      .screen .seg-row {gap:5px;flex-wrap:wrap;}
+      .screen .seg-btn,.screen .mode-btn,.screen .set-btn,.screen .theme-btn {min-height:44px;border:1px solid #88b4c147;border-radius:9px;background:linear-gradient(145deg,#254655,#142d40);box-shadow:none;color:#bdd4da;font-family:"Rajdhani",sans-serif;}
+      .screen .seg-btn.on,.screen .mode-btn.on,.screen .set-btn.on,.screen .theme-btn.on {background:#89cfc721;border-color:var(--hub-accent);color:#e3eee2;box-shadow:inset 0 -2px var(--hub-accent);}
+      .screen .mode-btn {padding:12px 10px;}
+      .screen .mode-btn span {font:500 12px/1.45 "Rajdhani",sans-serif;color:#b5cbd2;}
+      .screen .ava-grid {grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;}
+      .screen .ava-opt {min-height:72px;background:#183646;border:1px solid #94b9c444;border-radius:12px;color:#bfced5;}
+      .screen .ava-opt.sel {border-color:var(--hub-accent);background:#375666;box-shadow:inset 0 -2px var(--hub-accent);}
+      .screen .name-input {min-height:48px;background:#0a1c2b;border:1px solid #99c1cc66;border-radius:10px;color:#f2e5cc;font:700 20px "Rajdhani",sans-serif;letter-spacing:.12em;}
+      .screen .swatch {border-radius:10px;border:2px solid #b6d4d73d;box-shadow:inset 0 1px #fff2;}
+      .screen .swatch.sel {outline:2px solid #e8ddbe;outline-offset:2px;}
+      .screen .camp-tab {min-height:42px;border-radius:9px;border:1px solid #89adbe40;background:#173345;font:700 11px "Rajdhani",sans-serif;}
+      .screen .camp-tab.on {background:#48707b55;border-color:#a4d4d5;color:#e5ede1;}
+      .screen .camp-node {padding:14px 10px;gap:10px;border:1px solid #96bec83d;border-radius:14px;background:linear-gradient(135deg,#264b5b66,#102535dd);box-shadow:inset 0 1px #e2f4ef13;align-items:center;}
+      .screen .camp-node.sel {border-color:#b6d6c1;box-shadow:inset 3px 0 #dfc491;}
+      .screen .camp-meta {min-width:0;}
+      .screen .camp-sky2 {font:700 12px/1.3 "Rajdhani",sans-serif;letter-spacing:.05em;color:#eee2c8;}
+      .screen .camp-boss2 {font:500 11px/1.45 "Rajdhani",sans-serif;color:#b1c8d2;}
+      .screen .camp-guide {font:700 9px/1.4 "Rajdhani",sans-serif;}
+      .screen .camp-right {min-width:48px;font-family:"Rajdhani",sans-serif;}
+      .screen .camp-bounty2 {font-size:10px;color:#d8c795;}
+      #scr-quests .q-row {border:1px solid #8eb5c437;border-radius:11px;background:#17334488;box-shadow:none;padding:12px 10px;}
+      #scr-quests .q-row::before {animation:none;background:linear-gradient(130deg,#b8e7ed08,transparent 60%);}
+      #scr-quests .q-label {font:600 14px/1.35 "Rajdhani",sans-serif;color:#deebe6;}
+      #scr-quests .q-from {font:600 8px "Rajdhani",sans-serif;letter-spacing:.14em;color:#98bfc7;}
+      #scr-loadout .upg-btn {min-height:44px;min-width:72px;border:1px solid #e5d3a68c;border-radius:9px;background:linear-gradient(135deg,#dfc591,#bda06d);box-shadow:none;font:700 11px "Rajdhani",sans-serif;}
+      #scr-loadout .upg-name {font:700 14px "Rajdhani",sans-serif;color:#e3ecd9;}
+      #scr-loadout .upg-fx {font:500 11px/1.5 "Rajdhani",sans-serif;}
+      #scr-quests .q-claim {min-height:44px;border-radius:8px;background:#30545a;color:#dfefdd;border:1px solid #a6d0bf77;}
+      #scr-loadout .btn,#scr-settings .btn,#scr-quests .btn,#scr-campaign .btn {min-height:46px;border:1px solid #c9d5c188;border-radius:10px;background:linear-gradient(135deg,#e3c991,#c3a36e);color:#1b303a;box-shadow:inset 0 1px #fff5;font:700 12px "Rajdhani",sans-serif;letter-spacing:.1em;}
+      #scr-loadout .btn.ghost,#scr-settings .btn.ghost,#scr-quests .btn.ghost,#scr-campaign .btn.ghost {border-color:#94b9c344;background:linear-gradient(135deg,#274958,#183344);color:#c2d9db;box-shadow:inset 0 1px #e1f4e510;}
+      #scr-loadout .hg-power,.screen .upg-row,.screen .lo-summary {background:#133041;border:1px solid #9cc1cb40;border-radius:12px;box-shadow:none;}
+      :is(#scr-start,#scr-loadout,#scr-settings,#scr-quests,#scr-campaign) button {transition:border-color .18s ease,background .18s ease,transform .18s ease;}
+      :is(#scr-start,#scr-loadout,#scr-settings,#scr-quests,#scr-campaign) button:focus-visible {outline:2px solid #d9f4e3;outline-offset:3px;}
+      @media(max-width:360px){#scr-start .ref-world {min-height:64px;}#scr-loadout,#scr-settings,#scr-quests,#scr-campaign {padding-left:12px;padding-right:12px;}#scr-loadout .opt-card {padding:8px 4px;}#scr-start .ref-ship-info {padding:10px 9px;}#scr-start .glance-cell:first-child .glance-v {font-size:21px;}}
+      @media(prefers-reduced-motion:reduce){:is(#scr-start,#scr-loadout,#scr-settings,#scr-quests,#scr-campaign) button {transition:none;}}
     </style>
   </head>
   <body>
@@ -2281,7 +2398,7 @@
           </div>
 
 
-          <div class="ref-brand"><div><small>FLIGHT COMMAND / 01</small><strong>STARFALL</strong></div><button data-nav="pilots" class="deck-profile" aria-label="Pilot and player profile"><span class="hp-name" id="home-player-name">PLAYER</span><small>PILOT PROFILE ↗</small></button></div>
+          <div class="ref-brand"><div><small>FLIGHT COMMAND / 01</small><strong>STARFALL</strong></div><button data-nav="pilots" class="deck-profile" aria-label="Pilot and player profile"><span class="hp-name" id="home-player-name">PLAYER</span><small>PILOT PROFILE</small></button></div>
           <nav class="ref-shortcuts" aria-label="Main systems">
             <button data-nav="hangar"><span><svg class="nav-icon" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><defs><linearGradient id="nav-hangar-metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f0f6f8"/><stop offset=".35" stop-color="#a7c2cf"/><stop offset=".65" stop-color="#526f84"/><stop offset="1" stop-color="#c7d9df"/></linearGradient><linearGradient id="nav-hangar-dark" x2=".8" y2="1"><stop stop-color="#29495e"/><stop offset="1" stop-color="#071523"/></linearGradient><linearGradient id="nav-hangar-energy" x2="0" y2="1"><stop stop-color="#fff8db"/><stop offset=".45" stop-color="#79e5f2"/><stop offset="1" stop-color="#218cb6" stop-opacity=".15"/></linearGradient></defs><path d="M16 55 32 4 48 55 38 50 32 57 26 50Z" fill="#020a12" opacity=".6" transform="translate(0 3)"/>
 <path d="m27 29-15 19-2 8 17-6 5-10 5 10 17 6-2-8-15-19Z" fill="url(#nav-hangar-metal)" stroke="#d6e4e8" stroke-width="1"/>
@@ -2319,7 +2436,7 @@
 <path d="m28 5-1 6m24 3-4 3m7 20-5-2M28 50l1-6M13 42l5-4M11 18l6 2" stroke="#f1f6f3" stroke-width="1.2"/>
 <circle cx="32" cy="28" r="2" fill="#87e5f5"/></svg></span><b>SETTINGS</b><small>PREFERENCES</small></button>
           </nav>
-          <section class="ref-card ref-ship"><header><h2>READY TO FLY</h2><details class="graphics-panel" id="graphics-panel" data-state="loading"><summary id="graphics-details" aria-controls="graphics-diagnostics"><span id="graphics-status" role="status" aria-live="polite">STARTING 3D…</span><span>GRAPHICS · BUILD 3D-9</span></summary></details><button data-nav="livery">APPEARANCE ↗</button></header>
+          <section class="ref-card ref-ship"><header><h2>FLIGHT READY</h2><details class="graphics-panel" id="graphics-panel" data-state="loading"><summary id="graphics-details" aria-controls="graphics-diagnostics"><span id="graphics-status" role="status" aria-live="polite">STARTING 3D…</span><span>GRAPHICS · BUILD 3D-9</span></summary></details><button data-nav="livery">APPEARANCE</button></header>
             <div class="ref-ship-body"><div class="ck-stage">
             <canvas id="home-planet-cv" width="144" height="144" aria-hidden="true"></canvas>
             <div class="ck-padwrap">
@@ -2365,7 +2482,7 @@
             </div>
           </div><button class="ref-upgrade" data-nav="engineering">UPGRADES</button></div></div>
           </section>
-          <section class="ref-card ref-mission"><header><h2>DEPLOYMENT</h2><button data-nav="quests">CONTRACTS ↗</button></header>
+          <section class="ref-card ref-mission"><header><h2>NEXT MISSION</h2><button data-nav="quests">CONTRACTS</button></header>
           <div class="ref-mission-body"><div class="hub-plate" id="resume-plate" hidden><span class="hp-txt" id="resume-txt">RESUME — WAVE 2</span><span class="hp-btns"><button class="hp-btn go" id="btn-resume-run">RESUME</button><button class="hp-btn" id="btn-resume-dismiss">DISCARD</button></span></div><div class="ref-world"><canvas id="mission-world" width="192" height="192"></canvas><span>CAMPAIGN<br>5 WAVES</span></div><div class="ref-mission-copy"><div class="ck-bossplate">
             <svg class="skull" viewBox="0 0 24 24"><path d="M12 2a8 8 0 0 0-8 8c0 2.9 1.6 5 3.5 6.3V20a1.5 1.5 0 0 0 1.5 1.5h6A1.5 1.5 0 0 0 16.5 20v-3.7C18.4 15 20 12.9 20 10a8 8 0 0 0-8-8zM8.5 13.5a2 2 0 1 1 2-2 2 2 0 0 1-2 2zm7 0a2 2 0 1 1 2-2 2 2 0 0 1-2 2z"/></svg>
             <span class="bp-meta"><span class="bp-k">NEXT BOSS — <span id="ck-boss-sky">WAVE 1 · DEEP SPACE</span></span><span class="bp-v" id="home-objective">VOID MOTHERSHIP</span></span>
