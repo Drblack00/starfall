@@ -17,6 +17,52 @@ STARFALL is an original space shooter by Drblack Ventures: five skies, five boss
 
 The game is a single self-contained HTML file (`index.html`) — no build step. This repo is deployed as a static site on Render (see `render.yaml`).
 
+## Engine exhaust refinement
+
+Ship and drone engines share a soft volumetric-style plume in Home, the inspector
+and flight. Three crossed ribbons replace the hard eight-sided cone, using six
+triangles per engine instead of eight. A white-hot core blends into the selected
+thruster color, animated compression bands and subtle shear break up the body,
+and the edges/tail fade smoothly. A quieter nozzle halo and lower-amplitude
+length breathing replace the abrupt old flicker. Warp still stretches the visual
+plume; no movement, thrust, damage or timing values change. Preview framing
+includes hull, mounted weapon and full plume bounds, cached once per rig, so
+longer exhaust is not clipped at the bottom of Home or inspection views.
+
+The same existing exhaust batch, fixed instance buffers and a cached dedicated jet
+shader handle all engines; bullets and particles keep their original lightweight
+effects shader. No textures, particle spawns, per-frame arrays, canvas copies,
+GPU contexts or extra draw calls are added. Reduced motion freezes both the flow
+clock and per-engine phase; a paused game uses its frozen game clock. This is
+procedural visual exhaust, not fluid simulation or new model assets.
+
+`tests/thrusters.cjs` is part of `tests/verify.cjs`. It checks rendered color/alpha
+gradients, soft taper, animation/frozen frames, tilt visibility and reusable
+geometry/storage in WebGL2, WebGL1 and reduced-motion modes.
+
+Final verification: `CHROMIUM_PATH=/usr/bin/chromium node tests/verify.cjs`
+passes, including the new plume checks and all prior hub/game checks. Actual
+served WebGL1 play-through cleared the first assault and Mothership in 78.5 s
+with 4/4 hull, including charge, special and pause/resume; no runtime errors.
+Whole-session frame median/p95 was 33.3/66.7 ms, max 2,616.6 ms including startup,
+navigation and screenshots. Cyan/solar before-and-after previews were reviewed.
+
+Final serial 600-frame comparisons after 120 warm-up frames against the previous
+hub build `0f362d5` (Cloud Chromium, 390×844, baseline measured first):
+
+| Scene | Previous median / p95 | Updated median / p95 |
+| --- | --- | --- |
+| Eclipse combat | 49.9 / 66.7 ms | 50.0 / 66.7 ms |
+| Animated home | 16.7 / 33.4 ms | 16.7 / 33.4 ms |
+
+Combat maximum intervals were 100.0/100.1 ms, home 66.7/50.1 ms. Combat CPU
+submission median/p95 was 0.7/5.9 → 1.3/6.5 ms. Both combat samples retained 12
+draws, 272 instances, native 390px combat width and 96 free particles; both home
+samples had zero steady preview copies. Shader programs compile once per GPU
+context; the dedicated jet program adds no context or draw call. Shared-host
+frame times vary substantially: these matched distributions do not establish
+locked 60 fps or physical iPhone Safari performance. Slow tails remain.
+
 ## Pre-flight hub visual system
 
 The restored build and metallic navigation icons now share one flight-deck
@@ -33,10 +79,10 @@ cards, upgrade prices, mission readiness, rewards, avatar/livery selection and
 settings toggles keep their existing data and behavior. No menu, mode, upgrade,
 weapon, drone, profile control or unlock was removed. Home still ends at Play.
 
-All six embedded script blocks, including the game and embedded model data, are
-byte-for-byte identical to the restored post-PR #14 build. The changes are HTML
-labels and CSS; no gameplay balance, animation scheduler, renderer, pooled object,
-model or economy changes. Single HTML + existing assets, no new dependencies or
+The hub-only pass kept all six embedded script blocks byte-for-byte identical to
+the restored post-PR #14 build. Its changes are HTML labels and CSS; the subsequent
+engine-exhaust renderer refinement is described above. Gameplay balance, pools,
+ship/drone hull models and economy remain unchanged. Single HTML + existing assets, no new dependencies or
 runtime downloads. UI-only SVG icons remain inline.
 
 `tests/hub.cjs`, included in `tests/verify.cjs`, exercises real navigation through

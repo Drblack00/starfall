@@ -473,6 +473,7 @@ console.log(
   }
   await require("./webgl.cjs")(b, p, src);
   await require("./factions.cjs")(p);
+  await require("./thrusters.cjs")(b);
   await require("./presentation.cjs")(b);
   await require("./hub.cjs")(b);
   await require("./hd.cjs")(b);
