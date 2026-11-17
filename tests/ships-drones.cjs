@@ -38,7 +38,7 @@ function expose(source,expression){source=source.replaceAll('requestAnimationFra
   const aim=await page.evaluate(()=>{b.spawnBoss();b.g.boss.state='fight';b.g.boss.x=b.W/2;b.g.boss.y=300;b.g.boss.telegraph=0;const r=document.getElementById('game').getBoundingClientRect();return {x:r.left+r.width*.5,y:r.top+r.height*300/b.H};});
   await page.locator('#boss-card').dispatchEvent('click'); // Dismiss the existing boss telegraph card first.
   await page.mouse.click(aim.x,aim.y);assert(await page.evaluate(()=>b.BatchB.painted===b.g.boss),'tapping a boss core paints it');
-  await page.evaluate(()=>b.showScreen('hangar'));await page.locator('#ship-system-details summary').click();await page.getByRole('button',{name:'CANOPY OPEN / CLOSE'}).click();assert(await page.evaluate(()=>b.BatchB.canopy),'canopy control toggles');
+  await page.evaluate(()=>b.showScreen('hangar'));await page.getByRole('button',{name:'CANOPY OPEN / CLOSE'}).click();assert(await page.evaluate(()=>b.BatchB.canopy),'canopy control toggles');
   await page.locator('#inspect-zoom-in').click({clickCount:12});assert(await page.evaluate(()=>b.INSPECT.targetZoom>2.2&&b.INSPECT.targetZoom<=5),'cockpit inspection zoom');
   await page.reload();await page.evaluate(()=>b.showScreen('start'));assert(await page.evaluate(()=>b.LOADOUT.ship==='carrier'&&b.LOADOUT.drone==='repair'&&b.droneTier('scout')===3&&document.getElementById('home-ship').textContent==='KESTREL CARRIER'),'new hull, specialist and evolution survive reload');
   assert.deepStrictEqual(errors,[]);await page.close();

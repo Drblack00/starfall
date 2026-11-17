@@ -473,7 +473,9 @@ console.log(
   }
   await require("./webgl.cjs")(b, p, src);
   await require("./factions.cjs")(p);
+  await require("./thrusters.cjs")(b);
   await require("./presentation.cjs")(b);
+  await require("./hub.cjs")(b);
   await require("./hd.cjs")(b);
   await require("./inspection.cjs")(b);
   const reduced = await b.newPage({ viewport: { width: 375, height: 812 } });

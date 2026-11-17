@@ -17,53 +17,88 @@ STARFALL is an original space shooter by Drblack Ventures: five skies, five boss
 
 The game is a single self-contained HTML file (`index.html`) — no build step. This repo is deployed as a static site on Render (see `render.yaml`).
 
-## UI cleanup
+## Engine exhaust refinement
 
-Home centers the selected ship, loadout, destination and Play. Repeated command
-captions and navigation subtitles are removed. The overlapping command-deck
-miniature, moving crew and its repeated shared-GPU preview copies are removed;
-the actual native 3D ship and sky remain. Healthy graphics/build labels no longer
-occupy the ship header. Settings → Graphics Status opens diagnostics in place;
-errors still expose recovery on Home automatically.
+Ship and drone engines share a soft volumetric-style plume in Home, the inspector
+and flight. Three crossed ribbons replace the hard eight-sided cone, using six
+triangles per engine instead of eight. A white-hot core blends into the selected
+thruster color, animated compression bands and subtle shear break up the body,
+and the edges/tail fade smoothly. A quieter nozzle halo and lower-amplitude
+length breathing replace the abrupt old flicker. Warp still stretches the visual
+plume; no movement, thrust, damage or timing values change. Preview framing
+includes hull, mounted weapon and full plume bounds, cached once per rig, so
+longer exhaust is not clipped at the bottom of Home or inspection views.
 
-Photo Mode and Cockpit View live under Pause → View & Photo Tools. The P shortcut
-and photo save/share remain. Ultimate, formation, bomb, pause, hull, charge, boss
-and objective cues stay available in combat; the diagnostic PERF MODE badge is
-hidden. Hangar suppresses duplicate/current navigation entries, and Ship Systems
-& Liveries opens the retained technical controls on demand. Equipment catalogs wrap into
-three readable columns, including the six-hull first row added in Batch B; names
-no longer collide. Repeated role slogans and illustrative bars are hidden while
-short stats, prices/unlocks and comparison tools remain. Mission Details
-contains briefing art, enemy/environment intel and repeated loadout information;
-the destination, boss and launch/cancel actions stay prominent. More Game Modes
-keeps daily/events/NG+ available without crowding campaign selection. Run Details
-contains the extended result breakdown. Home still ends at Play.
+The same existing exhaust batch, fixed instance buffers and a cached dedicated jet
+shader handle all engines; bullets and particles keep their original lightweight
+effects shader. No textures, particle spawns, per-frame arrays, canvas copies,
+GPU contexts or extra draw calls are added. Reduced motion freezes both the flow
+clock and per-engine phase; a paused game uses its frozen game clock. This is
+procedural visual exhaust, not fluid simulation or new model assets.
 
-Gameplay, economy, models, abilities, modes and unlocks are unchanged. No balance
-lock changes, new assets, dependencies or build step. All changes are in the
-single HTML architecture and UI tests. `tests/declutter.cjs` exercises the actual
-page, including photo controls and diagnostics while paused; the ships/drones
-test explicitly opens the newly folded ship-system controls.
+`tests/thrusters.cjs` is part of `tests/verify.cjs`. It checks rendered color/alpha
+gradients, soft taper, animation/frozen frames, tilt visibility and reusable
+geometry/storage in WebGL2, WebGL1 and reduced-motion modes.
 
-Validation: `tests/verify.cjs`, `tests/ships-drones.cjs`,
-`tests/bosses-modes.cjs`, `tests/home-deck.cjs` and `tests/declutter.cjs` pass.
-The latter covers real clicks through optional modes, mission/system disclosures,
-Pause camera controls, photo return and diagnostics without losing the paused
-run. Existing frozen gameplay/economy baselines are unchanged.
+Final verification: `CHROMIUM_PATH=/usr/bin/chromium node tests/verify.cjs`
+passes, including the new plume checks and all prior hub/game checks. Actual
+served WebGL1 play-through cleared the first assault and Mothership in 78.5 s
+with 4/4 hull, including charge, special and pause/resume; no runtime errors.
+Whole-session frame median/p95 was 33.3/66.7 ms, max 2,616.6 ms including startup,
+navigation and screenshots. Cyan/solar before-and-after previews were reviewed.
 
-A serial 600-frame home comparison after 120 warm-up frames against main
-`c5a5fc6` measured updated/main median 16.7/16.7 ms, p95 16.7/16.8 ms and maximum
-50.0/50.0 ms. This is a shared Cloud Chromium sample, not a physical-phone or
-locked-60fps guarantee. The steady home path no longer generates the miniature
-planet preview, copies it into another canvas or restores the ship a second time
-on a 100 ms cadence.
+Final serial 600-frame comparisons after 120 warm-up frames against the previous
+hub build `0f362d5` (Cloud Chromium, 390×844, baseline measured first):
 
-A real served WebGL1 play-through selected Aegis/Guardian/Vector, cleared the full
-first assault and Mothership in 122.1 s with 4/4 hull, and exercised charge,
-special and pause/resume. There were no runtime errors. Whole-session median/p95
-frame intervals were 16.7/50.0 ms; max 1,266.7 ms includes startup/navigation and
-screenshot work. Final catalog layout checks pass at 320, 375 and 430 px, and
-home/inspector/faction captures show no browser errors.
+| Scene | Previous median / p95 | Updated median / p95 |
+| --- | --- | --- |
+| Eclipse combat | 49.9 / 66.7 ms | 50.0 / 66.7 ms |
+| Animated home | 16.7 / 33.4 ms | 16.7 / 33.4 ms |
+
+Combat maximum intervals were 100.0/100.1 ms, home 66.7/50.1 ms. Combat CPU
+submission median/p95 was 0.7/5.9 → 1.3/6.5 ms. Both combat samples retained 12
+draws, 272 instances, native 390px combat width and 96 free particles; both home
+samples had zero steady preview copies. Shader programs compile once per GPU
+context; the dedicated jet program adds no context or draw call. Shared-host
+frame times vary substantially: these matched distributions do not establish
+locked 60 fps or physical iPhone Safari performance. Slow tails remain.
+
+## Pre-flight hub visual system
+
+The restored build and metallic navigation icons now share one flight-deck
+palette across Home, Hangar, Blasters, Drones, Pilot/Profile, Engineering,
+Appearance, Campaign, Contracts and Settings. Teal display surfaces, champagne
+primary actions, section-specific accents, consistent typography, visible focus
+rings and restrained hover/press feedback establish the hierarchy. Existing
+screen fades and reduced-motion behavior remain.
+
+Home gives more space to the native 3D ship and a proper planet display beside
+the next mission. The catalog wraps additional hulls into readable three-column
+rows. Live equipment/ship viewers share a subtle static display grid; selection
+cards, upgrade prices, mission readiness, rewards, avatar/livery selection and
+settings toggles keep their existing data and behavior. No menu, mode, upgrade,
+weapon, drone, profile control or unlock was removed. Home still ends at Play.
+
+The hub-only pass kept all six embedded script blocks byte-for-byte identical to
+the restored post-PR #14 build. Its changes are HTML labels and CSS; the subsequent
+engine-exhaust renderer refinement is described above. Gameplay balance, pools,
+ship/drone hull models and economy remain unchanged. Single HTML + existing assets, no new dependencies or
+runtime downloads. UI-only SVG icons remain inline.
+
+`tests/hub.cjs`, included in `tests/verify.cjs`, exercises real navigation through
+nine sections at 320/375/430 px, checks readable fleet wrapping, usable Back
+controls and no horizontal overflow, and guards the mission planet against
+collapsed sizing. Solar Gold, Sunset and Eclipse retain distinct panel/button
+palettes, verified through the actual theme controls. Full verification covers frozen balance, touch, GPU/fallback,
+menu/flight identity, inspector gestures, pause/resume and reduced motion.
+
+Served-browser `CHROMIUM_PATH=/usr/bin/chromium node tests/verify.cjs` passes,
+including the integrated new hub checks and all prior regression checks. Ten
+actual section previews were captured and visually reviewed. A final serial
+600-frame home comparison (120 warm-up frames) against the pre-rework icon build
+measured both versions at 16.7 ms median / 50.0 ms p95 / 83.4 ms maximum, with zero
+steady GPU-to-canvas preview copies. Rare stalls remain; shared Cloud Chromium
+measurements are not a locked-60fps or physical iPhone Safari guarantee.
 
 ## Ships & drones — Batch B
 
@@ -1064,122 +1099,3 @@ Based on main `2bb229f` (Batch B / PR #13). Runtime remains entirely in `index.h
 | `update` | Core-hit stagger integration, cinematic collision gate, and carrier escort interception. Existing numeric damage, spawn and economy values are unchanged. | `aadc64f7b6dcd4cfd6480e6d9c623aaac27f630da0a23e9dc332e64f67dae869` |
 
 Validation: `tests/verify.cjs`, `tests/bosses-modes.cjs` (normal + reduced motion), and the Batch B `tests/ships-drones.cjs` regression suite, including frame-identical warp/skip comparison against merged Batch A. The phone-sized headless Chromium benchmark at 390×844 measured 0.4 ms median / 0.8 ms p95 work and 16.7 ms p95 frame intervals over 600 samples. This is a desktop headless viewport measurement, not a physical-phone hardware certification. New event storage uses a preallocated typed array, and render overlays reuse existing canvas/GPU resources.
-
-## Batch D — home, deck and experience (#4, #5, #7, #25–29, #34–36)
-
-Based on main `4fdb1a1` (merged Batch C / PR #14). Runtime stays in the single
-`index.html`, using embedded materials and reusable instance buffers.
-
-- In **HD Cinematic**, depth-layered, textured fog passes behind and in front of
-  craft; matching fog lighting tints hulls. Each sector has a different planet palette/geography,
-  counter-rotating cloud material, night-side city lights and atmosphere rim.
-- Cinematic ion lightning, ember dust, rift sparkle, cryo crystals and eclipse static give
-  the five skies their weather identity. Flash preference and reduced motion
-  suppress lightning; reduced motion freezes ambient drift and clouds.
-- The dock retains the selected native ship and adds a holo-table planet, patrol
-  drones and moving crew silhouettes. Launch Check now includes a living planet,
-  two intel cards and a dark boss teaser before its existing launch confirmation.
-- **COCKPIT** adds a glass canopy reflecting the current rendered environment and
-  animated HUD glare; the external player hull is hidden in this view.
-- Results count accuracy, peak combo, escorts lost and time bonus. A separate
-  presentation-only action score combines the unchanged gameplay score with
-  `max(0, round(300 - runTime))` on victory. It never pays credits or alters the
-  official score, bounty, campaign stars or economy. Reduced motion shows final
-  counters immediately.
-- **PHOTO / P** freezes battle. Orbit and elevation sliders rotate the frozen
-  world around the ship. **SAVE PHOTO** downloads a local PNG; **SHARE…** is a
-  separate explicit tap that invokes the system file-share sheet when available.
-  Cancellation and unsupported sharing stay local. Return restores the prior
-  playing or paused state. Escape also returns.
-- **NG+ SKIES** unlocks after a campaign clear. It starts at sky 1 with run 1's
-  unchanged campaign values and adds a pair of crossing projectiles every three
-  combat seconds. No patterns fire during intros or transitions. NG+ checkpoints
-  preserve the mode; starting a normal campaign clears it. An NG+ clear unlocks
-  persistent Aurora and Solar cosmetic liveries for each selected hull.
-- Smooth remains the default. **HD CINEMATIC** adds a 48-segment planet (24 with
-  reduced motion), higher raster density when affordable, and extra fog/weather
-  particles.
-  The frame-time governor consumes both render-start intervals and presented rAF
-  intervals. A tight budget disables cinematic geometry, fog and mist shaders
-  entirely, restoring the baked backdrop while preserving native combat pixels.
-  Smooth always uses that baked planet and shaders compiled without cinematic
-  mist, cloud or city-light work; no planet/fog draw calls are added. Shader
-  variants and backdrop textures are cached and reused across setting changes.
-  Menu updates are capped at 10 Hz; reduced motion updates on selection changes only.
-
-No balance-lock entries or verifier hashing logic changed. All locked blocks are
-still hashed directly from the shipped bytes; `TOTAL_WAVES` remains 5 and all five
-bosses remain distinct.
-
-Validation (serve the repository on port 8765; Playwright required):
-
-```sh
-python -m http.server 8765
-CHROMIUM_PATH=/usr/bin/chromium node tests/verify.cjs
-CHROMIUM_PATH=/usr/bin/chromium node tests/home-deck.cjs
-CHROMIUM_PATH=/usr/bin/chromium node tests/bosses-modes.cjs
-CHROMIUM_PATH=/usr/bin/chromium node tests/ships-drones.cjs
-```
-
-The new suite covers campaign/NG+ separation, checkpoint restoration, prestige
-liveries, real result counters, frozen photo simulation, camera matrices, reusable
-buffers, nonblank captures, explicit-only sharing, five distinct skies, reduced
-motion and 320/375/430px briefing layouts. Existing verification includes native
-WebGL2/WebGL1, context recovery and phone HUD/touch regressions.
-
-Initial draft measurements, before the GPU performance follow-up: a 375×812
-DPR-2 headless Chromium comparison over 600 measured frames found
-0.5 ms median / 0.9 ms p95 JavaScript work for Batch D (main: 0.5 / 1.1 ms).
-Native combat remained 750px wide; the low-budget scene added two draw calls.
-Headless frame intervals were 33.4 ms median / 66.6 ms p95 (main: 16.7 / 66.6 ms).
-These software-rendered desktop measurements do **not** certify 60fps on physical
-phones; that device check remains necessary before making a universal claim.
-
-### Batch D GPU performance follow-up
-
-Smooth now restores main's cached backdrop planet and compiles out the cinematic
-mist, moving terrain, cloud and city-light shader paths. Its cinematic planet,
-fog and weather batches submit zero instances. HD uses cached alternate material
-and effect programs; governor fallback also returns to the Smooth programs and
-baked backdrop. The governor explicitly consumes rAF timestamp intervals as well
-as render-start intervals, so slow presentation with cheap JavaScript still
-removes the extra GPU work.
-
-Sequential seeded `tests/benchmark.cjs` runs, 120 warm-up frames then **600 measured
-frames per run**, same Chromium and native combat resolution for all trees:
-
-| Smooth configuration | Main `4fdb1a1` median / p95 ms | Original PR `d381461` median / p95 ms | Fixed median / p95 ms |
-| --- | --- | --- | --- |
-| 900×900 DPR 1 | 16.7 / 33.3 | 16.7 / 50.0 | 16.7 / 16.8 |
-| 375×812 DPR 2 | 16.7 / 50.0 | 33.3 / 66.7 | 16.7 / 50.0 |
-| 900×900 DPR 1, reduced motion | 16.7 / 16.8 | 16.7 / 50.0 | 16.7 / 16.8 |
-
-Main and fixed were each measured **twice** in every configuration; both trials
-returned the median/p95 values shown. The original PR was measured once per
-configuration in this comparison. Draws are **12 → 14 → 12** (main → original PR →
-fixed). Fixed JS work median was 0.4–0.5 ms, p95 0.8–1.2 ms; main median was
-0.4–0.6 ms, p95 0.6–1.0 ms. Combat raster widths stayed 511 px at 900×900 and
-750 px at 375×812 DPR 2. No reduction in combat pixels or balance change was used.
-
-This host reproduces the original median regression at phone dimensions and the
-tail regression in all three configurations. Absolute timings differ from the
-independent review host. The fixed default median matches main in all repeated
-runs; these are still headless measurements, not physical-phone certification.
-The PR remains **draft**.
-
-Reproduce using the same source snapshots and harness (server on port 8765):
-
-```sh
-git show 4fdb1a1:index.html > work/main.html
-git show d381461:index.html > work/before.html
-CHROMIUM_PATH=/usr/bin/chromium node tests/benchmark.cjs work/main.html work/before.html index.html
-CHROMIUM_PATH=/usr/bin/chromium STARFALL_WIDTH=375 STARFALL_HEIGHT=812 STARFALL_DPR=2 node tests/benchmark.cjs work/main.html work/before.html index.html
-CHROMIUM_PATH=/usr/bin/chromium STARFALL_REDUCED=1 node tests/benchmark.cjs work/main.html work/before.html index.html
-```
-
-The reduced-motion environment flag changes only page media emulation; the seed,
-scene, warm-up and 600-frame sampling harness are unchanged. Added behavior tests
-also verify zero Smooth cinematic instances, optimized-out mist uniforms, rAF-only
-GPU-pressure fallback with cheap JS, and shader-program reuse after manual and
-automatic quality changes. `tests/verify.cjs` and `tests/balance-lock.json` remain
-byte-identical to the prior PR head.
