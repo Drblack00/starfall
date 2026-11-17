@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://drblack00.github.io/starfall/sitemap.xml

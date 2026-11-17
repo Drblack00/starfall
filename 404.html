@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Signal lost — STARFALL</title>
+    <meta name="description" content="That sector doesn't exist. Return to STARFALL — Sky Defender and rejoin the fight." />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/png" href="/starfall/assets/icon.png" />
+    <meta name="theme-color" content="#02040a" />
+    <style>
+      * { box-sizing: border-box; margin: 0; }
+      body {
+        min-height: 100dvh; display: flex; align-items: center; justify-content: center;
+        background: #02040a; color: #eaf6ff; padding: 24px; text-align: center;
+        font-family: "Rajdhani", system-ui, sans-serif;
+      }
+      .wrap { max-width: 430px; animation: rise .55s cubic-bezier(.22,1.24,.36,1) both; }
+      @keyframes rise { from { opacity: 0; transform: translateY(16px) scale(.98); } to { opacity: 1; transform: none; } }
+      .code { font-family: "Orbitron", monospace; font-size: 13px; letter-spacing: .34em; color: #3fd6ff; font-weight: 700; }
+      h1 { margin-top: 12px; font-family: "Orbitron", monospace; font-size: 30px; letter-spacing: .04em; }
+      p { margin-top: 12px; color: #8fb8d8; font-size: 17px; line-height: 1.55; font-weight: 500; }
+      a {
+        display: inline-block; margin-top: 26px; padding: 13px 26px; border-radius: 10px;
+        border: 1px solid rgba(63,214,255,.35); background: rgba(6,16,32,.86); color: #eaf6ff;
+        font-family: "Orbitron", monospace; font-size: 14px; font-weight: 700; letter-spacing: .08em;
+        text-decoration: none; transition: transform .35s cubic-bezier(.22,1.24,.36,1), border-color .2s;
+      }
+      a:hover { border-color: #3fd6ff; }
+      a:active { transform: scale(.96); }
+      @media (prefers-reduced-motion: reduce) { .wrap { animation: none; } a { transition: none; } }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <p class="code">404 — SIGNAL LOST</p>
+      <h1>DRIFTING OFF COURSE</h1>
+      <p>That sector of space doesn't exist. Your ship is fine — the coordinates were wrong.</p>
+      <a href="/starfall/">RETURN TO BASE</a>
+    </main>
+  </body>
+</html>
