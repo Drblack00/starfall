@@ -1,0 +1,194 @@
+{
+  "sourceRevision": "0128ca510d653bb04d6d1e4885bd8890b5050b4f",
+  "fleet": {
+    "phantom": {
+      "sha256": "d46c0c8d7a0ef70f4c3db5ff8972dabd8c03cba10120949fdc75401b552c67a3",
+      "triangles": 1426,
+      "vertices": 1779,
+      "textureSize": [
+        2048,
+        2048
+      ]
+    },
+    "aegis": {
+      "sha256": "79017f87d660c5e7b438e1abd764072a17b2ec8ce5a03478f2b41f191e4e1541",
+      "triangles": 1748,
+      "vertices": 2124,
+      "textureSize": [
+        2048,
+        2048
+      ]
+    },
+    "interceptor": {
+      "sha256": "a757ea034e0a81c68178f71e37ce16a4798323c719a4a9b4fbdf604fdd760154",
+      "triangles": 8292,
+      "vertices": 7644,
+      "textureSize": [
+        2048,
+        2048
+      ]
+    },
+    "bulwark": {
+      "sha256": "f81ffcf335c8a23bdea68c2bfd2f4b8f47ff87552c69150d08ff057d0f2ae88c",
+      "triangles": 2688,
+      "vertices": 3508,
+      "textureSize": [
+        2048,
+        2048
+      ]
+    },
+    "spectre": {
+      "sha256": "852b306d28cef8d27ee8d90fa29c0be179864f13506077552bdee4cd503812f4",
+      "triangles": 3388,
+      "vertices": 3819,
+      "textureSize": [
+        2048,
+        2048
+      ]
+    },
+    "tempest": {
+      "sha256": "988a54e929c838f70dee1236d103c0acbfae3ed474481ea7d84cfe001ffbf12c",
+      "triangles": 3512,
+      "vertices": 4105,
+      "textureSize": [
+        2048,
+        2048
+      ]
+    },
+    "nomad": {
+      "sha256": "92032a847042ce2f51528feae31f1eb0caca0cda7b0059732343396243fb860d",
+      "triangles": 748,
+      "vertices": 1169,
+      "textureSize": [
+        2048,
+        2048
+      ]
+    },
+    "solaris": {
+      "sha256": "8dca8f6cfc92773fc70fcce93f44c61cb4fe562f484a38b688e04aa5c5eadf9d",
+      "triangles": 4530,
+      "vertices": 4911,
+      "textureSize": [
+        2048,
+        2048
+      ]
+    },
+    "reaper": {
+      "sha256": "f817cddb967ec294a86e617a5504562bb38c53ea3516e414519893cd46353385",
+      "triangles": 2152,
+      "vertices": 2569,
+      "textureSize": [
+        2048,
+        2048
+      ]
+    },
+    "starforge": {
+      "sha256": "59d2951c8fc119e99c6f407e40cbce3197a5c946113b16d522c3083f1e566d24",
+      "triangles": 938,
+      "vertices": 1272,
+      "textureSize": [
+        2048,
+        2048
+      ]
+    },
+    "sovereign": {
+      "sha256": "43cb21ef6f498e10d0ea6aeaeefe87a4e020f46833669d445c19ec169cb8b024",
+      "triangles": 2642,
+      "vertices": 3673,
+      "textureSize": [
+        2048,
+        2048
+      ]
+    }
+  },
+  "drones": {
+    "drone:scout": {
+      "sha256": "7e3a27532b43807b375e3d3ad9cbe1f7e20d8bb723f2dcc2a3c9efb38da73a5b",
+      "triangles": 4566,
+      "vertices": 4653,
+      "sourceFile": "cyberpunk_pack/Enemy_Flying.glb",
+      "detail": "source-geometry-bevelled"
+    },
+    "drone:wasp": {
+      "sha256": "af82b5b458530b31ce9694cf0461649839e1e822a922203faa16f4c32c21e595",
+      "triangles": 4604,
+      "vertices": 4967,
+      "sourceFile": "cyberpunk_pack/Enemy_Flying_Gun.glb",
+      "detail": "source-geometry-bevelled"
+    },
+    "drone:twin": {
+      "sha256": "d3ebd094f1c571eec7da8d7c67f47c8c24b30abc9a0801ba20cdbaf2e3a371d1",
+      "triangles": 4588,
+      "vertices": 3270,
+      "sourceFile": "ultimate_space_pack/Enemy_Flying-transformed.glb",
+      "detail": "source-geometry-bevelled"
+    },
+    "drone:phantom": {
+      "sha256": "06dbb0e4f89a5a94827f522d518097db73bc00239ffa59902fdc3728ebc9e72a",
+      "triangles": 1504,
+      "vertices": 2883,
+      "sourceFile": "cyberpunk_pack/Turret_GunDouble.glb",
+      "detail": "source-geometry-bevelled"
+    },
+    "drone:guardian": {
+      "sha256": "1c731f445be1f70124d666a42fc70c7387de39ed7ad73b3af8604e3e79a8f4bd",
+      "triangles": 1318,
+      "vertices": 2490,
+      "sourceFile": "cyberpunk_pack/Turret_Cannon.glb",
+      "detail": "source-geometry-bevelled"
+    },
+    "drone:swarm": {
+      "sha256": "178d4479b08fe0cbdf953e288f5b21c8f1483c9578db5d726ad4985c7334c414",
+      "triangles": 1756,
+      "vertices": 1211,
+      "sourceFile": "ultimate_space_pack/Enemy_ExtraSmall-transformed.glb",
+      "detail": "source-geometry-bevelled"
+    }
+  },
+  "faction": {
+    "enemy:diver": {
+      "indices": 8496,
+      "vertices": 2413
+    },
+    "enemy:charger": {
+      "indices": 8592,
+      "vertices": 2460
+    },
+    "enemy:weaver": {
+      "indices": 13536,
+      "vertices": 3290
+    },
+    "enemy:sentinel": {
+      "indices": 11616,
+      "vertices": 2975
+    },
+    "enemy:lancer": {
+      "indices": 6792,
+      "vertices": 2105
+    },
+    "enemy:bulwark": {
+      "indices": 8640,
+      "vertices": 2510
+    },
+    "boss:mothership": {
+      "indices": 40800,
+      "vertices": 10651
+    },
+    "boss:dreadnought": {
+      "indices": 35088,
+      "vertices": 9640
+    },
+    "boss:leviathan": {
+      "indices": 40752,
+      "vertices": 10047
+    },
+    "boss:cryowarden": {
+      "indices": 22032,
+      "vertices": 7320
+    },
+    "boss:eclipse": {
+      "indices": 34128,
+      "vertices": 9141
+    }
+  }
+}

@@ -38,7 +38,7 @@ ENGINES = {
 }
 
 
-def import_model(path, slot, name, original_path):
+def import_model(path, slot, name, original_path, texture_size=2048):
     raw = path.read_bytes()
     magic, version, length = struct.unpack_from("<III", raw)
     assert magic == 0x46546C67 and version == 2 and length == len(raw)
@@ -95,9 +95,9 @@ def import_model(path, slot, name, original_path):
     view = doc["bufferViews"][doc["images"][0]["bufferView"]]
     start = view.get("byteOffset", 0)
     image = Image.open(io.BytesIO(buf[start:start + view["byteLength"]])).convert("RGB")
-    image.thumbnail((512, 512), Image.Resampling.LANCZOS)
+    image.thumbnail((texture_size, texture_size), Image.Resampling.LANCZOS)
     jpeg = io.BytesIO()
-    image.save(jpeg, format="JPEG", quality=85, optimize=True)
+    image.save(jpeg, format="JPEG", quality=94, subsampling=0, optimize=True)
     encode = lambda value: base64.b64encode(value).decode("ascii")
     return {
         "ship": slot, "name": name, "sourceFile": path.name,
@@ -107,6 +107,8 @@ def import_model(path, slot, name, original_path):
         "encoding": "indexed-u16le-linear-v1", "data": encode(unique.tobytes()),
         "indices": encode(inverse.astype("<u2").tobytes()),
         "texture": "data:image/jpeg;base64," + encode(jpeg.getvalue()),
+        "textureSize": list(image.size),
+        "detail": "source-resolution",
         "engines": ENGINES[slot],
     }
 
@@ -116,6 +118,7 @@ def main():
     parser.add_argument("source_dir", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--optimized-dir", type=Path, help="Optional Blender flight-budget meshes")
+    parser.add_argument("--texture-size", type=int, default=2048, help="Maximum embedded texture edge")
     args = parser.parse_args()
     models = []
     for slot, name in MODELS.items():
@@ -123,7 +126,7 @@ def main():
         path = args.optimized_dir / original.name if args.optimized_dir else original
         if not path.exists():
             path = original
-        model = import_model(path, slot, name, original)
+        model = import_model(path, slot, name, original, args.texture_size)
         if path != original:
             model["optimizedSha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
             source_bytes = original.read_bytes()
