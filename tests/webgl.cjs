@@ -165,7 +165,7 @@ module.exports = async function verifyWebGL(browser, page, source) {
       else if(asset.key.startsWith('equipment:')){t.g.player.gunType=key;t.LOADOUT.gun=key;t.render();check(w.foreground.batches['ship:'+t.g.player.ship].source.weapon===mesh,'Mounted imported weapon '+key);w.thumbnail('vanguard','#ddf6ff','#77ddff',1,0);check(w.preview.batches['ship:vanguard'].source.weapon===mesh,'Same mounted weapon mesh at home '+key);}
       check(w.thumbnail(asset.key,'#aaffee','#aaffee',1,0),'Shared combat model preview '+asset.key);
     }
-    check(!w.combat.models.some(m=>m.key.startsWith('enemy:')),'No arsenal hull is embedded as an enemy');for(const type of ['diver','charger','weaver','sentinel','lancer','bulwark']){const mesh=w.getGeometry('enemy:'+type);check(mesh.family==='rift'&&!mesh.image&&mesh.assetId==='starfall-rift:'+type,'Original enemy faction geometry '+type);}
+    check(!w.combat.models.some(m=>m.key.startsWith('enemy:')),'No arsenal hull is embedded as an enemy');for(const type of ['diver','charger','weaver','sentinel','lancer','bulwark']){const mesh=w.getGeometry('enemy:'+type);check(mesh.family==='rift'&&!mesh.image&&mesh.orbital&&mesh.assetId==='starfall-orbital:enemy:'+type,'Original enemy faction geometry '+type);}
     t.LOADOUT.gun=savedGun;t.g.player.gunType=savedGun;t.g.bombFx={x:210,y:400,t:.1,rings:[]};t.render();
     const bomb=w.combatGPU.batches.bomb,records=bomb.records;check(bomb.count===1,'Smart bomb has a live 3D body');
     t.g.bombFx.t=.5;t.render();check(bomb.count===0&&bomb.records===records,'Bomb body ends smoothly without reallocating storage');t.g.bombFx=null;

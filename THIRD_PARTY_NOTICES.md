@@ -206,3 +206,21 @@ three intersecting flame ribbons with a white-hot core, colored sheath, pressure
 bands and advected turbulence. Its Canvas fallback is an original cached
 procedural flame image. No downloaded fire footage, texture or simulation code is
 included, and the effect introduces no additional third-party license.
+
+
+# Orbital Realism original assets (build 3D-11)
+
+The six enemy hulls, five flagship hulls and separate Leviathan arm, each with a
+matching LOD, are original STARFALL geometry authored by the included Blender
+script `tools/author-orbital-fleet.py`. No downloaded model or concept-art
+projection is used for these faction hulls. Packed geometry and baked vertex
+contact shadows are embedded in `orbital-meshes`; their hashes and topology are
+recorded in `tests/orbital-mesh-lock.json`. Existing imported player, weapon and
+drone models retain their credits and licenses above.
+
+The five Orbital Realism scenery plates are original AI-generated artwork created
+for this project from its approved art direction, embedded as two WebP atlases in
+`orbital-scenes`. They are background illustrations, not third-party space
+photographs or 3D planet assets. The six-enemy and five-boss concept boards are
+references for original modeling; those pictures are not shipped as model skins.
+No external paid image-to-3D generation service was used.

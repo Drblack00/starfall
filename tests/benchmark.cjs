@@ -87,7 +87,7 @@ const fs = require("fs");
           rafMs: stats(raf),
           samples: work.length,
           freeParts: g.partsPool?.length,
-          graphics: typeof SF3D !== "undefined" ? {mode:SF3D.metrics.mode,preset:PROFILE.graphics,resolution:SF3D.metrics.resolution,draws:SF3D.metrics.draws,instances:SF3D.metrics.instances,backgroundWidth:SF3D.metrics.backgroundWidth,combatWidth:SF3D.metrics.combatWidth,playerWidth:SF3D.metrics.playerWidth,nativePlayer:SF3D.metrics.nativePlayer,ship:g.player.ship} : {mode:"canvas2d"},
+          graphics: typeof SF3D !== "undefined" ? {mode:SF3D.metrics.mode,preset:PROFILE.graphics,resolution:SF3D.metrics.resolution,draws:SF3D.metrics.draws,instances:SF3D.metrics.instances,backgroundWidth:SF3D.metrics.backgroundWidth,combatWidth:SF3D.metrics.combatWidth,playerWidth:SF3D.metrics.playerWidth,nativePlayer:SF3D.metrics.nativePlayer,ship:g.player.ship,geometryDetail:SF3D.metrics.geometryDetail,submittedTriangles:Object.values(SF3D.renderer.batches).reduce((sum,b)=>sum+b.count*b.source.count/3,0)} : {mode:"canvas2d"},
         };
       },{visualShip:process.env.STARFALL_SHIP||null,crowd:process.env.STARFALL_CROWD==="1",graphics:process.env.STARFALL_GRAPHICS||null,samples:+(process.env.STARFALL_FRAMES||600),warmup:+(process.env.STARFALL_WARMUP||120)}),
     );

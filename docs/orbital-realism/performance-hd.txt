@@ -1,0 +1,40 @@
+index.html {
+  workMs: { median: 1.4, p95: 7.2, max: 39.9 },
+  rafMs: { median: 83.4, p95: 116.7, max: 199.9 },
+  samples: 600,
+  freeParts: 112,
+  graphics: {
+    mode: 'webgl2',
+    preset: 'hd',
+    resolution: 1,
+    draws: 18,
+    instances: 442,
+    backgroundWidth: 390,
+    combatWidth: 390,
+    playerWidth: 119,
+    nativePlayer: true,
+    ship: 'interceptor',
+    geometryDetail: 'adaptive',
+    submittedTriangles: 37108
+  }
+}
+work/orbital/baseline.html {
+  workMs: { median: 1.2, p95: 4.4, max: 21.5 },
+  rafMs: { median: 83.4, p95: 116.6, max: 150 },
+  samples: 600,
+  freeParts: 112,
+  graphics: {
+    mode: 'webgl2',
+    preset: 'hd',
+    resolution: 1,
+    draws: 18,
+    instances: 418,
+    backgroundWidth: 390,
+    combatWidth: 390,
+    playerWidth: 119,
+    nativePlayer: true,
+    ship: 'interceptor',
+    geometryDetail: 'adaptive',
+    submittedTriangles: 36730
+  }
+}

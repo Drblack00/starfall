@@ -147,48 +147,48 @@
   },
   "faction": {
     "enemy:diver": {
-      "indices": 8496,
-      "vertices": 2413
+      "vertices": 10370,
+      "indices": 20724
     },
     "enemy:charger": {
-      "indices": 8592,
-      "vertices": 2460
+      "vertices": 10748,
+      "indices": 21324
     },
     "enemy:weaver": {
-      "indices": 13536,
-      "vertices": 3290
+      "vertices": 6018,
+      "indices": 15552
     },
     "enemy:sentinel": {
-      "indices": 11616,
-      "vertices": 2975
+      "vertices": 7420,
+      "indices": 16188
     },
     "enemy:lancer": {
-      "indices": 6792,
-      "vertices": 2105
+      "vertices": 10472,
+      "indices": 20928
     },
     "enemy:bulwark": {
-      "indices": 8640,
-      "vertices": 2510
+      "vertices": 19548,
+      "indices": 34800
     },
     "boss:mothership": {
-      "indices": 40800,
-      "vertices": 10651
+      "vertices": 104180,
+      "indices": 198924
     },
     "boss:dreadnought": {
-      "indices": 35088,
-      "vertices": 9640
+      "vertices": 86684,
+      "indices": 179940
     },
     "boss:leviathan": {
-      "indices": 40752,
-      "vertices": 10047
+      "vertices": 19078,
+      "indices": 35856
     },
     "boss:cryowarden": {
-      "indices": 22032,
-      "vertices": 7320
+      "vertices": 105078,
+      "indices": 168408
     },
     "boss:eclipse": {
-      "indices": 34128,
-      "vertices": 9141
+      "vertices": 33494,
+      "indices": 70356
     }
   }
 }

@@ -1,0 +1,15 @@
+{
+  "boss": {
+    "time": 28.153251236861262,
+    "score": 9246,
+    "state": "boss",
+    "boss": "mothership"
+  },
+  "clear": {
+    "time": 52.88658457019319,
+    "score": 14831,
+    "state": "bossdown"
+  },
+  "errors": [],
+  "artifacts": "work/orbital/play-complete"
+}
