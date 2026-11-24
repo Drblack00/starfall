@@ -4,6 +4,114 @@ STARFALL is an original space shooter by Drblack Ventures: five skies, five boss
 
 **Play:** https://starfall-xr9e.onrender.com
 
+## Source-detail PBR graphics (build 3D-10)
+
+The exhaust follow-up replaces hard cone faces with three intersecting, feathered
+flame ribbons: a white-hot core, colored sheath, moving turbulence, pressure bands
+and a soft tail. Ships and drones use the same six-triangle plume in inspection
+and gameplay, in the existing effect batch with no extra draw calls or instances.
+Length breathes gently and follows the existing warp envelope; reduced motion
+holds the turbulence and breathing still. The Canvas fallback receives a cached
+96×256 soft flame per color. No balance or collision values change.
+`tests/exhaust.cjs` checks actual plume pixels, four liveries, animated and reduced
+motion, WebGL2/WebGL1, shared Home/flight geometry, warp response and GPU reuse.
+
+The approved Orbital Command hub now uses the upgraded native 3D renderer in
+Home, Hangar, equipment inspection and combat. The runtime remains one
+self-contained `index.html`, with the existing icon assets and no framework,
+model-network requests or build step.
+
+- Eleven imported fleet hulls retain full source geometry and their original
+  2048×2048 textures; Nitro Blade remains the exact shared Home/flight hull.
+- Six distinct CC0 drone bodies retain source geometry with small beveled edges.
+- Six separate Rift enemies and five unique bosses gain finer curved surfaces,
+  recessed service detail and physical materials. They do not reuse player hulls.
+- Linear-light GGX shading, authored normal/ORM maps, prefiltered RGBM reflection
+  lighting and ACES tone mapping replace the flat craft-shading path.
+- **Ultra 3D** is the initial quality preset for this graphics revision. It adds
+  1.5× supersampling; HD Cinematic and Smooth remain available in Settings.
+  All three presets retain physical craft materials. Ultra submits full source
+  geometry; HD/Smooth can use prewarmed versions of the same faction models for
+  small gameplay objects. Inspection and playable ships retain full detail.
+- Instance buffers and effects remain pooled. The source-texture GPU working set
+  is bounded to 80 MiB per renderer; old fleet textures can be reuploaded when selected.
+- Gameplay balance, collision radii, spawning, rewards and the five-wave structure
+  remain unchanged. The frozen gameplay hashes are still checked by the suite.
+
+Model sources and licenses are in `THIRD_PARTY_NOTICES.md`. Optional offline
+re-authoring tools are `tools/import-fleet.py`, `tools/export-hd-drones.py`,
+`tools/embed-hd-assets.py` and `tools/make-pbr-materials.py`. They require Python,
+numpy/Pillow and Blender/DracoPy where noted; players require none of those tools.
+
+Verify while serving the repository on localhost port 8765:
+
+```sh
+python -m http.server 8765 --bind 127.0.0.1
+CHROMIUM_PATH=/usr/bin/chromium node tests/verify.cjs
+```
+
+`tests/pbr.cjs` checks exact source counts and hashes, 2K textures, actual normal,
+roughness and RGBM image data, visible roughness response, bounded texture memory
+and zero steady GPU buffer/texture allocations. Existing geometry assertions now
+check the exact source manifest rather than the retired 512px/low-poly limits.
+All collision, ability, pooling, controller, fallback and screen-navigation checks
+remain in the suite.
+
+Validation for this revision: `tests/verify.cjs` passes, including frozen balance,
+charger aim/rush and elite cues, distinct bosses, WebGL1/context recovery,
+phone navigation, and prewarmed allocation-free geometry switching. An assisted
+play-through completed the entire first assault, its naturally spawned boss fight
+and boss defeat, plus real Pause/Resume clicks, without browser errors. The test
+accelerates simulation and grants invulnerability in its test page only; it does
+not change shipped damage, spawns, boss health or rewards. Reproduce it with:
+
+```sh
+CHROMIUM_PATH=/usr/bin/chromium node tests/graphics-playthrough.cjs
+```
+
+The initial PBR upgrade was measured serially in headless Chromium using **SwiftShader
+software rendering**, at 390×844, DPR 1, HD Cinematic, with the Interceptor,
+Eclipse boss, twelve enemies, three drones and recurring explosions. Each build
+received 120 warm-up frames followed by 600 samples:
+
+| Measurement (ms) | Main `9257b44` | Initial PBR `5af430b` |
+| --- | ---: | ---: |
+| CPU update/render submission median / p95 / max | 1.0 / 2.3 / 5.3 | 1.2 / 3.3 / 9.4 |
+| rAF frame spacing median / p95 / max | 33.3 / 50.1 / 100.0 | 66.7 / 83.4 / 200.0 |
+
+The material upgrade has a measured GPU cost; this environment does **not**
+demonstrate 60fps. CPU submission timing is not GPU completion timing. Hardware
+phone testing and more GPU tuning remain necessary before claiming 60fps or
+merging a performance-sensitive release. Ultra deliberately keeps full geometry
+and 1.5× supersampling; HD and Smooth retain physical surfaces while reducing
+secondary reflections and faction geometry under pressure. The pull request is
+draft for that reason. `index.html` is approximately 30.5 MB uncompressed.
+
+A separate initial-PBR Ultra stress sample (30 warm-up + 120 measured frames, same viewport
+and workload) measured CPU median/p95/max 1.3/4.0/25.1 ms and rAF spacing
+149.9/199.9/233.3 ms, with a 585px-wide supersampled combat buffer. This is a
+shorter maximum-detail software-GPU diagnostic, not a matched 600-frame comparison.
+
+The exhaust follow-up was measured against `5af430b` in a fresh serial comparison
+with the same HD workload, 120 warm-up frames and 600 measured frames per build:
+
+| Measurement (ms) | Before exhaust upgrade | With upgraded exhaust |
+| --- | ---: | ---: |
+| CPU update/render submission median / p95 / max | 1.1 / 3.1 / 31.6 | 1.2 / 3.3 / 32.5 |
+| rAF frame spacing median / p95 / max | 66.7 / 83.4 / 266.7 | 66.7 / 100.0 / 266.6 |
+
+Both samples finished at 18 draw calls and 418 instances. Median frame spacing
+stayed the same; p95 increased in this software-GPU sample. The earlier hardware
+validation requirement remains. The complete verification suite and assisted
+wave/boss/Pause/Resume test were rerun successfully with the final exhaust shader.
+
+Reproduce the matched benchmark (save the base HTML first):
+
+```sh
+git show 9257b44:index.html > /tmp/starfall-base.html
+CHROMIUM_PATH=/usr/bin/chromium STARFALL_WIDTH=390 STARFALL_HEIGHT=844 STARFALL_DPR=1 STARFALL_GRAPHICS=hd STARFALL_SHIP=interceptor STARFALL_CROWD=1 node tests/benchmark.cjs /tmp/starfall-base.html index.html
+```
+
 ## Controls
 
 - **Move:** drag on screen (or arrow keys / WASD on desktop), or enable TILT and lean the phone

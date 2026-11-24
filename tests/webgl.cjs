@@ -1,5 +1,6 @@
 // Rendering checks used by verify.cjs; the original simulation checks stay intact.
 module.exports = async function verifyWebGL(browser, page, source) {
+  const lock=JSON.parse(require('fs').readFileSync('tests/graphics-source-lock.json','utf8'));
   console.log(await page.evaluate(async () => {
     PROFILE.graphics="hd";
     const w=t.SF3D, check=(v,msg)=>{if(!v)throw Error(msg)};
@@ -72,6 +73,7 @@ module.exports = async function verifyWebGL(browser, page, source) {
     check(Math.abs(Math.abs(w.combatGPU.batches['enemy:charger'].records[0])-1.28)<.001,'Elite charger keeps enlarged hull');
     check(w.combatGPU.batches.cube.count>0,'Elite charger armour band rendered');
     t.g.enemies=[];
+    PROFILE.graphics='ultra'; // Ultra must submit the exact authored inspection mesh.
     const kinds=['mothership','dreadnought','leviathan','cryowarden','eclipse'];
     const counts=new Set();
     for(let i=0;i<5;i++) {
@@ -98,7 +100,7 @@ module.exports = async function verifyWebGL(browser, page, source) {
     return 'WebGL: embedded mesh, LOD, shared previews, five bosses, stable instance buffers passed';
   }));
   await page.evaluate(()=>{if(Object.getPrototypeOf(t.SF3D.foreground)!==Object.getPrototypeOf(t.SF3D.preview))throw Error('Home and flight do not share the same GPU renderer class')});
-  console.log(await page.evaluate(async()=>{
+  console.log(await page.evaluate(async lock=>{
     PROFILE.graphics="hd";
     const w=t.SF3D,check=(value,message)=>{if(!value)throw Error(message)};
     await w.ready;
@@ -110,7 +112,9 @@ module.exports = async function verifyWebGL(browser, page, source) {
       const mesh=w.getGeometry('ship:'+asset.ship);names.add(mesh.assetId);
       check(mesh.source===asset.name+' / Quaternius'&&mesh.assetId==='quaternius:'+asset.name,'Imported hull replaces procedural slot '+asset.ship);
       check(mesh.count===asset.triangles*3&&mesh.indices.length===mesh.count,'Full imported triangle count '+asset.ship);
-      check(mesh.image.naturalWidth===512&&mesh.image.naturalHeight===512,'Embedded surface texture decoded '+asset.ship);
+      const expected=lock.fleet[asset.ship];
+      check(asset.sha256===expected.sha256&&asset.triangles===expected.triangles&&asset.vertices===expected.vertices,'Pinned source geometry retained '+asset.ship);
+      check(mesh.image.naturalWidth===expected.textureSize[0]&&mesh.image.naturalHeight===expected.textureSize[1],'Exact original surface texture resolution '+asset.ship);
       const packed=atob(asset.data),indices=atob(asset.indices);
       for(let n=0;n<mesh.vertices.length;n+=137){const q=packed.charCodeAt(n*2)|(packed.charCodeAt(n*2+1)<<8),channel=n%12;
         check(mesh.vertices[n]===Math.fround(asset.offsets[channel]+q*asset.steps[channel]),'Source vertex/normal/UV retained '+asset.ship);}
@@ -140,9 +144,9 @@ module.exports = async function verifyWebGL(browser, page, source) {
     gpu.add('spark',100,100,0,2,3,4,1e-9,1e-9,1e-9,'#ffffff','#ffffff',1,false);
     for(let n=0;n<16;n++)check(Math.abs(identity[n]-a.records[offset+24+n])<1e-6,'Identity transform fast path agrees with rotated path');
     t.render();
-    return 'Imported fleet: eleven unique textured hulls, exact home/flight geometry, visible pixels, reusable buffers/textures passed';
-  }));
-  console.log(await page.evaluate(async()=>{
+    return 'Imported fleet: eleven unique source-resolution hulls, exact home/flight geometry, visible pixels, reusable buffers/textures passed';
+  },lock));
+  console.log(await page.evaluate(async lock=>{
     const w=t.SF3D,check=(x,message)=>{if(!x)throw Error(message)};await w.ready;
     check(w.combat.models.length===20&&w.combat.license==='CC0-1.0','Twenty licensed combat model adaptations');
     t.startRun(1);t.g.spawnQueue=[];t.g.waveState='active';t.g.player.invuln=1000;
@@ -150,7 +154,10 @@ module.exports = async function verifyWebGL(browser, page, source) {
     for(const asset of w.combat.models){const mesh=w.getGeometry(asset.key);
       check(mesh.assetId&&mesh.count===asset.triangles*3&&mesh.indices.length===mesh.count,'Imported combat mesh '+asset.key);
       check(mesh.vertices.every(Number.isFinite)&&mesh.indices.every(i=>i<mesh.uniqueVertices),'Finite valid combat geometry '+asset.key);
-      check(mesh.count<=3660,'Fixed combat triangle budget '+asset.key);
+      if(asset.key.startsWith('drone:')){
+        const expected=lock.drones[asset.key];
+        check(asset.sha256===expected.sha256&&mesh.count===expected.triangles*3&&mesh.uniqueVertices===expected.vertices,'Exact restored source drone geometry '+asset.key);
+      }else check(mesh.count<=3660,'Fixed combat triangle budget '+asset.key);
       if(asset.key.startsWith('mount:')){const extent=[0,1,2].map(c=>{let lo=Infinity,hi=-Infinity;for(let n=c;n<mesh.vertices.length;n+=12){lo=Math.min(lo,mesh.vertices[n]);hi=Math.max(hi,mesh.vertices[n]);}return hi-lo;});check(extent[1]>extent[0]&&extent[1]>extent[2]&&mesh.count<=720,'Drone barrel points toward local nose within budget '+asset.key);}
       const key=asset.key.split(':')[1];
       if(asset.key.startsWith('enemy:')){t.g.enemies=[];const e=t.createEnemy(key,210);e.y=200;e.spawnT=0;e.elite=true;t.g.enemies.push(e);t.render();const batch=w.combatGPU.batches[asset.key];check(batch.count===1&&batch.textureReady,'Textured enemy is submitted '+key);atlas.add(batch.texture);}
@@ -165,7 +172,7 @@ module.exports = async function verifyWebGL(browser, page, source) {
     t.emitBullets(210,400,0,-700,1);t.render();check(w.combatGPU.batches.laser.count>0&&w.combatGPU.batches.laser.source===w.getGeometry('laser'),'Soft-core lasers are submitted at native combat resolution');t.g.bullets.at(-1).charged=true;t.render();check(w.combatGPU.batches.round.count>0&&w.combatGPU.batches.round.source===w.getGeometry('round'),'Charged shots retain an imported three-dimensional energy core');
     check(w.renderer.gl.getError()===0&&w.foreground.gl.getError()===0,'No combat-material GPU errors');
     return 'Combat: six original faction hulls stay separate from the arsenal, six drone bodies, three mounted weapons, smart bomb and blaster rounds reuse GPU buffers';
-  }));
+  },lock));
   const contextLoss=await page.evaluate(()=>{
     const ext=t.SF3D.renderer.gl.getExtension('WEBGL_lose_context');
     if(!ext)return false;window.testContextExt=ext;ext.loseContext();return true;

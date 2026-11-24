@@ -33,25 +33,25 @@ runtime. Original file hashes are retained in the embedded `fleet-assets` metada
 | --- | --- | ---: |
 | Phantom | Omen | 1,426 |
 | Aegis | Challenger | 1,748 |
-| Interceptor | Insurgent | 2,800 |
+| Interceptor | Insurgent | 8,292 |
 | Bulwark | Pancake | 2,688 |
-| Spectre | Executioner | 2,800 |
-| Tempest | Spitfire | 2,800 |
+| Spectre | Executioner | 3,388 |
+| Tempest | Spitfire | 3,512 |
 | Nomad | Dispatcher | 748 |
-| Solaris | Striker | 2,800 |
+| Solaris | Striker | 4,530 |
 | Reaper | Zenith | 2,152 |
 | Starforge | Bob | 938 |
 | Sovereign | Imperial | 2,642 |
 
 Modifications: normalized to the existing render coordinate system; corrected face
-winding to match outward normals; retained source topology for seven hulls;
-decimated Insurgent (8,292), Striker (4,530), Spitfire (3,512), and Executioner
-(3,388) to 2,800 triangles each using Blender 4.3.2 while retaining UV mapping;
-linearly packed vertex channels into 16-bit data with 16-bit indices; resized the
-source color textures to 512×512 JPEG; added shader paint tint, lighting and per-model
-engine anchors. Both mesh data and textures are embedded in `index.html`. Model
-names are credited here; existing STARFALL ship names, stats and career unlocks stay
-unchanged. No endorsement by Quaternius or the mirror maintainer is implied.
+winding to match outward normals; retained the full source topology for all eleven
+hulls; linearly packed vertex channels into 16-bit data with 16-bit indices;
+embedded the original 2048×2048 color textures as high-quality JPEG (quality 94,
+no chroma subsampling); added live paint tint, physical material shading and
+per-model engine anchors. Earlier 2,800-triangle/512px adaptations were replaced by
+the full source versions in build 3D-10. Both mesh data and textures are embedded in
+`index.html`. STARFALL ship names, stats and career unlocks stay unchanged. No
+endorsement by Quaternius or the mirror maintainer is implied.
 
 # Historical combat models and equipment (build 3D-5)
 
@@ -145,12 +145,12 @@ revision `0128ca510d653bb04d6d1e4885bd8890b5050b4f`; no mirror application code 
 
 | Role | Source file | Triangles | Original GLB SHA-256 |
 | --- | --- | ---: | --- |
-| drone:scout | cyberpunk_pack/Enemy_Flying.glb | 1198 | `7e3a27532b43807b375e3d3ad9cbe1f7e20d8bb723f2dcc2a3c9efb38da73a5b` |
-| drone:wasp | cyberpunk_pack/Enemy_Flying_Gun.glb | 1198 | `af82b5b458530b31ce9694cf0461649839e1e822a922203faa16f4c32c21e595` |
-| drone:twin | ultimate_space_pack/Enemy_Flying-transformed.glb | 1200 | `d3ebd094f1c571eec7da8d7c67f47c8c24b30abc9a0801ba20cdbaf2e3a371d1` |
-| drone:phantom | cyberpunk_pack/Turret_GunDouble.glb | 1199 | `06dbb0e4f89a5a94827f522d518097db73bc00239ffa59902fdc3728ebc9e72a` |
-| drone:guardian | cyberpunk_pack/Turret_Cannon.glb | 1199 | `1c731f445be1f70124d666a42fc70c7387de39ed7ad73b3af8604e3e79a8f4bd` |
-| drone:swarm | ultimate_space_pack/Enemy_ExtraSmall-transformed.glb | 1200 | `178d4479b08fe0cbdf953e288f5b21c8f1483c9578db5d726ad4985c7334c414` |
+| drone:scout | cyberpunk_pack/Enemy_Flying.glb | 4566 | `7e3a27532b43807b375e3d3ad9cbe1f7e20d8bb723f2dcc2a3c9efb38da73a5b` |
+| drone:wasp | cyberpunk_pack/Enemy_Flying_Gun.glb | 4604 | `af82b5b458530b31ce9694cf0461649839e1e822a922203faa16f4c32c21e595` |
+| drone:twin | ultimate_space_pack/Enemy_Flying-transformed.glb | 4588 | `d3ebd094f1c571eec7da8d7c67f47c8c24b30abc9a0801ba20cdbaf2e3a371d1` |
+| drone:phantom | cyberpunk_pack/Turret_GunDouble.glb | 1504 | `06dbb0e4f89a5a94827f522d518097db73bc00239ffa59902fdc3728ebc9e72a` |
+| drone:guardian | cyberpunk_pack/Turret_Cannon.glb | 1318 | `1c731f445be1f70124d666a42fc70c7387de39ed7ad73b3af8604e3e79a8f4bd` |
+| drone:swarm | ultimate_space_pack/Enemy_ExtraSmall-transformed.glb | 1756 | `178d4479b08fe0cbdf953e288f5b21c8f1483c9578db5d726ad4985c7334c414` |
 | frame:ar1 | AR_1.glb | 1200 | `0370edb381d2f298efbc9ac7dd4ec11d22d3b0137bb135df1b89a2a284af9125` |
 | frame:ar4 | AR_4.glb | 1199 | `d249dddf433609cccf01d1abe4f8f13d9eee4e1ba33a4bd9617598e6e6a0af60` |
 | frame:ar6 | AR_6.glb | 1199 | `0bb077776559d354b41834595c9c92ddd93318c1a893718ccf53e93f7e0a35ac` |
@@ -160,8 +160,8 @@ revision `0128ca510d653bb04d6d1e4885bd8890b5050b4f`; no mirror application code 
 
 Modifications: source armature poses baked for static escorts; non-visible objects
 excluded (including the importer's material-preview helper); triangulated and
-adapted to approximately 1,200 triangles; smooth curved surfaces with sharp
-mechanical edges; source materials sampled into metal/livery/glass vertex channels;
+restored to source geometry for drones, with small manufactured edge bevels;
+weapon chassis retain their approximately 1,200-triangle adaptations; source materials sampled into metal/livery/glass vertex channels;
 normalized to the existing escort/weapon extents; outward winding and indexed
 16-bit packing. The six drone slots replace their earlier Kenney hull visuals;
 abilities and numbers remain unchanged. Source turret bodies are adapted into
@@ -177,3 +177,32 @@ maintainer is implied.
 
 The new procedural action score is original project-authored synthesis; it uses
 no third-party recording, sample or composition.
+
+
+# Original PBR materials and geometry detail (build 3D-10)
+
+The 1024×1024 normal and occlusion/roughness/metallic surface maps and eight-level
+RGBM studio reflection atlas are original STARFALL assets, authored deterministically
+by `tools/make-pbr-materials.py`. They are embedded, decoded once, shared across
+models, and reused by the same physical material shader in inspection and flight.
+No stock photograph, third-party environment map, model-viewer screenshot or AI-generated
+model is included in these maps.
+
+The six Rift enemy hulls and all five unique boss hulls retain their original
+STARFALL silhouettes. Higher-resolution curved surfaces, static service panels,
+recessed radiators, optical housings and distinct boss machinery are original
+STARFALL mesh work. The three game-authored specialist player hulls and the repair,
+jammer and kamikaze drones receive matching service detail. Gameplay LODs derive
+from these same faction designs; full-detail models remain in Ultra and inspection.
+These visual changes do not alter collision radii or
+combat properties. Exact current geometry counts and original downloaded-file
+hashes are recorded in `tests/graphics-source-lock.json`.
+
+The previously discussed Drone Ball and AI-41 models are not included in this
+release. No claim of downloading or integrating those account-gated assets is made.
+
+The exhaust follow-up uses original STARFALL geometry and procedural shader work:
+three intersecting flame ribbons with a white-hot core, colored sheath, pressure
+bands and advected turbulence. Its Canvas fallback is an original cached
+procedural flame image. No downloaded fire footage, texture or simulation code is
+included, and the effect introduces no additional third-party license.
