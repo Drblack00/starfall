@@ -200,3 +200,9 @@ hashes are recorded in `tests/graphics-source-lock.json`.
 
 The previously discussed Drone Ball and AI-41 models are not included in this
 release. No claim of downloading or integrating those account-gated assets is made.
+
+The exhaust follow-up uses original STARFALL geometry and procedural shader work:
+three intersecting flame ribbons with a white-hot core, colored sheath, pressure
+bands and advected turbulence. Its Canvas fallback is an original cached
+procedural flame image. No downloaded fire footage, texture or simulation code is
+included, and the effect introduces no additional third-party license.

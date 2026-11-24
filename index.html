@@ -6248,7 +6248,7 @@
           c.beginPath(); c.ellipse(2, 6, art.span + 4, 20, 0, 0, 6.283); c.fill();
         }
         // engine flames — flicker with thrust, coloured by the thruster style, white-hot at the nozzle
-        var fl = 11 + Math.sin(t * 34) * 3 + Math.sin(t * 57) + 1 + (o.flameBoost || 0);
+        var fl = 14 + (REDUCED ? 0 : Math.sin(t * 9) * .5 + Math.sin(t * 17) * .3) + (o.flameBoost || 0);
         var engines = ENGINE_LAYOUTS[art.pods] || ENGINE_LAYOUTS.twin, thrust = o.thrust || "#3fd6ff";
         c.globalAlpha = baseA * 0.22;
         c.drawImage(lightSprite(thrust), -24, 1, 48, 58);
@@ -6531,8 +6531,8 @@
         ctx.save(); ctx.translate(dp.x, dp.y); ctx.rotate((dp.bank || 0) * 0.7); // drones bank as they chase the ship
         ctx.fillStyle = "rgba(0,0,0,0.28)";
         ctx.beginPath(); ctx.ellipse(1, 3, r + 2, r * 0.8, 0, 0, 6.283); ctx.fill();
-        // engine flame — flickers live under the cached body
-        ctx.drawImage(flameSprite(art.ring),-3.5,r*.6,7,10+Math.sin(G.time*30+idx*2)*2.2);
+        // Cached feathered plume, with restrained breathing instead of strobing.
+        ctx.drawImage(flameSprite(art.ring),-3.5,r*.6,7,12+(REDUCED?0:Math.sin(G.time*9+idx*2)*.5));
         var spr = getDroneSprite(type);
         ctx.drawImage(spr.cv, -spr.sz / 2, -spr.sz / 2, spr.sz, spr.sz);
         // rotating sensor arc + blinking beacon stay live
@@ -6767,13 +6767,21 @@
       }
       function flameSprite(color) {
         if (FLAME_CACHE[color]) return FLAME_CACHE[color];
-        var cv = document.createElement("canvas"); cv.width = 32; cv.height = 128;
-        var c = cv.getContext("2d"); c.scale(4, 4); c.translate(4, 0);
-        var g = c.createLinearGradient(0, 0, 0, 32);
-        g.addColorStop(0, "#ffffff"); g.addColorStop(0.18, color); g.addColorStop(1, "rgba(0,0,0,0)");
-        c.fillStyle = g; c.beginPath(); c.moveTo(-3, 0); c.lineTo(3, 0); c.lineTo(0, 32); c.fill();
-        c.fillStyle = "rgba(255,255,255,0.85)";
-        c.beginPath(); c.moveTo(-1.2, 0); c.lineTo(1.2, 0); c.lineTo(0, 15); c.fill();
+        // One cached soft-plume atlas per livery for the Canvas fallback. No
+        // per-frame gradients, filters or random draws from the combat RNG.
+        var cv = document.createElement("canvas"); cv.width = 96; cv.height = 256;
+        var c = cv.getContext("2d"), image = c.createImageData(96, 256), rgb = hexRgb(color).split(",").map(Number);
+        for (var y = 0; y < 256; y++) for (var x = 0; x < 96; x++) {
+          var t = y / 255, u = (x / 95 - .5) * 2, width = .7 * (1 - .68 * t);
+          var r = (u + Math.sin(t * 25) * .04 * t) / width;
+          var core = Math.exp(-r * r * 18) * (1 - t), band = .88 + .12 * Math.cos(t * 39);
+          var a = Math.exp(-r * r * 4) * Math.pow(1 - t, 1.35) * band, i = (y * 96 + x) * 4;
+          image.data[i] = rgb[0] + (255 - rgb[0]) * core;
+          image.data[i + 1] = rgb[1] + (249 - rgb[1]) * core;
+          image.data[i + 2] = rgb[2] + (233 - rgb[2]) * core;
+          image.data[i + 3] = Math.round(a * 255);
+        }
+        c.putImageData(image, 0, 0);
         return FLAME_CACHE[color] = cv;
       }
       function nebulaSprite(env) {
@@ -8556,7 +8564,19 @@
           if(parts[0]==="station") {var accent=BOSS_VISUALS[BOSS_KINDS[(+type)-1]].color;b.box(0,0,0,70,460,24,"#536a7a");for(var side of [-1,1]){b.plate([[side*20,140],[side*240,220],[side*250,180],[side*35,60]],0,16,"#8ca0a7");b.plate([[side*20,-100],[side*220,-200],[side*230,-155],[side*30,-20]],0,18,"#8ca0a7");for(var i=0;i<5;i++){b.box(side*(62+i*32),116+i*13,20,24,32,12,"#bac7c8");b.box(side*(62+i*32),121+i*13,33,16,3,2,accent,3);}}b.sphere(0,0,18,56,"#172f3d",0,24);b.box(0,0,68,18,45,3,accent,3);for(var j=0;j<12;j++)b.box(0,80+j*9,25,28,3,2,accent,3);for(var si=9;si<b.v.length;si+=12)if(b.v[si]===0)b.v[si]=12;var mesh=b.finish(key);mesh.toon=true;return mesh;}
           if(parts[0]==="boss")return factionMesh(key,type,true);
           if(key==="arm"){b.plate([[-7,18],[7,18],[8,65],[-8,65]],0,10,"#36736b",12);b.sphere(0,66,10,9,"#8fffe2",3,12);return b.finish(key);}
-          if(key==="exhaust"){for(var jet=0;jet<8;jet++){var ja=jet*Math.PI/4,jb=(jet+1)*Math.PI/4;b.tri([Math.cos(ja)*.5,0,Math.sin(ja)*.5],[0,-1,0],[Math.cos(jb)*.5,0,Math.sin(jb)*.5],"#ffffff",10);}return b.finish(key);}
+          if(key==="exhaust"){
+            // Three intersecting feathered ribbons keep depth when the ship
+            // rotates. Six triangles replace the old eight hard cone faces.
+            for(var jet=0;jet<3;jet++){
+              var angle=jet*Math.PI/3,dx=Math.cos(angle)*.75,dz=Math.sin(angle)*.75;
+              var start=b.v.length;
+              b.tri([-dx,0,-dz],[dx,0,dz],[dx,-1,dz],"#ffffff",10);
+              b.tri([-dx,0,-dz],[dx,-1,dz],[-dx,-1,-dz],"#ffffff",10);
+              var uv=[0,0,1,0,1,1,0,0,1,1,0,1];
+              for(var corner=0;corner<6;corner++){b.v[start+corner*12+10]=uv[corner*2];b.v[start+corner*12+11]=uv[corner*2+1];}
+            }
+            return b.finish(key);
+          }
           else if(key==="bullet"){var poles=[[0,0,1],[0,0,-1]],rim=[[1,0,0],[0,1,0],[-1,0,0],[0,-1,0]];for(var bi=0;bi<4;bi++){b.tri(poles[0],rim[bi],rim[(bi+1)%4],"#ffffff",3);b.tri(poles[1],rim[(bi+1)%4],rim[bi],"#ffffff",3);}}
           else if(key==="sphere")b.sphere(0,0,0,1,"#ffffff",0,16);
           else if(key==="planet"||key==="planet:hd")b.sphere(0,0,0,1,"#ffffff",5,key==="planet:hd"?48:24);
@@ -8741,14 +8761,27 @@ else if(tag>4.5){vec3 terrain=texture(uGrill,vUV).rgb;float land=smoothstep(.42,
         }
         var effectVertex=`#version 300 es
 precision highp float;layout(location=0) in vec3 aPosition;layout(location=3) in vec2 aUV;layout(location=4) in mat4 iModel;layout(location=8) in vec4 iTint;layout(location=9) in vec4 iEngine;
-uniform vec2 uSize;uniform vec2 uOffset;uniform float uCamera;out vec2 fxUV;out vec4 fxColor;out float localY;
-void main(){vec4 p=iModel*vec4(aPosition,1.);fxUV=aUV;fxColor=vec4(iEngine.rgb,min(iTint.a,1.));localY=aPosition.y;float z=p.z-uCamera;gl_Position=vec4(p.x*2.*uCamera/uSize.x+uOffset.x*2.*(-z)/uSize.x,p.y*2.*uCamera/uSize.y+uOffset.y*2.*(-z)/uSize.y,-1.0008*z-2.0008,-z);}`, effectFragment=`#version 300 es
-precision highp float;in vec2 fxUV;in vec4 fxColor;in float localY;uniform float effectType;out vec4 result;
+uniform vec2 uSize;uniform vec2 uOffset;uniform float uCamera;uniform float uEffectTime;out vec2 fxUV;out vec4 fxColor;out float fxPhase;
+void main(){vec4 p=iModel*vec4(aPosition,1.);fxUV=aUV;fxColor=vec4(iEngine.rgb,min(iTint.a,1.));fxPhase=uEffectTime+iModel[3].x*.017+iModel[3].y*.011;float z=p.z-uCamera;gl_Position=vec4(p.x*2.*uCamera/uSize.x+uOffset.x*2.*(-z)/uSize.x,p.y*2.*uCamera/uSize.y+uOffset.y*2.*(-z)/uSize.y,-1.0008*z-2.0008,-z);}`, effectFragment=`#version 300 es
+precision highp float;in vec2 fxUV;in vec4 fxColor;in float fxPhase;uniform float effectType;out vec4 result;
 void main(){
 #ifdef SF_CINEMATIC
 if(effectType>3.5){vec2 p=(fxUV-.5)*2.;float f=max(0.,1.-dot(p,p));float n=.5+.25*sin(p.x*11.+sin(p.y*9.))+.15*sin(p.y*23.+p.x*17.);result=vec4(fxColor.rgb,fxColor.a*f*f*n);return;}
 #endif
-if(effectType<.5){vec2 p=(fxUV-.5)*2.;float f=max(0.,1.-dot(p,p));result=vec4(fxColor.rgb*1.4,fxColor.a*f*f*f);}else if(effectType<1.5){vec2 p=abs((fxUV-.5)*2.);float s=1.-smoothstep(.12,1.,p.x),c=1.-smoothstep(.7,1.,p.y),h=1.-smoothstep(.04,.26,p.x);result=vec4(mix(fxColor.rgb,vec3(1.),h*.9),fxColor.a*s*s*c);}else if(effectType<2.5){result=vec4(fxColor.rgb*1.6,fxColor.a);}else{float f=clamp(-localY,0.,1.);result=vec4(mix(vec3(1.),fxColor.rgb,smoothstep(0.,.35,f))*1.4,fxColor.a*(1.-smoothstep(.35,1.,f)));}}`;
+if(effectType<.5){vec2 p=(fxUV-.5)*2.;float f=max(0.,1.-dot(p,p));result=vec4(fxColor.rgb*1.4,fxColor.a*f*f*f);}else if(effectType<1.5){vec2 p=abs((fxUV-.5)*2.);float s=1.-smoothstep(.12,1.,p.x),c=1.-smoothstep(.7,1.,p.y),h=1.-smoothstep(.04,.26,p.x);result=vec4(mix(fxColor.rgb,vec3(1.),h*.9),fxColor.a*s*s*c);}else if(effectType<2.5){result=vec4(fxColor.rgb*1.6,fxColor.a);}else{
+  float t=clamp(fxUV.y,0.,1.),x=(fxUV.x-.5)*2.;
+  float flow=sin(t*31.-fxPhase*14.+x*4.);
+  float curl=sin(t*19.-fxPhase*9.)*.07*t+flow*.035*t;
+  float diamonds=pow(max(0.,cos(t*40.-sin(fxPhase*2.)*.22)),8.);
+  float radius=(.76+.10*sin(t*5.)+.10*diamonds*(1.-t))*(1.-.82*t);
+  float r=abs(x+curl)/max(.035,radius);
+  float sheath=1.-smoothstep(.16,1.,r),core=1.-smoothstep(.02,.48,r);
+  float tail=(1.-smoothstep(.48,1.,t))*(1.-t*.35);
+  float hot=clamp(core*(1.-t*.75)+diamonds*.24*(1.-t),0.,1.);
+  vec3 fire=mix(fxColor.rgb*1.3,vec3(1.,.98,.92),hot);
+  float density=(sheath*.64+core*.25)*(1.+flow*.07+diamonds*.1);
+  result=vec4(fire,fxColor.a*clamp(density,0.,1.)*tail*.7);
+}}`;
         var toonVertex=`#version 300 es
 precision highp float;layout(location=0) in vec3 aPosition;layout(location=1) in vec3 aNormal;layout(location=2) in vec4 aMaterial;layout(location=4) in mat4 iModel;layout(location=8) in vec4 iTint;layout(location=9) in vec4 iEngine;uniform vec4 uMist;uniform float uMistTime;uniform vec4 uBattle;uniform vec3 uBattleColor;uniform vec2 uSize;uniform vec2 uOffset;uniform float uCamera;out mediump vec4 toonColor;
 void main(){vec4 p=iModel*vec4(aPosition,1.);vec3 N=normalize(mat3(iModel)*(aNormal*vec3(iModel[0].w,iModel[1].w,iModel[2].w)));vec3 L=vec3(-.408,.408,.816);float d=max(0.,dot(N,L));float fill=max(0.,dot(N,vec3(.62,-.48,.62)));float h=max(0.,dot(N,vec3(-.22,.23,.948)));float h2=h*h,h4=h2*h2,h8=h4*h4,spec=h8*h8;float rim=1.-abs(N.z);rim=rim*rim;
@@ -8786,7 +8819,7 @@ precision mediump float;in mediump vec4 toonColor;out vec4 result;void main(){re
           this.toonProgram=program(gl,toonVertex,toonFragment,this.legacy);
           this.toonBattle=gl.getUniformLocation(this.toonProgram,"uBattle");this.toonBattleColor=gl.getUniformLocation(this.toonProgram,"uBattleColor");
           this.toonMist=gl.getUniformLocation(this.toonProgram,"uMist");this.toonMistTime=gl.getUniformLocation(this.toonProgram,"uMistTime");this.toonSize=gl.getUniformLocation(this.toonProgram,"uSize");this.toonOffset=gl.getUniformLocation(this.toonProgram,"uOffset");this.toonCamera=gl.getUniformLocation(this.toonProgram,"uCamera");
-          this.effectSize=gl.getUniformLocation(this.effects,"uSize");this.effectOffset=gl.getUniformLocation(this.effects,"uOffset");this.effectCamera=gl.getUniformLocation(this.effects,"uCamera");this.effectType=gl.getUniformLocation(this.effects,"effectType");
+          this.effectSize=gl.getUniformLocation(this.effects,"uSize");this.effectOffset=gl.getUniformLocation(this.effects,"uOffset");this.effectCamera=gl.getUniformLocation(this.effects,"uCamera");this.effectType=gl.getUniformLocation(this.effects,"effectType");this.effectTime=gl.getUniformLocation(this.effects,"uEffectTime");
           var tex=this.grill=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,1,1,0,gl.RGBA,gl.UNSIGNED_BYTE,new Uint8Array([180,180,180,255]));gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,this.legacy?gl.CLAMP_TO_EDGE:gl.REPEAT);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,this.legacy?gl.CLAMP_TO_EDGE:gl.REPEAT);
           var image=new Image();image.onload=function(){if(gl.isContextLost())return;gl.bindTexture(gl.TEXTURE_2D,tex);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,image);};image.src=document.getElementById("nitro-grill").textContent.trim();
           this.background=program(gl,`#version 300 es\nprecision highp float;layout(location=0) in vec2 aPosition;out vec2 uv;void main(){uv=aPosition*.5+.5;gl_Position=vec4(aPosition,.999,1);}`,`#version 300 es\nprecision highp float;in vec2 uv;uniform vec3 top;uniform vec3 bot;uniform float clock;uniform sampler2D uCloud;out vec4 result;void main(){vec3 cloud=texture(uCloud,uv*1.3+vec2(clock*.001,clock*.002)).rgb;vec3 glow=mix(vec3(.055,.12,.24),top*3.,.5);vec3 col=mix(bot,top,uv.y)+glow*(cloud.r*.25+cloud.g*.45);float vignette=1.-length((uv-.5)*.7);result=vec4(col*vignette,1.);}`,this.legacy);
@@ -8807,7 +8840,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
         }
         var MATERIAL_UNIFORMS={pbr:"uPBR",materialTier:"uMaterialTier",surface:"uSurface",size:"uSize",offset:"uOffset",camera:"uCamera",shadow:"uShadow",time:"uTime",grillLocation:"uGrill",textured:"uTextured",battle:"uBattle",battleColor:"uBattleColor",finish:"uFinish",mist:"uMist"};
         var TOON_UNIFORMS={toonBattle:"uBattle",toonBattleColor:"uBattleColor",toonMist:"uMist",toonMistTime:"uMistTime",toonSize:"uSize",toonOffset:"uOffset",toonCamera:"uCamera"};
-        var EFFECT_UNIFORMS={effectSize:"uSize",effectOffset:"uOffset",effectCamera:"uCamera",effectType:"effectType"};
+        var EFFECT_UNIFORMS={effectSize:"uSize",effectOffset:"uOffset",effectCamera:"uCamera",effectType:"effectType",effectTime:"uEffectTime"};
         GPU.prototype.surfaceTexture=function(image,unit,repeat){
           var gl=this.gl,texture=gl.createTexture();
           gl.activeTexture(gl.TEXTURE0+unit);gl.bindTexture(gl.TEXTURE_2D,texture);
@@ -8930,7 +8963,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
         var EFFECT_TYPES={fog:4,glow:0,laser:1,spark:1,round:2,bullet:2,core:2,ring:2,exhaust:3};
         GPU.prototype.flush=function(time,shadows){
           this.setCinematic(this.isPreview?!!(this.batches.planet&&this.batches.planet.count):!!this.cinematicSky);
-          var gl=this.gl,boundTexture=this.grill,boundMaterial=false,boundBlend=true;gl.useProgram(this.toonProgram);gl.uniform2f(this.toonSize,(this.cropWidth||W)/(this.zoom||1),(this.cropHeight||(this.isPreview?W:H))/(this.zoom||1));gl.uniform2f(this.toonOffset,this.offsetX||0,this.offsetY||0);gl.uniform1f(this.toonCamera,1050);gl.useProgram(this.effects);gl.uniform2f(this.effectSize,(this.cropWidth||W)/(this.zoom||1),(this.cropHeight||(this.isPreview?W:H))/(this.zoom||1));gl.uniform2f(this.effectOffset,this.offsetX||0,this.offsetY||0);gl.uniform1f(this.effectCamera,1050);gl.useProgram(this.program);gl.uniform2f(this.size,(this.cropWidth||W)/(this.zoom||1),(this.cropHeight||(this.isPreview?W:H))/(this.zoom||1));gl.uniform2f(this.offset,this.offsetX||0,this.offsetY||0);gl.uniform1f(this.camera,1050);gl.uniform1f(this.time,REDUCED?0:time);if(this.cinematic){var mist=typeof DeckD!=="undefined"?DeckD:null,mc=mist?mist.colors[G.sector-1]:null;gl.uniform4f(this.mist,mc?mc[0]:0,mc?mc[1]:0,mc?mc[2]:0,this.isPreview||!mist?0:(REDUCED?.05:.26));gl.useProgram(this.toonProgram);gl.uniform4f(this.toonMist,mc?mc[0]:0,mc?mc[1]:0,mc?mc[2]:0,this.isPreview||!mist?0:(REDUCED?.05:.26));gl.uniform1f(this.toonMistTime,REDUCED?0:time);gl.useProgram(this.program);}gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.grill);gl.uniform1i(this.grillLocation,0);gl.uniform1f(this.textured,0);gl.uniform1f(this.materialTier,this.isPreview||PROFILE.graphics==="ultra"||PROFILE.graphics==="hd"&&!this.craftLod?1:0);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
+          var gl=this.gl,boundTexture=this.grill,boundMaterial=false,boundBlend=true;gl.useProgram(this.toonProgram);gl.uniform2f(this.toonSize,(this.cropWidth||W)/(this.zoom||1),(this.cropHeight||(this.isPreview?W:H))/(this.zoom||1));gl.uniform2f(this.toonOffset,this.offsetX||0,this.offsetY||0);gl.uniform1f(this.toonCamera,1050);gl.useProgram(this.effects);gl.uniform2f(this.effectSize,(this.cropWidth||W)/(this.zoom||1),(this.cropHeight||(this.isPreview?W:H))/(this.zoom||1));gl.uniform2f(this.effectOffset,this.offsetX||0,this.offsetY||0);gl.uniform1f(this.effectCamera,1050);gl.uniform1f(this.effectTime,REDUCED?0:time);gl.useProgram(this.program);gl.uniform2f(this.size,(this.cropWidth||W)/(this.zoom||1),(this.cropHeight||(this.isPreview?W:H))/(this.zoom||1));gl.uniform2f(this.offset,this.offsetX||0,this.offsetY||0);gl.uniform1f(this.camera,1050);gl.uniform1f(this.time,REDUCED?0:time);if(this.cinematic){var mist=typeof DeckD!=="undefined"?DeckD:null,mc=mist?mist.colors[G.sector-1]:null;gl.uniform4f(this.mist,mc?mc[0]:0,mc?mc[1]:0,mc?mc[2]:0,this.isPreview||!mist?0:(REDUCED?.05:.26));gl.useProgram(this.toonProgram);gl.uniform4f(this.toonMist,mc?mc[0]:0,mc?mc[1]:0,mc?mc[2]:0,this.isPreview||!mist?0:(REDUCED?.05:.26));gl.uniform1f(this.toonMistTime,REDUCED?0:time);gl.useProgram(this.program);}gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.grill);gl.uniform1i(this.grillLocation,0);gl.uniform1f(this.textured,0);gl.uniform1f(this.materialTier,this.isPreview||PROFILE.graphics==="ultra"||PROFILE.graphics==="hd"&&!this.craftLod?1:0);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.enable(gl.BLEND);gl.blendFuncSeparate(gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA,gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
           if(!this.isPreview&&typeof DeckD!=="undefined"&&DeckD.photo){
             var co=Math.cos(DeckD.yaw),si=Math.sin(DeckD.yaw),cp=Math.cos(DeckD.pitch),sp=Math.sin(DeckD.pitch),px=G.player.x-W/2,py=H/2-G.player.y;
             for(var orbitKey in this.batches){var ob=this.batches[orbitKey],oa=ob.records;for(var oi=0;oi<ob.count;oi++)for(var col=0;col<4;col++){
@@ -9012,10 +9045,10 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
           if(typeof BatchB!=="undefined"&&BatchB&&G.mode!=="playing")attached(g,body,0,-7-BatchB.canopyOpen*4,9+BatchB.canopyOpen*7,"cube",6,10,1,yaw,pitch+BatchB.canopyOpen*.8,roll,"#72dfff",engine,.7);
           var imported=geometry["ship:"+model],anchors=imported&&imported.engines;
           var layout=model==="vanguard"?NITRO_ENGINES:(ENGINE_LAYOUTS[(SHIP_ART[model]||SHIP_ART.vanguard).pods]||ENGINE_LAYOUTS.twin);
-          var flicker=REDUCED?1:1+Math.sin(time*43)*.12;
+          var flicker=REDUCED?1:1+Math.sin(time*9)*.035+Math.sin(time*17)*.02;
           for(var j=0;j<(anchors?anchors.length:layout.length);j++){
             var ex=anchors?anchors[j][0]:layout[j],ey=anchors?anchors[j][1]:model==="vanguard"?-24:-19,ez=anchors?anchors[j][2]:4;
-            attached(g,body,ex,ey,ez,"exhaust",3.2*scale,13*scale*flicker*(1+(G.warpW||0)*2),3.2*scale,yaw,pitch,roll,engine,engine,1);
+            attached(g,body,ex,ey,ez,"exhaust",3.2*scale,18*scale*flicker*(1+(G.warpW||0)*2),3.2*scale,yaw,pitch,roll,engine,engine,Math.min(1,alpha));
             attached(g,body,ex,ey-4,ez+3,"glow",16*scale,16*scale,1,0,0,0,engine,engine,alpha*.24);
           }
           return body;
@@ -9061,7 +9094,7 @@ precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D 
         function droneCraft(g,type,x,y,scale,yaw,pitch,roll,accent){
           roll=roll||0;yaw=yaw||0;pitch=pitch||0;
           var rig=getDroneRig(type),body=g.add("drone:"+type,x,y,3,scale,scale,scale,yaw,pitch,roll,accent,accent,1,true,rig);
-          for(var side=-1;side<=1;side+=2)attached(g,body,side*3,-7,1,"exhaust",1.2*scale,(5+Math.abs(roll)*12)*scale,1.2*scale,yaw,pitch,roll,accent,accent,.7);
+          for(var side=-1;side<=1;side+=2)attached(g,body,side*3,-7,1,"exhaust",1.2*scale,(6.2+Math.abs(roll)*12)*scale,1.2*scale,yaw,pitch,roll,accent,accent,.8);
           var tier=typeof BatchB!=="undefined"?droneTier(type):1, tm=REDUCED?0:G.time*22;
           for(var side=-1;side<=1;side+=2){attached(g,body,side*9,0,7,"cube",8,1,1,yaw+tm,pitch,roll,accent,accent,1);attached(g,body,side*8,3,8,"glow",2,2,2,0,0,0,accent,accent,REDUCED?.7:.4+Math.sin(G.time*4+side)*.3);}
           for(var plate=1;plate<tier;plate++)attached(g,body,0,plate*4,8,"cube",9,2,2,yaw,pitch,roll,"#d9edff",accent,1);
