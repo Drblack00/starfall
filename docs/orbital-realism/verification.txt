@@ -1,0 +1,95 @@
+Frozen balance: combat/economy functions and data blocks match documented shipped-byte baselines.
+[
+  'fast projectile sweeps through enemy',
+  'overlapping piercing bolts each hit once',
+  'enemy projectile swept player collision',
+  'pool resets cryo flag',
+  'stale bomb reference cannot hit recycled bullet',
+  'mothership wind-up contact',
+  'dreadnought wind-up contact',
+  'leviathan wind-up contact',
+  'cryowarden wind-up contact',
+  'eclipse wind-up contact',
+  'pool resets particle flags',
+  'Lancer eases out of its spawn portal',
+  'Explosion afterglow is a delayed pooled particle',
+  'Recycled particles clear the new bloom flag',
+  'vanguard home and flight share the exact cached hull',
+  'phantom home and flight share the exact cached hull',
+  'aegis home and flight share the exact cached hull',
+  'interceptor home and flight share the exact cached hull',
+  'bulwark home and flight share the exact cached hull',
+  'spectre home and flight share the exact cached hull',
+  'tempest home and flight share the exact cached hull',
+  'nomad home and flight share the exact cached hull',
+  'solaris home and flight share the exact cached hull',
+  'reaper home and flight share the exact cached hull',
+  'starforge home and flight share the exact cached hull',
+  'sovereign home and flight share the exact cached hull',
+  'gunship home and flight share the exact cached hull',
+  'wraith home and flight share the exact cached hull',
+  'carrier home and flight share the exact cached hull',
+  'Station 1 reuses its texture',
+  'Station 2 reuses its texture',
+  'Station 3 reuses its texture',
+  'Station 4 reuses its texture',
+  'Station 5 reuses its texture',
+  'Five different orbital environments',
+  'diver uses a cached material',
+  'charger uses a cached material',
+  'weaver uses a cached material',
+  'sentinel uses a cached material',
+  'lancer uses a cached material',
+  'bulwark uses a cached material',
+  'mothership armor texture is cached',
+  'dreadnought armor texture is cached',
+  'leviathan armor texture is cached',
+  'cryowarden armor texture is cached',
+  'eclipse armor texture is cached',
+  'Boss armor geometry stays distinct',
+  'power engineering preview is cached',
+  'cannon engineering preview is cached',
+  'gun:pulse equipment texture is reused',
+  'gun:scatter equipment texture is reused',
+  'gun:lance equipment texture is reused',
+  'Cannon previews retain distinct barrel arrangements',
+  'Laser texture is reused',
+  'Projectile resolves its texture on first draw',
+  'Pooled projectile clears cached visual state',
+  'Steady rendering creates no new material-cache entries',
+  'mothership has its own HUD signature',
+  'mothership 20-second simulation',
+  'dreadnought has its own HUD signature',
+  'dreadnought 20-second simulation',
+  'leviathan has its own HUD signature',
+  'leviathan 20-second simulation',
+  'cryowarden has its own HUD signature',
+  'cryowarden 20-second simulation',
+  'eclipse has its own HUD signature',
+  'eclipse 20-second simulation',
+  'five distinct boss kinds'
+]
+Combo pop restarts during and after animation without allocating another animation
+Confirmation and screen transitions survive rapid navigation
+Phone HUD and touch checks passed at 320px
+Phone HUD and touch checks passed at 375px
+Phone HUD and touch checks passed at 430px
+WebGL: embedded mesh, LOD, shared previews, five bosses, stable instance buffers passed
+Imported fleet: eleven unique source-resolution hulls, exact home/flight geometry, visible pixels, reusable buffers/textures passed
+Combat: six original faction hulls stay separate from the arsenal, six drone bodies, three mounted weapons, smart bomb and blaster rounds reuse GPU buffers
+WebGL context loss and recovery passed
+WebGL2 and stream decompression disabled: native WebGL1 Nitro flight, preview, five bosses and allocation-free uploads passed
+WebGL2 shader startup failure recovers to native WebGL1 3D
+Explicit phone fallback reason and retry into real Nitro 3D passed
+Preview failure is bounded and keeps 3D gameplay active
+Factions: six unique non-arsenal enemies, five distinct bosses, physical material/blend paths, native battle and cached scenery passed
+Orbital: exact authored meshes, contact-shadow pixel response, five cached skies, eased boss groups, 32-bit rendering and stable GPU pools passed
+Orbital: WebGL1 without 32-bit index extension retains native 3D with prewarmed same-design LODs
+PBR: exact source meshes, original 2K textures, real normal/ORM/RGBM maps, visible roughness response, bounded GPU texture cache, prewarmed gameplay LODs and zero steady GPU allocations passed
+Exhaust: WebGL2/animated soft core/sheath/tail, four liveries, shared ship/drone geometry, warp response and pooled storage passed
+Exhaust: WebGL1/reduced-motion soft core/sheath/tail, four liveries, shared ship/drone geometry, warp response and pooled storage passed
+Presentation: home ends at Play, native GPU menu/flight identity, zero steady preview copies, accessible selection, Enter/Escape, organized systems, live weapon/drone views and pause/resume passed
+HD: six new drone bodies, nine persistent cosmetic blaster chassis, exact mounted/viewed models, HD combat, native Smooth-mode combat and phase-aligned action audio passed
+Inspection: real mesh rotation/tilt/pan/zoom, eased reset, keyboard, pinch, ship selection and equipment navigation passed
+Reduced-motion presentation checks passed
+No browser runtime errors

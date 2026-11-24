@@ -1,0 +1,502 @@
+--- main-0a0200b/index.html (embedded assets omitted)
++++ orbital/index.html (embedded assets omitted)
+@@ -2337,6 +2337,141 @@
+ #stage #scr-start .ref-shortcuts{width:100%}
+ #stage #scr-start .ref-shortcuts svg{fill:none}
+ #stage .screen .meta-key{display:block}
++</style><style id="orbital-realism">
++/* Orbital Realism: the approved flight deck, with the native shared ship surface. */
++#stage #scr-start{background:#030b14;color:#eaf3f8}
++#stage #scr-start #reference-backdrop{opacity:1;animation:orbitalDrift 28s ease-in-out infinite alternate}
++#stage #scr-start .ck-scroll{display:block;position:absolute;inset:0;padding:0!important;overflow:hidden}
++#stage #scr-start .ck-topbar{position:absolute;top:3.5%;left:6%;right:6%;height:24px;min-height:0}
++#stage #scr-start .deck-location{display:none}
++#stage #scr-start .ck-wallet{width:100%;display:flex;justify-content:space-between}
++#stage #scr-start .ck-wal{padding:0;border:0;background:none;box-shadow:none;gap:4px;color:#ddeaf2;font:500 12px Rajdhani,sans-serif;letter-spacing:.08em}
++#stage #scr-start .coin,#stage #scr-start .core{display:none}
++#stage #scr-start .ck-wal small{font:400 9px Rajdhani,sans-serif;opacity:.7}
++#stage #scr-start .ref-brand{position:absolute;top:10%;left:6%;right:6%;height:70px;min-height:0;display:block}
++#stage #scr-start .ref-brand small{font-size:9px;letter-spacing:.14em;color:#adc3d1}
++#stage #scr-start .ref-brand strong{font:500 clamp(26px,6.4vw,35px) Rajdhani,sans-serif;letter-spacing:.23em;color:#f2f7fa;text-shadow:0 0 22px #b9daff22}
++#stage #scr-start .deck-profile{position:absolute;right:0;top:-5px;min-height:30px;max-width:90px;border:0;background:#07132255;padding:4px 7px;box-shadow:none}
++#stage #scr-start .deck-profile:before{display:none}
++#stage #scr-start .deck-profile .hp-name{font-size:9px;letter-spacing:.06em}
++#stage #scr-start .deck-profile small{display:none}
++#stage #scr-start .ref-ship{position:absolute;top:20%;left:0;right:0;height:49%;min-height:0;max-height:none;border:0;box-shadow:none;background:none;border-radius:0;overflow:visible;display:block}
++#stage #scr-start .ref-ship:after{display:none}
++#stage #scr-start .ref-ship>header{position:absolute;right:6%;top:0;left:auto;height:24px;min-height:0;border:0;background:none;padding:0;z-index:4}
++#stage #scr-start .ref-ship>header h2,#stage #scr-start .ref-ship>header>button{display:none}
++#stage #scr-start .graphics-panel{margin:0}
++#stage #scr-start .ref-ship-body{position:relative;display:block;height:100%;min-height:0}
++#stage #scr-start .ref-ship .ck-stage{position:absolute;inset:0 0 16%;min-height:0;background:none;border:0;overflow:visible}
++#stage #scr-start .ref-ship .ck-stage:before,#stage #scr-start .ref-ship .ck-stage:after,#stage #scr-start .orbit-axis,#stage #scr-start .deck-mark,#stage #scr-start .ck-pad,#stage #scr-start .ck-haze,#stage #scr-start .hero-glow,#stage #scr-start .hero-puff{display:none}
++#stage #scr-start .ck-padwrap,#stage #scr-start .hero-zone,#stage #scr-start .hero,#stage #scr-start #hero-ship{position:absolute;inset:0;width:100%;height:100%;max-width:none;max-height:none;min-height:0;transform:none;animation:none;overflow:visible}
++#stage #scr-start .ref-ship-info{position:absolute;top:82%;left:6%;right:6%;height:auto;padding:0;display:block}
++#stage #scr-start .ref-ship-info:before,#stage #scr-start .flight-kicker{display:none}
++#stage #scr-start .home-panel{padding:0;background:none;box-shadow:none;border:0}
++#stage #scr-start .glance-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
++#stage #scr-start .glance-cell{margin:0;padding:0;border:0}
++#stage #scr-start .glance-cell:first-child{grid-column:1/-1;padding:0;border:0}
++#stage #scr-start .glance-k{display:none}
++#stage #scr-start .glance-cell:first-child .glance-v{font:500 26px/1.1 Rajdhani,sans-serif;letter-spacing:.14em;color:#edf5fa;max-width:74%}
++#stage #scr-start .glance-cell:not(:first-child) .glance-v{font-size:10px;font-weight:400;color:#b9d0dc;letter-spacing:.10em}
++#stage #scr-start .glance-cell:not(:first-child) .glance-v:before{display:none}
++#stage #scr-start .glance-cell:nth-child(2) .glance-v:after{content:" BLASTER"}
++#stage #scr-start .glance-cell:nth-child(3) .glance-v:after{content:" WING"}
++#stage #scr-start .ref-upgrade{position:absolute;right:0;top:0;min-height:30px;min-width:62px;width:auto;padding:5px 6px;font:500 9px Rajdhani,sans-serif;letter-spacing:.05em;border:1px solid #b9d8e326;border-radius:5px;background:#07142177;color:#c2dce9}
++#stage #scr-start .ref-upgrade:after{display:none}
++#stage #scr-start .ref-shortcuts{position:absolute;bottom:16%;left:6%;right:6%;width:auto;gap:7px}
++#stage #scr-start .ref-shortcuts button:nth-child(n){height:60px;min-height:60px;gap:6px;padding:7px 0;background:#081521b3;border:1px solid #bfd9e12c;border-radius:8px;box-shadow:inset 0 1px #e6f5ff08}
++#stage #scr-start .ref-shortcuts button:before,#stage #scr-start .ref-shortcuts button:after,#stage #scr-start .ref-shortcuts small{display:none}
++#stage #scr-start .ref-shortcuts button>span{width:23px;height:23px;padding:0;border:0;background:none}
++#stage #scr-start .ref-shortcuts .nav-icon{stroke:#c4e5f5!important;filter:grayscale(1) brightness(1.4);stroke-width:1}
++#stage #scr-start .ref-shortcuts b{font:500 10px Rajdhani,sans-serif;letter-spacing:.04em;color:#e1edf4}
++#stage #scr-start .ref-mission{position:absolute;bottom:9.4%;left:6%;right:6%;height:31px;border:0;border-radius:0;box-shadow:none;background:none;overflow:visible}
++#stage #scr-start .ref-mission:after,#stage #scr-start .ref-mission>header,#stage #scr-start .ref-world{display:none}
++#stage #scr-start .ref-mission-body{display:block;padding:0;min-height:0;height:100%}
++#stage #scr-start .ref-mission-copy{display:flex;align-items:center;height:100%;gap:6px;padding:0}
++#stage #scr-start .ref-mission-copy .bp-k{display:none}
++#stage #scr-start .ref-mission-copy .bp-v{font:500 11px Rajdhani,sans-serif;letter-spacing:.09em;color:#e0edf4;max-width:72%}
++#stage #scr-start .ref-mission-copy p{display:none}
++#stage #scr-start .ref-mission-copy button{margin:0 0 0 auto;min-height:31px;font:500 9px Rajdhani,sans-serif;letter-spacing:.02em;color:#a5d3e7}
++#stage #scr-start .ck-launchwrap{position:absolute;left:6%;right:6%;bottom:3%;height:45px;padding:0;margin:0}
++#stage #scr-start #btn-play{height:45px;min-height:45px;border:1px solid #d9f6ff90;border-radius:8px;background:linear-gradient(110deg,#c5e8f1,#effaff);box-shadow:0 4px 25px #81c9ed1a;color:#102632;font:500 18px Rajdhani,sans-serif;letter-spacing:.22em}
++#stage #scr-start #btn-play:before{display:none}
++#stage #scr-start #btn-play:after{right:24px;width:7px;height:7px;border-color:#133342}
++/* Compact combat HUD. All original actions and information remain available. */
++#stage .me-top{top:16px;left:16px;right:16px;align-items:flex-start}
++#stage .me-scorewrap{padding:0;min-width:0;width:auto;height:auto;min-height:0;background:none;border:0;border-radius:0;box-shadow:none;backdrop-filter:none}
++#stage #hud-score{font:500 24px/1 Rajdhani,sans-serif;letter-spacing:.04em;text-shadow:0 1px 10px #0008}
++#stage #hud-wave-v{font:500 10px/1.6 Rajdhani,sans-serif;letter-spacing:.12em;margin-top:5px;color:#b9cfda}
++#stage #btn-pause{width:44px;height:44px;min-height:44px;min-width:44px;border-radius:50%;border:1px solid #b9dce638;background:#06121c80;box-shadow:none}
++#stage #btn-pause svg{width:16px;height:16px}
++#stage #me-hull{left:16px;bottom:17px;width:88px;min-height:0;padding:0;background:none;border:0;border-radius:0;box-shadow:none;backdrop-filter:none}
++#stage #me-hull:before{font-size:8px;letter-spacing:.12em;margin-bottom:5px;color:#a6c4d5}
++#stage #me-hull-row{gap:5px;font-size:11px;line-height:1.4}
++#stage #me-heart{font-size:11px}
++#stage #me-hull-track{width:74px;height:4px;margin-top:6px;border:0;background:#c2e6e91b;border-radius:2px}
++#stage #me-hull-fill{background:#adf3e3;box-shadow:0 0 5px #a5ebdf22}
++#stage #combo-box{top:18px!important;left:33%!important;right:auto;bottom:auto;transform:none!important;padding:0;min-width:0;background:none;border:0;border-radius:0;box-shadow:none}
++#stage #hud-combo{font:500 12px Rajdhani,sans-serif;letter-spacing:.03em;color:#c2e8f5;text-shadow:0 0 7px #001a28}
++#stage #combo-track{display:none}
++#stage #wave-rail{top:21px;left:49%;right:74px;width:auto;height:28px;transform:none}
++#stage #wave-rail-track{top:22px;height:2px;border:0;background:#cfeaff19}
++#stage #wave-rail-label{font:500 9px Rajdhani,sans-serif;letter-spacing:.05em;line-height:1.4;text-align:right;color:#b8d5e3}
++#stage #bossbar{top:70px;left:16px;right:16px;width:auto;max-width:none;height:40px;padding:7px 10px;border:1px solid #b9dce626;border-radius:5px;background:#03111bc7;box-shadow:none;backdrop-filter:none;transform:none;text-shadow:0 1px 3px #000}
++#stage:has(#bossbar.on) #wave-rail{display:none}
++#stage #bossbar .boss-heading{margin-bottom:7px;padding:0;background:none}
++#stage #bossname{font:500 11px Rajdhani,sans-serif;letter-spacing:.09em}
++#stage #boss-health{font:500 10px Rajdhani,sans-serif}
++#stage #bossbar .track{height:4px;border:0;border-radius:0;background:#cee3ff1c}
++#stage #bossbar .segs{opacity:.35}
++#stage #objective-box{top:59px;left:16px;right:75px;width:auto;max-width:none;height:auto;padding:0;border:0;border-radius:0;box-shadow:none;background:none;backdrop-filter:none;transform:none;text-align:left}
++#stage #objective-box .hud-label{display:none}
++#stage #hud-objective{font:500 9px/1.4 Rajdhani,sans-serif;letter-spacing:.03em;color:#c8d7d6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
++#stage #objective-sliver{top:58px;left:16px;right:75px;height:2px;opacity:.35}
++#stage #chargebar{height:3px;width:74px;box-shadow:0 0 8px #ffda8b44;border:0;background:#e4f4ff12}
++#stage #chargebar:before{display:none}
++#stage #batch-flight-controls{right:72px!important;bottom:16px!important;width:auto!important;gap:7px!important;flex-direction:row!important}
++#stage #batch-flight-controls button{position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;width:46px;min-width:46px;height:51px;min-height:51px;padding:5px!important;border:1px solid #b9dce633;border-radius:11px;background:#071521b0;box-shadow:none;color:#c8e4f1;font-size:0!important;letter-spacing:0;overflow:hidden}
++#stage #btn-ultimate:before{content:"ϟ";font:500 22px/1 sans-serif}
++#stage #btn-ultimate:after{content:attr(data-remaining);font:500 9px/1.2 Rajdhani,sans-serif}
++#stage #btn-formation:before{content:"⠿";font:500 19px/1 sans-serif}
++#stage #btn-formation:after{content:attr(data-short);font:500 9px/1.2 Rajdhani,sans-serif}
++#stage #btn-bomb{right:16px;bottom:16px;width:48px;height:51px;min-height:51px;min-width:48px;padding:7px;border:1px solid #ddc69270;border-radius:11px;background:#20211cb8;box-shadow:none;backdrop-filter:none}
++#stage #btn-bomb svg{width:19px;height:19px;margin:0 auto 3px}
++#stage #btn-bomb:after{content:"BOMB";font:500 9px Rajdhani,sans-serif;letter-spacing:.04em}
++#stage #bomb-count{top:3px;right:3px;width:13px;height:13px;line-height:13px;font-size:9px;border:0;box-shadow:none;background:none;color:#efdbb4}
++#stage #coach{top:auto;bottom:120px;left:16px;right:16px;width:auto;min-height:48px;padding:7px 10px;transform:none;display:flex;align-items:center;gap:8px;background:#071827da;border:1px solid #b6d6e133;border-radius:7px;box-shadow:none}
++#stage #coach:not(.on){display:none}
++#stage #coach.on{animation:orbital-coach .24s cubic-bezier(.22,1,.36,1)}
++@keyframes orbital-coach{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
++#stage:has(#coach.on) #hint{opacity:0;pointer-events:none}
++#stage #coach-step{font:500 9px Rajdhani,sans-serif;margin:0;color:#d8ca9b;min-width:28px}
++#stage #coach-text{font:500 11px/1.4 Rajdhani,sans-serif;letter-spacing:.04em;text-align:left;flex:1}
++#stage #coach-skip{width:44px;min-width:44px;min-height:44px;padding:5px;margin:0;font-size:9px;border-radius:5px}
++#stage #hint{font:500 10px/1.4 Rajdhani,sans-serif;max-width:70%;padding:7px 10px;top:auto;bottom:120px;border-radius:7px;background:#081724b3;box-shadow:none;border-color:#c4dfec26}
++#stage #banner{top:17%;left:10%;right:10%;width:auto;padding:10px;font:500 15px/1.3 Rajdhani,sans-serif;letter-spacing:.12em;border:0;border-radius:7px;background:#071524c7;box-shadow:none;transform:none;pointer-events:none}
++#stage #banner small{font-size:9px;letter-spacing:.08em;margin-top:4px}
++#stage #banner.show{animation:orbital-notice 2.2s both}
++@keyframes orbital-notice{0%{opacity:0;transform:translateY(-8px)}12%,73%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-4px)}}
++#stage #boss-card{top:17%;left:13%;right:13%;width:auto;padding:9px 12px;background:#061323bc;border:1px solid #bed8e326;border-radius:7px;box-shadow:none;transform:none}
++#stage #bc-canvas,#stage #bc-abilities,#stage #bc-bounty,#stage #bc-epi{display:none}
++#stage #bc-name{font:500 14px Rajdhani,sans-serif;letter-spacing:.11em}
++#stage #boss-card #skip-boss-intro{font-size:9px;min-height:30px;padding:4px 8px;margin-top:5px}
++#stage #boss-alert{font-size:11px;padding:7px 10px;border-radius:6px;background:#281119aa;box-shadow:none}
++#stage #me-flash{font-size:11px;max-width:64%;padding:7px 9px;top:28%;background:#06121bab;border-color:#bbd7e12b;box-shadow:none;border-radius:6px}
++@media(max-width:360px){#stage #scr-start .ref-brand strong{font-size:28px}#stage #scr-start .ref-brand small{font-size:8px}#stage #scr-start .glance-cell:first-child .glance-v{font-size:23px}#stage #scr-start .ref-shortcuts b{font-size:10px}#stage #scr-start .ref-shortcuts button:nth-child(n){height:55px;min-height:55px}#stage #scr-start .ref-shortcuts{gap:5px}#stage #batch-flight-controls{gap:5px!important}#stage #hud-score{font-size:22px}#stage #wave-rail-label{font-size:8px}}
++@media(prefers-reduced-motion:reduce){#stage #scr-start #reference-backdrop{animation:none}#stage #coach.on{animation:none}#stage #banner.show{animation:none;opacity:1}}
++
++
++#stage #scr-start .ck-topbar,#stage #scr-start .ref-brand,#stage #scr-start .ref-ship,#stage #scr-start .ref-mission,#stage #scr-start .ck-launchwrap{width:auto!important;max-width:none}
++#stage #scr-start .ref-brand>div{align-items:flex-start;text-align:left}
++#stage #scr-start .ref-brand strong{font-size:32px}
++#stage #boss-card.batch-c-intro.show{top:17%;bottom:auto;left:13%;right:13%;width:auto;padding:9px 12px;transform:none}
++#stage #scr-start .deck-profile,#stage #scr-start .ref-upgrade{min-height:44px}
++#stage #scr-start .glance-cell:first-child{min-height:44px}
++#stage #scr-start .ref-shortcuts{bottom:18%}
++#stage #scr-start .ref-mission{height:44px}
++#stage #scr-start .ref-mission-copy button{min-height:44px}
++#stage #boss-card.batch-c-intro #bc-epi{display:none}
++#stage #boss-card.batch-c-intro .btn{min-height:36px;margin:5px 0 0;font-size:9px;padding:5px 9px}
+ </style></head>
+   <body>
+ <script type="application/json" id="nitro-asset">[encoded asset omitted; see checked manifests and authoring tools]</script>
+@@ -2345,7 +2480,9 @@
+ <script type="application/json" id="fleet-assets">[encoded asset omitted; see checked manifests and authoring tools]</script>
+ <script type="text/plain" id="nebula-asset">[encoded asset omitted; see checked manifests and authoring tools]</script>
+ <script type="application/json" id="combat-assets">[encoded asset omitted; see checked manifests and authoring tools]</script>
+-    <div id="stage">
++<script type="application/json" id="orbital-meshes">[encoded asset omitted; see checked manifests and authoring tools]</script>
++<script type="application/json" id="orbital-scenes">[encoded asset omitted; see checked manifests and authoring tools]</script>
++<div id="stage">
+       <canvas id="game"></canvas>
+
+       <!-- HUD — Minimal Edge (Sample 01): plain text at the edges, no pills -->
+@@ -6806,11 +6943,18 @@
+         }
+         return NEBULA_CACHE[key] = cv;
+       }
++      var OrbitalScenes=(function(){
++        var meta=JSON.parse(document.getElementById("orbital-scenes").textContent),images=[],complete=false;
++        var ready=Promise.all(meta.atlases.map(function(atlas){return new Promise(function(resolve,reject){var image=new Image();images.push(image);image.onload=resolve;image.onerror=function(){reject(Error("Orbital scene failed to decode"));};image.src=atlas.image;});})).then(function(){complete=true;SPACE_BACKDROP_CACHE={};homeBackdropKey="";});
++        function paint(c,sector,w,h){if(!complete)return false;var frame=meta.sectors[sector-1],atlas=meta.atlases[frame[0]],image=images[frame[0]],sw=image.naturalWidth/atlas.columns;c.drawImage(image,sw*frame[1],0,sw,image.naturalHeight,0,0,w,h);return true;}
++        return {ready:ready,paint:paint,get complete(){return complete;},meta:meta};
++      })();
+       var SPACE_BACKDROP_CACHE={};
+       function spaceBackdrop(sector,cinematic){
+-        var cacheKey=sector+(cinematic?5:0);
++        var cacheKey=sector+(OrbitalScenes.complete?0:cinematic?5:0);
+         if(SPACE_BACKDROP_CACHE[cacheKey])return SPACE_BACKDROP_CACHE[cacheKey];
+         var cv=document.createElement("canvas");cv.width=512;cv.height=1024;var c=cv.getContext("2d"),env=ENVS[sector-1],palettes=[["#13294e","#43aabd"],["#3b254e","#e6a95a"],["#24234c","#7ae0c1"],["#1e3154","#a9d9ff"],["#211b43","#bc9bdc"]],palette=palettes[sector-1];
++        if(OrbitalScenes.paint(c,sector,512,1024))return SPACE_BACKDROP_CACHE[cacheKey]=cv;
+         var sky=c.createLinearGradient(0,0,430,1024);sky.addColorStop(0,palette[0]);sky.addColorStop(1,"#0a1430");c.fillStyle=sky;c.fillRect(0,0,512,1024);
+         c.globalAlpha=.32;c.drawImage(nebulaSprite(env),-120,-90,850,1120);c.globalAlpha=1;
+         if(!cinematic){
+@@ -7748,7 +7892,8 @@
+         homeBackdropKey = key;
+         var cv = $("reference-backdrop"), c = cv.getContext("2d");
+         c.setTransform(1,0,0,1,0,0);
+-        var g=c.createLinearGradient(0,0,650,1280);g.addColorStop(0,homeTheme==="sunset"?"#342439":homeTheme==="eclipse"?"#201f45":"#102238");g.addColorStop(.5,"#050e1c");g.addColorStop(1,"#030914");c.fillStyle=g;c.fillRect(0,0,768,1280);
++        if(OrbitalScenes.paint(c,LAUNCH.sector||1,768,1280))return;
++        var g=c.createLinearGradient(0,0,0,1280);g.addColorStop(0,homeTheme==="sunset"?"#342439":homeTheme==="eclipse"?"#201f45":"#102238");g.addColorStop(.5,"#050e1c");g.addColorStop(1,"#030914");c.fillStyle=g;c.fillRect(0,0,768,1280);
+         c.globalAlpha=.25;c.drawImage(nebulaSprite(ENVS[(LAUNCH.sector||1)-1]),-100,-120,1150,1450);c.globalAlpha=1;
+         drawPlanetAt(c,710,110,260,["deep","ember","rift","cryo","eclipse"][(LAUNCH.sector||1)-1],0);
+         c.save();c.translate(30,1080);c.rotate(-.6);c.globalAlpha=.12;c.drawImage(stationSprite(1),-280,-280,560,560);c.restore();
+@@ -7788,6 +7933,7 @@
+       /* Contextual tutorial hints — each fires once per run, the moment it becomes relevant */
+       var hintTimer = null;
+       function showHint(text) {
++        if(typeof COACH!=="undefined"&&COACH.active)return;
+         var el = $("hint");
+         el.textContent = text;
+         el.classList.add("on");
+@@ -8348,6 +8494,7 @@
+         var assetMeta = JSON.parse(document.getElementById("nitro-asset").textContent);
+         var fleetMeta = JSON.parse(document.getElementById("fleet-assets").textContent);
+         var combatMeta=JSON.parse(document.getElementById("combat-assets").textContent);
++        var orbitalMeta=JSON.parse(document.getElementById("orbital-meshes").textContent);
+         var surfaceMeta=JSON.parse(document.getElementById("pbr-assets").textContent);
+         var surfaceImages={},surfaceReady=Promise.all(["normal","orm","environment"].map(function(name){return new Promise(function(resolve,reject){var image=surfaceImages[name]=new Image();image.onload=resolve;image.onerror=function(){reject(Error("PBR material failed to decode: "+name));};image.src=surfaceMeta[name];});}));
+         var nebulaImage=new Image();nebulaImage.src=document.getElementById("nebula-asset").textContent.trim();
+@@ -8594,7 +8741,7 @@
+           layout(location=4) in mat4 iModel; layout(location=8) in vec4 iTint; layout(location=9) in vec4 iEngine;
+           uniform vec2 uSize; uniform vec2 uOffset; uniform float uCamera; uniform float uShadow;
+           out vec3 vLocalNormal; out vec3 vNormal; out vec3 vWorld; out vec4 vMaterial; out vec4 vTint; out vec4 vEngine; out vec2 vUV; out vec3 vLocal;
+-          void main(){vLocalNormal=aNormal;vec4 p=iModel*vec4(aPosition,1.);vNormal=normalize(mat3(iModel)*(aNormal*vec3(iModel[0].w,iModel[1].w,iModel[2].w)));vWorld=p.xyz;vLocal=aPosition;vMaterial=aMaterial;vTint=iTint;vEngine=iEngine;vUV=aUV;
++          void main(){vLocalNormal=aNormal;vec4 p=iModel*vec4(aPosition,1.);vNormal=normalize(mat3(iModel)*(aNormal*vec3(iModel[0].w,iModel[1].w,iModel[2].w)));vWorld=p.xyz;vLocal=aPosition;vMaterial=aMaterial;if(aMaterial.a>12.005&&aMaterial.a<12.099)vMaterial.rgb*=sqrt(clamp(aUV.x,.28,1.));vTint=iTint;vEngine=iEngine;vUV=aUV;
+             if(uShadow>.5){if(mod(iEngine.a,2.)<.5){gl_Position=vec4(2.,2.,2.,1.);return;}p.xy+=vec2(.32,-.35)*(p.z+75.);p.z=-74.;}
+             float z=p.z-uCamera;gl_Position=vec4(p.x*2.*uCamera/uSize.x+uOffset.x*2.*(-z)/uSize.x,p.y*2.*uCamera/uSize.y+uOffset.y*2.*(-z)/uSize.y,-1.0008*z-2.0008,-z);}`;
+         var fragment=`#version 300 es
+@@ -8649,11 +8796,12 @@
+             vec3 an=abs(vLocalNormal);vec2 uv=an.z>=an.x&&an.z>=an.y?vLocal.xy:an.x>=an.y?vLocal.yz:vLocal.xz;
+             uv=uv*uSurface.w;
+             vec4 maps=texture(uSurfaceORM,fract(uv));
+-            vec3 n=mappedNormal(normalize(vNormal),uv,texture(uHullNormal,fract(uv)).xyz*2.-1.);
++            vec3 n=normalize(vNormal);if(uSurface.z>.01)n=mappedNormal(n,uv,texture(uHullNormal,fract(uv)).xyz*2.-1.);
+             vec3 v=normalize(vec3(0.,0.,1050.)-vWorld);
+             float glass=tag>3.5&&tag<4.5?1.:0.;
+             float metal=mix(clamp(uSurface.x*maps.b*1.12,0.,1.),.0,glass);
+             float rough=mix(clamp(uSurface.y*maps.g*2.,.16,.9),.12,glass);
++            if(tag>12.005&&tag<12.099)rough=clamp(fract(tag)*10.,.18,.85);
+             base=srgbToLinear(base)*(.86+.14*maps.r)+maps.a*.025;
+             base=mix(base,vec3(.012,.035,.055),glass*.72);
+             vec3 f0=mix(vec3(.04),base,metal),f=fresnel(max(dot(n,v),0.),f0);
+@@ -8687,7 +8835,7 @@
+                 base=mix(base,vTint.rgb*(.3+.7*max(base.r,max(base.g,base.b))),paint*.75);
+               }else if(tag>11.5){
+                 float elite=step(.12,dot(abs(vTint.rgb-vEngine.rgb),vec3(1.)));
+-                base=mix(base,vTint.rgb,mix(.16,.72,elite));
++                base=mix(base,vTint.rgb,mix(tag>12.005&&tag<12.099?.025:.16,.72,elite));
+               }else if(tag>1.5&&tag<2.5)base=mix(base,vTint.rgb,.78);
+               vec3 lit=physicalSurface(base,tag)+vec3(max(0.,vTint.a-1.)*.8);
+               result=vec4(lit,min(vTint.a,1.));return;
+@@ -8808,6 +8956,7 @@
+             this.createVAO=gl.createVertexArray.bind(gl);this.bindVAO=gl.bindVertexArray.bind(gl);this.deleteVAO=gl.deleteVertexArray.bind(gl);
+             this.divisor=gl.vertexAttribDivisor.bind(gl);this.drawInstances=gl.drawElementsInstanced.bind(gl);
+           }
++          this.uintIndices=!this.legacy||!!gl.getExtension("OES_element_index_uint");
+           this.program=program(gl,vertex,fragment,this.legacy);gl.useProgram(this.program);this.batches={};this.textureCache=new WeakMap();this.textureBytes=0;this.assetClock=0;this.draws=0;this.instances=0;
+           this.pbr=gl.getUniformLocation(this.program,"uPBR");this.materialTier=gl.getUniformLocation(this.program,"uMaterialTier");this.surface=gl.getUniformLocation(this.program,"uSurface");this.size=gl.getUniformLocation(this.program,"uSize");this.offset=gl.getUniformLocation(this.program,"uOffset");this.camera=gl.getUniformLocation(this.program,"uCamera");this.shadow=gl.getUniformLocation(this.program,"uShadow");this.time=gl.getUniformLocation(this.program,"uTime");this.grillLocation=gl.getUniformLocation(this.program,"uGrill");this.textured=gl.getUniformLocation(this.program,"uTextured");
+           this.battle=gl.getUniformLocation(this.program,"uBattle");this.battleColor=gl.getUniformLocation(this.program,"uBattleColor");this.finish=gl.getUniformLocation(this.program,"uFinish");this.mist=gl.getUniformLocation(this.program,"uMist");
+@@ -8833,8 +8982,8 @@
+           this.bgTop=gl.getUniformLocation(this.background,"top");this.bgBot=gl.getUniformLocation(this.background,"bot");this.bgTime=gl.getUniformLocation(this.background,"clock");
+           this.skyProgram=program(gl,`#version 300 es
+ precision highp float;layout(location=0) in vec2 aPosition;out vec2 uv;void main(){uv=aPosition*.5+.5;gl_Position=vec4(aPosition,.999,1.);}`,`#version 300 es
+-precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D previousSky;uniform float skyBlend;out vec4 result;void main(){vec2 p=vec2(uv.x,1.-uv.y);vec4 col=texture(currentSky,p);if(skyBlend<.999)col=mix(texture(previousSky,p),col,skyBlend);result=col;}`,this.legacy);
+-          this.skyCurrent=gl.getUniformLocation(this.skyProgram,"currentSky");this.skyPrevious=gl.getUniformLocation(this.skyProgram,"previousSky");this.skyBlend=gl.getUniformLocation(this.skyProgram,"skyBlend");this.skyTextures={};
++precision highp float;in vec2 uv;uniform sampler2D currentSky;uniform sampler2D previousSky;uniform float skyBlend;uniform vec2 skyDrift;out vec4 result;void main(){vec2 p=(vec2(uv.x,1.-uv.y)-.5)*.975+.5+skyDrift;vec4 col=texture(currentSky,p);if(skyBlend<.999)col=mix(texture(previousSky,p),col,skyBlend);result=col;}`,this.legacy);
++          this.skyCurrent=gl.getUniformLocation(this.skyProgram,"currentSky");this.skyPrevious=gl.getUniformLocation(this.skyProgram,"previousSky");this.skyBlend=gl.getUniformLocation(this.skyProgram,"skyBlend");this.skyDrift=gl.getUniformLocation(this.skyProgram,"skyDrift");this.skyTextures={};
+           this.cinematic=false;this.materialVariants=[this.captureMaterials(),null];
+
+         }
+@@ -8877,7 +9026,9 @@
+           this.cinematic=enabled;
+         };
+         GPU.prototype.batch=function(key,source){
+-          var data=source||get(key),old=this.batches[key],gl=this.gl;if(old&&old.source===data)return old;
++          var data=source||get(key),old=this.batches[key],gl=this.gl;
++          if(data.index32&&!this.uintIndices)data=get(key+":lod");
++          if(old&&old.source===data)return old;
+           if(old&&old.lods){var variant=data===old.lods.high.source?old.lods.high:data===old.lods.low.source?old.lods.low:null;if(variant){old.source=data;old.vertex=variant.vertex;old.index=variant.index;old.vao=variant.vao;return old;}}
+           if(old)this.releaseBatch(key);
+           // Source-resolution maps remain embedded, but only a bounded working set lives on the GPU.
+@@ -8890,7 +9041,7 @@
+             }
+           }
+           var cap=key==="glow"||key==="spark"||key==="laser"?2048:key==="core"||key==="bullet"||key==="cube"?1024:256;
+-          var physical=key.indexOf("ship:")===0||key.indexOf("enemy:")===0||key.indexOf("boss:")===0||key.indexOf("drone:")===0||key.indexOf("equipment:")===0||key.indexOf("frame:")===0||key.indexOf("mount:")===0;
++          var physical=!!data.pbr||key.indexOf("ship:")===0||key.indexOf("enemy:")===0||key.indexOf("boss:")===0||key.indexOf("drone:")===0||key.indexOf("equipment:")===0||key.indexOf("frame:")===0||key.indexOf("mount:")===0;
+           if(physical)data.pbr=true;
+           var b={source:data,physical:physical,lastUsed:++this.assetClock,surface:new Float32Array([key.indexOf("boss:")===0?.92:.78,key.indexOf("enemy:")===0?.42:.34,.38,key.indexOf("boss:")===0?.028:.045]),count:0,blended:false,capacity:cap,records:new Float32Array(cap*24),vao:this.createVAO(),vertex:gl.createBuffer(),instance:gl.createBuffer(),index:gl.createBuffer(),cast:false};
+           this.bindVAO(b.vao);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,b.index);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,data.indices,gl.STATIC_DRAW);gl.bindBuffer(gl.ARRAY_BUFFER,b.vertex);gl.bufferData(gl.ARRAY_BUFFER,data.vertices,gl.STATIC_DRAW);
+@@ -8911,6 +9062,7 @@
+             entry.users++;b.textureEntry=entry;b.texture=entry.texture;
+             Object.defineProperty(b,"textureReady",{get:function(){return entry.ready;}});
+           }
++          if(data.orbital){b.surface[1]=.48;b.surface[2]=.16;}
+           if(key.indexOf("ship:")===0){var finish=data.finishId||0;b.surface[0]=finish===1?.58:finish===2?.96:finish===3?.24:.82;b.surface[1]=finish===1?.56:finish===2?.23:finish===3?.64:.34;}
+           this.batches[key]=b;return b;
+         };
+@@ -8922,7 +9074,7 @@
+           delete this.batches[key];
+         };
+         GPU.prototype.prepareLOD=function(batch,data){
+-          if(batch.lods)return;var gl=this.gl,variant={source:data,vertex:gl.createBuffer(),index:gl.createBuffer(),vao:this.createVAO()};
++          if(batch.lods||batch.source===data)return;var gl=this.gl,variant={source:data,vertex:gl.createBuffer(),index:gl.createBuffer(),vao:this.createVAO()};
+           this.bindVAO(variant.vao);gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,variant.index);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,data.indices,gl.STATIC_DRAW);
+           gl.bindBuffer(gl.ARRAY_BUFFER,variant.vertex);gl.bufferData(gl.ARRAY_BUFFER,data.vertices,gl.STATIC_DRAW);
+           var dims=[3,3,4,2],offset=0;for(var i=0;i<4;i++){gl.enableVertexAttribArray(i);gl.vertexAttribPointer(i,dims[i],gl.FLOAT,false,48,offset);offset+=dims[i]*4;}
+@@ -8930,19 +9082,19 @@
+           batch.lods={high:{source:batch.source,vertex:batch.vertex,index:batch.index,vao:batch.vao},low:variant};this.bindVAO(null);
+         };
+         GPU.prototype.skyTexture=function(sector){
+-          var cacheKey=sector+(this.cinematicSky?5:0),cached=this.skyTextures[cacheKey];if(cached)return cached;var gl=this.gl,texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,texture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,spaceBackdrop(sector,this.cinematicSky));gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);return this.skyTextures[cacheKey]=texture;
++          var cacheKey=sector+(OrbitalScenes.complete?0:this.cinematicSky?5:0),cached=this.skyTextures[cacheKey];if(cached)return cached;var gl=this.gl,texture=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,texture);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,spaceBackdrop(sector,this.cinematicSky));gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);return this.skyTextures[cacheKey]=texture;
+         };
+         GPU.prototype.begin=function(width,height,clear,sector,time,offscreen,preserve){
+           var gl=this.gl;if(!offscreen&&(this.canvas.width!==width||this.canvas.height!==height)){this.canvas.width=width;this.canvas.height=height;}
+           gl.viewport(0,0,width,height);gl.clearColor(0,0,0,0);gl.clear((preserve?0:gl.COLOR_BUFFER_BIT)|gl.DEPTH_BUFFER_BIT);gl.disable(gl.CULL_FACE);
+-          if(clear){gl.disable(gl.DEPTH_TEST);gl.disable(gl.BLEND);gl.useProgram(this.skyProgram);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.skyTexture(sector||1));gl.uniform1i(this.skyCurrent,0);var blend=G.envBlend===undefined?1:G.envBlend;if(blend<.999){gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,this.skyTexture(Math.max(1,ENVS.indexOf(G.envPrev)+1)));gl.uniform1i(this.skyPrevious,1);}gl.uniform1f(this.skyBlend,blend);this.bindVAO(this.bgVAO);gl.drawArrays(gl.TRIANGLES,0,3);gl.activeTexture(gl.TEXTURE0);}
++          if(clear){gl.disable(gl.DEPTH_TEST);gl.disable(gl.BLEND);gl.useProgram(this.skyProgram);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.skyTexture(sector||1));gl.uniform1i(this.skyCurrent,0);var blend=G.envBlend===undefined?1:G.envBlend;if(blend<.999){gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,this.skyTexture(Math.max(1,ENVS.indexOf(G.envPrev)+1)));gl.uniform1i(this.skyPrevious,1);}gl.uniform1f(this.skyBlend,blend);gl.uniform2f(this.skyDrift,REDUCED?0:Math.sin(time*.035)*.006,REDUCED?0:Math.cos(time*.027)*.008);this.bindVAO(this.bgVAO);gl.drawArrays(gl.TRIANGLES,0,3);gl.activeTexture(gl.TEXTURE0);}
+
+           for(var key in this.batches){this.batches[key].count=0;this.batches[key].cast=false;this.batches[key].blended=false;}
+           this.draws=0;this.instances=0;
+         };
+         // Instance matrices/colors are written directly into fixed typed arrays.
+         GPU.prototype.add=function(key,x,y,z,sx,sy,sz,yaw,pitch,roll,tint,engine,alpha,cast,source){
+-          if(!source&&!this.isPreview&&this.craftLod&&(key.indexOf("enemy:")===0||key.indexOf("boss:")===0))source=get(key+":lod");
++          if(!source&&!this.isPreview&&this.craftLod&&(key.indexOf("enemy:")===0||key.indexOf("boss:")===0||key==="arm"))source=get(key+":lod");
+           var b=this.batch(key,source);b.lastUsed=++this.assetClock;if(b.count>=b.capacity)return;var a=b.records,i=b.count++*24;
+           // Stars, straight bolts and glows use identity rotation: skip six trig calls.
+           if(!(yaw||pitch||roll)){
+@@ -8973,7 +9125,7 @@
+           }
+           for(var key in this.batches){var b=this.batches[key];if(!b.count)continue;gl.bindBuffer(gl.ARRAY_BUFFER,b.instance);if(this.legacy)gl.bufferSubData(gl.ARRAY_BUFFER,0,b.uploadRanges[b.count]);else gl.bufferSubData(gl.ARRAY_BUFFER,0,b.records,0,b.count*24);}
+           gl.depthMask(false);gl.uniform1f(this.shadow,1);
+-          if(shadows)for(var key in this.batches){var b=this.batches[key];if(!b.count||!b.cast)continue;this.bindVAO(b.vao);this.drawInstances(gl.TRIANGLES,b.source.count,gl.UNSIGNED_SHORT,0,b.count);this.draws++;}
++          if(shadows)for(var key in this.batches){var b=this.batches[key];if(!b.count||!b.cast)continue;this.bindVAO(b.vao);this.drawInstances(gl.TRIANGLES,b.source.count,b.source.index32?gl.UNSIGNED_INT:gl.UNSIGNED_SHORT,0,b.count);this.draws++;}
+           gl.uniform1f(this.shadow,0);
+           var fx=VisualFX.light,lc=color(fx.color);gl.uniform4f(this.battle,fx.x-W/2,H/2-fx.y,35,REDUCED?0:fx.power*3);gl.uniform3fv(this.battleColor,lc);
+           gl.useProgram(this.toonProgram);gl.uniform4f(this.toonBattle,fx.x-W/2,H/2-fx.y,35,REDUCED?0:fx.power*3);gl.uniform3fv(this.toonBattleColor,lc);gl.useProgram(this.program);
+@@ -8985,8 +9137,8 @@
+             var effect=EFFECT_TYPES[key],kind=shadows?0:effect!==undefined?1:!b.physical&&(b.source.family==="rift"||b.source.toon)?2:0;
+             if(kind!==boundProgram){gl.useProgram(kind===2?this.toonProgram:kind===1?this.effects:this.program);boundProgram=kind;}
+             if(kind===1)gl.uniform1f(this.effectType,effect);
+-            else if(kind===0){gl.uniform1f(this.pbr,b.physical?1:0);gl.uniform4fv(this.surface,b.surface);var finishId=key.indexOf("ship:")===0?(b.source.finishId||0):0;gl.uniform2f(this.finish,finishId===1?.35:finishId===2?1:finishId===3?.08:.8,finishId===1?.72:finishId===2?.12:finishId===3?.94:.4);var material=b.source.image?1:0;if(material!==boundMaterial){gl.uniform1f(this.textured,material);boundMaterial=material;}var texture=b.texture||(key.indexOf("planet")===0?this.nebula:this.grill);if(texture!==boundTexture){gl.bindTexture(gl.TEXTURE_2D,texture);boundTexture=texture;}}
+-            this.bindVAO(b.vao);this.drawInstances(gl.TRIANGLES,b.source.count,gl.UNSIGNED_SHORT,0,b.count);this.draws++;
++            else if(kind===0){gl.uniform1f(this.pbr,b.physical?1:0);gl.uniform4f(this.surface,b.surface[0],b.surface[1],this.craftLod&&b.source.orbital?0:b.surface[2],b.surface[3]);var finishId=key.indexOf("ship:")===0?(b.source.finishId||0):0;gl.uniform2f(this.finish,finishId===1?.35:finishId===2?1:finishId===3?.08:.8,finishId===1?.72:finishId===2?.12:finishId===3?.94:.4);var material=b.source.image?1:0;if(material!==boundMaterial){gl.uniform1f(this.textured,material);boundMaterial=material;}var texture=b.texture||(key.indexOf("planet")===0?this.nebula:this.grill);if(texture!==boundTexture){gl.bindTexture(gl.TEXTURE_2D,texture);boundTexture=texture;}}
++            this.bindVAO(b.vao);this.drawInstances(gl.TRIANGLES,b.source.count,b.source.index32?gl.UNSIGNED_INT:gl.UNSIGNED_SHORT,0,b.count);this.draws++;
+           }
+           gl.depthMask(true);this.bindVAO(null);
+         };
+@@ -9054,10 +9206,13 @@
+           return body;
+         }
+         var NITRO_ENGINES=[-5.8,5.8];
+-        function boss(g,b,t){var coreZ=b.kind==="eclipse"?74:b.kind==="cryowarden"?65:b.kind==="mothership"?56:52;var col=BOSS_VISUALS[b.kind].color,alpha=b.vanish>0?clamp(Math.abs(b.vanish-.28)/.28,.06,1):1;if(REDUCED&&b.state==="intro")alpha*=Math.min(1,(3-b.introC)/.3);
+-            if(b.kind==="mothership")g.add("boss:mothership",b.x,b.y,0,b.phaseC?1.0:1.22,b.phaseC?1.4:1.22,1.22,b.state==="intro"&&!REDUCED?(3-b.introC)*Math.PI*2/3:0,0,0,col,col,alpha,true);
+-            else g.add("boss:"+b.kind,b.x,b.y,0,b.phaseC?1.0:1.22,b.phaseC?1.4:1.22,1.22,b.state==="intro"&&!REDUCED?(3-b.introC)*Math.PI*2/3:0,.07,0,col,col,alpha,true);
+-            if(!b.phaseC&&b.kind==="mothership")for(var side=-1;side<=1;side+=2)g.add("sphere",b.x+side*75,b.y,3,20,15,16,0,0,0,"#7799ac",col,alpha,true);
++        function boss(g,b,t){
++          for(var groupKey in g.batches)g.batches[groupKey]._bossStart=g.batches[groupKey].count;
++          var coreZ=b.kind==="eclipse"?74:b.kind==="cryowarden"?65:b.kind==="mothership"?56:52;var col=BOSS_VISUALS[b.kind].color,alpha=b.vanish>0?clamp(Math.abs(b.vanish-.28)/.28,.06,1):1;if(REDUCED&&b.state==="intro")alpha*=Math.min(1,(3-b.introC)/.3);
++            if(b.kind==="mothership")g.add("boss:mothership",b.x,b.y,0,b.phaseC?1.0:1.22,b.phaseC?1.4:1.22,1.22,0,0,0,col,col,alpha,true);
++            else g.add("boss:"+b.kind,b.x,b.y,0,b.phaseC?1.0:1.22,b.phaseC?1.4:1.22,1.22,0,.07,0,col,col,alpha,true);
++
++            var body=g.batches["boss:"+b.kind],hull=get("boss:"+b.kind);if(hull.engines)for(var ei=0;ei<hull.engines.length;ei++){var anchor=hull.engines[ei];attached(g,body,anchor[0],anchor[1],anchor[2],"exhaust",3.2,18*(REDUCED?1:1+Math.sin(t*9+ei)*.035),3.2,hull.engineYaw,0,0,col,col,alpha*.85);}
+             if(b.kind==="dreadnought"&&b.plates)for(var pi=0;pi<b.plates.length;pi++){var plate=b.plates[pi],pc=plate.hp>0?"#ffc972":"#201e1a";g.add(b.phaseC?"ring":"cube",b.x+plate.off*1.22,b.y+8,34,17,5,3,0,0,0,pc,pc,alpha,false);if(plate.hp>0)glow(g,b.x+plate.off*1.22,b.y+8,38,20,"#ff9d40",.18*alpha);}
+             if(b.kind==="leviathan")for(var arm=0;arm<3;arm++)g.add("arm",b.x,b.y,5,1.22,1.22,1.22,b.rot+arm*2.094,0,0,col,col,alpha,true);
+             if(b.kind==="cryowarden"&&b.shell>0)g.add("ring",b.x,b.y,26,76,76,65,t*.1,.3,0,col,col,.8,false);
+@@ -9069,13 +9224,23 @@
+             if(b.state==="enter"||b.telegraph>0){g.add("ring",b.x,b.y,4,130,42,20,t*.5,.2,0,col,col,.75*alpha,false);}
+             if(b.flameTele>0||b.flameT>0){var ang=b.flameAng||0;for(var f=0;f<8;f++){var d=30+f*28;glow(g,b.x+Math.sin(ang)*d,b.y+Math.cos(ang)*d,10,28+f*7,b.flameT>0?"#ff9d40":"#ff6159",b.flameT>0?.5:.16);}}
+             if(b.flash>0&&SETTINGS.flash&&!REDUCED)glow(g,b.x,b.y,35,60,"#ffffff",.45);
++            if(b.state==="intro"&&!REDUCED){
++              var progress=clamp(1-b.introC/3,0,1),ease=1-Math.pow(1-progress,3),approach=.10+.90*ease,turn=(1-ease)*(b.kind==="eclipse"?.34:b.kind==="dreadnought"?-.22:.12),co=Math.cos(turn),si=Math.sin(turn),cx=b.x-W/2,cy=H/2-b.y;
++              for(var groupKey in g.batches){var batch=g.batches[groupKey],values=batch.records,start=batch._bossStart||0;for(var record=start;record<batch.count;record++){
++                var off=record*24,oldZ=values[off+14],newZ=oldZ*approach-220*(1-ease),oldDepth=1-oldZ/1050,newDepth=1-newZ/1050,factor=approach*newDepth/oldDepth;
++                for(var column=0;column<3;column++){var o=off+column*4,x=values[o],y=values[o+1];values[o]=(x*co-y*si)*factor;values[o+1]=(x*si+y*co)*factor;values[o+2]*=factor;values[o+3]/=factor*factor;}
++                var px=values[off+12]/oldDepth-cx,py=values[off+13]/oldDepth-cy;values[off+12]=(cx+(px*co-py*si)*approach)*newDepth;values[off+13]=(cy+(px*si+py*co)*approach)*newDepth;values[off+14]=newZ;
++              }}
++              var wake=Math.sin(progress*Math.PI);g.add("ring",b.x,b.y,-230,110*(.3+progress),28*(.3+progress),12,0,.1,0,col,col,wake*.23,false);glow(g,b.x,b.y,-240,130,col,wake*.12);
++            }
+           }
+         function environment(g){
+-          if(typeof DeckD!=="undefined")DeckD.world(g,qualityScale);
++          // The approved plates replace the old low-poly foreground station and planet.
++          if(!OrbitalScenes.complete&&typeof DeckD!=="undefined")DeckD.world(g,qualityScale);
+           var t=G.time,p=G.player,env=ENVS[G.sector-1],accent=BOSS_VISUALS[BOSS_KINDS[G.sector-1]].color;
+           for(var l=0;l<3;l++)for(var i=0;i<G.stars[l].length;i+=qualityScale<.5?2:1){var star=G.stars[l][i];g.add("glow",star.x,star.y,-230+l*40,3+l,3+l,1,0,0,0,"#bedfff","#bedfff",.45+l*.15,false);}
+           if(G.warpW>0&&G.warpStars)for(var wi=0;wi<G.warpStars.length;wi++){var ws=G.warpStars[wi],dist=((ws.d+G.time*G.warpW*.85)%1)*Math.max(W,H)*.75*(1-.35*Math.max(0,1-G.warpP/.22)),dx=Math.cos(ws.a)*dist,dy=Math.sin(ws.a)*dist*.72,len=G.warpW*dist*.85;g.add("spark",W/2+dx+(G.warpShake||0),H*.42+dy,-20,ws.s*(1+G.warpW*.6),Math.max(1,len),1,-Math.atan2(dx,-dy),0,0,"#bceaff","#bceaff",G.warpW,false);}
+-          for(var i=0;i<G.debris.length;i++){var rock=G.debris[i];g.add("sphere",rock.x,rock.y,-60,rock.r*.6,rock.r*.5,rock.r*.5,rock.rot,rock.rot*.4,0,accent,accent,1,false);}
++          if(!OrbitalScenes.complete)for(var i=0;i<G.debris.length;i++){var rock=G.debris[i];g.add("sphere",rock.x,rock.y,-60,rock.r*.6,rock.r*.5,rock.r*.5,rock.rot,rock.rot*.4,0,accent,accent,1,false);}
+
+           for(var i=0;i<G.parts.length;i++){var pt=G.parts[i];if(pt.t<0)continue;var life=Math.max(0,1-pt.t/pt.life),sz=pt.size||2;if(pt.ring)g.add("ring",pt.x,pt.y,13,pt.r,pt.r,30,0,0,0,pt.color,pt.color,life*.65,false);else if(pt.bloom)glow(g,pt.x,pt.y,18,sz*(1+pt.t/pt.life),pt.color,life*.45);else g.add("spark",pt.x,pt.y,5,sz*life,(pt.streak?30:pt.spark?Math.max(sz,Math.hypot(pt.vx,pt.vy)*.035):sz)*life,sz*life,pt.spark?-Math.atan2(pt.vx,-pt.vy):t,0,pt.spark?0:t,pt.color,pt.color,life,false);}
+         }
+@@ -9110,7 +9275,11 @@
+             var e=G.enemies[i],m=ENEMY_MATERIALS[e.type],s=e.type==="charger"&&e.elite?1.28:1;
+             var aim=e.type==="charger"&&e.state==="aim"&&(REDUCED||!SETTINGS.flash||Math.floor(t*10)%2===0);
+             var yaw=Math.PI+(e.type==="charger"&&e.state==="rush"?Math.atan2(e.vx,e.vy):0),alpha=e.spawnT>0?.45+.55*(1-e.spawnT/.28):1;
+-            g.add("enemy:"+e.type,e.x,e.y,0,s,s,s,yaw,.07,0,e.elite?"#e4b945":m.accent,m.accent,alpha*(aim?1.2:1),true);
++            var arrival=REDUCED?1:Math.max(0,Math.min(1,1-(e.spawnT||0)/.28)),entry=1-Math.pow(1-arrival,3),size=s*(.22+.78*entry),bank=REDUCED?0:(1-entry)*.24*Math.sin(e.x);
++            var enemyBody=g.add("enemy:"+e.type,e.x,e.y,-100*(1-entry),size,size,size,yaw+bank,.07,bank*.3,e.elite?"#e4b945":m.accent,m.accent,alpha*(aim?1.2:1),true);
++            var engines=enemyBody&&enemyBody.source.engines,exhaustScale=g.craftLod?.65:1;
++            if(engines)for(var engineIndex=0;engineIndex<engines.length;engineIndex++){var anchor=engines[engineIndex];attached(g,enemyBody,anchor[0],anchor[1],anchor[2],"exhaust",2.5*size*exhaustScale,10*size*exhaustScale,2.5*size*exhaustScale,yaw+bank,.07,bank*.3,m.accent,m.accent,alpha*.8);}
++            if(arrival<1&&!REDUCED)glow(g,e.x,e.y,-110,34*(1-entry),m.accent,(1-entry)*.24);
+             if(e.elite&&e.type==="charger")g.add("cube",e.x,e.y,(get("enemy:charger").roof||8)*s+2,20,3,3,yaw,0,0,"#151617",m.accent,1,false);
+             if(e.type==="charger"&&e.state==="aim"&&(REDUCED||!SETTINGS.flash||Math.floor(t*10)%2===0))glow(g,e.x,e.y,16,40,"#ffe79a",.8);
+             if(e.flash>0&&SETTINGS.flash&&!REDUCED)glow(g,e.x,e.y,16,32,m.accent,.7);
+@@ -9130,6 +9299,8 @@
+           if(G.bombFx){var fx=G.bombFx;if(fx.t<.32){var k=fx.t/.32;g.add("bomb",fx.x,fx.y,20+Math.sin(k*Math.PI)*18,9,9,9,fx.t*7,.2,fx.t*3,"#ffd374","#ffd374",1-k*k,false);}for(var i=0;i<fx.rings.length;i++)if(fx.rings[i].r>0)g.add("ring",fx.x,fx.y,15,fx.rings[i].r,fx.rings[i].r,30,t*.1,0,0,"#ffd774","#ffd774",Math.max(0,1-fx.t/1.8),false);}
+         }
+         function warm(g){
++          if(!g.materialVariants[1]){g.setCinematic(true);g.setCinematic(false);}
++          if(OrbitalScenes.complete&&!g.orbitalSky){for(var skyKey in g.skyTextures)g.gl.deleteTexture(g.skyTextures[skyKey]);g.skyTextures={};g.orbitalSky=true;}
+           // Build meshes and allocate GPU storage before combat, not on a first hit/spawn.
+           for(var sky=1;sky<=5;sky++)g.skyTexture(sky);
+           var key;if(LOADOUT.ship!=="vanguard")g.batch("ship:"+LOADOUT.ship);
+@@ -9138,6 +9309,7 @@
+           for(var wi=0;wi<5;wi++){var bossBatch=g.batch("boss:"+BOSS_KINDS[wi]);g.prepareLOD(bossBatch,get("boss:"+BOSS_KINDS[wi]+":lod"));g.batch("station:"+(wi+1));}
+           var common=["fog","arm","sphere","planet:hd","planet","core","bullet","ring","glow","spark","cube","exhaust","bomb","round","laser","equipment:power","equipment:cannon","equipment:pulse","equipment:scatter","equipment:lance"];
+           for(var wi=0;wi<common.length;wi++)g.batch(common[wi]);
++          if(get("arm:lod"))g.prepareLOD(g.batch("arm"),get("arm:lod"));
+           if(geometry["ship:vanguard"]&&geometry["ship:vanguard"].assetId)g.batch("ship:vanguard");
+         }
+         function publishStatus() {
+@@ -9154,10 +9326,10 @@
+             detail="The home-screen ship is a compatibility drawing; its 3D preview could not start. Retry 3D to restore it.";
+           } else if(!renderer || !modelReady) {
+             label=!renderer?"STARTING 3D…":"3D · LOADING FLEET…";
+-            detail="Loading the embedded ship models and textures. Build 3D-9.";
++            detail="Loading the embedded ship models and textures. Build 3D-11.";
+           } else {
+             state="ready";var selected=geometry["ship:"+LOADOUT.ship];label="3D ACTIVE · "+(selected&&selected.assetId?selected.source.split(" / ")[0].toUpperCase():"FLEET");
+-            detail=(renderer.legacy?"WebGL1":"WebGL2")+" scene active. "+(selected?selected.source:"Imported fleet")+" uses the same model, materials and renderer in home and flight. Build 3D-9.";
++            detail=(renderer.legacy?"WebGL1":"WebGL2")+" scene active. "+(selected?selected.source:"Imported fleet")+" uses the same model, materials and renderer in home and flight. Build 3D-11.";
+           }
+           var panel=document.getElementById("graphics-panel");
+           if((failed||assetFailed||previewFailed)&&panel.dataset.state!==state){document.getElementById("scr-start").prepend(document.getElementById("graphics-diagnostics"));panel.open=true;document.getElementById("graphics-diagnostics").hidden=false;}
+@@ -9328,7 +9500,16 @@
+           }
+           await Promise.all(pending);
+         }
+-        async function loadModel(){try{await surfaceReady;for(var variant of [assetMeta,assetMeta.lod]) {
++        function loadOrbital(){
++          for(var mi=0;mi<orbitalMeta.models.length;mi++){
++            var asset=orbitalMeta.models[mi],encoded=atob(asset.data),raw=atob(asset.indices),vertices=new Float32Array(asset.vertices*12),indices=asset.indexBytes===4?new Uint32Array(asset.triangles*3):new Uint16Array(asset.triangles*3);
++            if(encoded.length!==vertices.length*2||raw.length!==indices.length*asset.indexBytes)throw Error("Invalid Orbital mesh: "+asset.key);
++            for(var n=0;n<vertices.length;n++){var channel=n%12,q=encoded.charCodeAt(n*2)|(encoded.charCodeAt(n*2+1)<<8);vertices[n]=asset.offsets[channel]+q*asset.steps[channel];}
++            for(var n=0;n<indices.length;n++){var offset=n*asset.indexBytes,value=raw.charCodeAt(offset)|(raw.charCodeAt(offset+1)<<8);if(asset.indexBytes===4)value=(value|(raw.charCodeAt(offset+2)<<16)|(raw.charCodeAt(offset+3)<<24))>>>0;if(value>=asset.vertices)throw Error("Orbital index out of bounds");indices[n]=value;}
++            geometry[asset.key]={key:asset.key,vertices:vertices,indices:indices,count:indices.length,uniqueVertices:asset.vertices,assetId:asset.assetId,source:asset.source,pbr:true,family:"rift",orbital:true,lod:asset.lod,index32:asset.indexBytes===4,roof:asset.roof,engines:asset.engines,engineYaw:asset.engineYaw,image:null};
++          }
++        }
++        async function loadModel(){try{await Promise.all([surfaceReady,OrbitalScenes.ready]);for(var variant of [assetMeta,assetMeta.lod]) {
+             // No DecompressionStream dependency: older Safari can decode this too.
+             var encoded=atob(variant.data),count=variant.vertices*12,vertices=new Float32Array(count);
+             if(variant.encoding!=="u16le-linear-v1"||encoded.length!==count*2)throw Error("Invalid embedded Nitro Blade data");
+@@ -9336,10 +9517,10 @@
+             var key=variant===assetMeta?"ship:vanguard":"ship:vanguard:lod";
+             geometry[key]=indexGeometry({key:key,vertices:vertices,count:variant.vertices,source:"Nitro Blade / VertaScan",assetId:"nitro-blade"});
+           }
+-          await loadFleet();await loadCombat();if(renderer)warm(renderer);modelReady=true;assetFailed=false;metrics.revision++;document.getElementById("stage").classList.add("models-ready");if(screens.loadout.classList.contains("on"))paintLoadoutArt();publishStatus();return true;
++          await loadFleet();await loadCombat();loadOrbital();if(renderer)warm(renderer);modelReady=true;assetFailed=false;metrics.revision++;document.getElementById("stage").classList.add("models-ready");if(screens.loadout.classList.contains("on"))paintLoadoutArt();publishStatus();return true;
+           }catch(e){modelReady=false;assetFailed=true;metrics.revision++;metrics.error="Model load: "+(e.message||String(e));document.getElementById("stage").classList.add("models-ready");publishStatus();return false;}}
+         var ready=loadModel();
+-        return {draw:draw,presentFrame:presentFrame,thumbnail:thumbnail,presentPreview:presentPreview,freezePreview:freezePreview,getRig:getRig,getDroneRig:getDroneRig,getGeometry:get,metrics:metrics,retry:retry,get ready(){return ready;},asset:assetMeta,fleet:fleetMeta,combat:combatMeta,get renderer(){return renderer;},get preview(){return preview;},get combatGPU(){return renderer;},get foreground(){return renderer&&!failed&&metrics.nativePlayer&&!metrics.menuActive?renderer:null;}};
++        return {draw:draw,presentFrame:presentFrame,thumbnail:thumbnail,presentPreview:presentPreview,freezePreview:freezePreview,getRig:getRig,getDroneRig:getDroneRig,getGeometry:get,metrics:metrics,retry:retry,get ready(){return ready;},asset:assetMeta,fleet:fleetMeta,combat:combatMeta,orbital:orbitalMeta,get renderer(){return renderer;},get preview(){return preview;},get combatGPU(){return renderer;},get foreground(){return renderer&&!failed&&metrics.nativePlayer&&!metrics.menuActive?renderer:null;}};
+       })();
+       // Fixed visual pools: effects never own or mutate combat entities.
+       var VisualFX = (function(){
+@@ -9465,11 +9646,9 @@
+           var cTxt = "×" + comboMult().toFixed(2);
+           if (cTxt !== lastComboTxt) { comboEl.textContent = cTxt; lastComboTxt = cTxt; }
+           setMeter(comboFillEl, G.comboT / 2.5);
+-          // Combo: completely hidden at x1.00; otherwise floats just above the ship, fading as the chain decays
++          // Combo stays in the header and fades as the chain decays; hidden at x1.00.
+           var comboVis = G.combo > 0 && G.comboT > 0 && G.player.alive;
+           if (comboVis) {
+-            comboBoxEl.style.left = (G.player.x / W * 100) + "%";
+-            comboBoxEl.style.top = (G.player.y / H * 100) + "%";
+             comboBoxEl.style.opacity = clamp(0.3 + (G.comboT / 2.5) * 0.7, 0, 1);
+           }
+           if (comboVis !== lastComboVis) { lastComboVis = comboVis; comboBoxEl.classList.toggle("vis", comboVis); if (!comboVis) comboBoxEl.style.opacity = ""; }
+@@ -9791,6 +9970,7 @@
+         var c = el("coach"); if (c) c.classList.add("on");
+       }
+       function finishOnboarding() {
++        if(COACH.active){el("hint").classList.remove("on");if(hintTimer)clearTimeout(hintTimer);}
+         COACH.active = false; ONBOARDED = true;
+         saveJSON("starfall-onboarded-v1", { done: 1 });
+         var c = el("coach"); if (c) c.classList.remove("on");
+@@ -9976,7 +10156,7 @@
+         if(G.mode!=="playing"||!p.alive)return;
+         BatchB.cooldown=Math.max(0,BatchB.cooldown-dt);BatchB.cloakT=Math.max(0,(BatchB.cloakT||0)-dt);
+         if(BatchB.wingT>0){BatchB.wingT-=dt;for(var di=0;di<p.drones;di++)p.droneFire[di]=Math.min(p.droneFire[di],.08);}
+-        if(flightControls){var seconds=Math.ceil(BatchB.cooldown);if(ultimateButton._seconds!==seconds){ultimateButton._seconds=seconds;ultimateButton.textContent=seconds?"ULTIMATE · "+seconds+"s":"ULTIMATE · READY";ultimateButton.disabled=seconds>0;}}
++        if(flightControls){var seconds=Math.ceil(BatchB.cooldown);if(ultimateButton._seconds!==seconds){ultimateButton._seconds=seconds;ultimateButton.textContent=seconds?"ULTIMATE · "+seconds+"s":"ULTIMATE · READY";ultimateButton.disabled=seconds>0;ultimateButton.dataset.remaining=seconds?seconds+"s":"ULT";}}
+         if(BatchB.painted!==G.boss||!G.boss||G.boss.dead)BatchB.painted=null;
+         if(!weaponsOffline()){
+           if(p.drones>0)BatchB.flight[p.droneType]=(BatchB.flight[p.droneType]||0)+dt;
+@@ -10005,7 +10185,7 @@
+       (function wireBatchB(){
+       canvas.addEventListener("pointerdown",function(e){if(!G.boss||G.mode!=="playing")return;var r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)*W/r.width,y=(e.clientY-r.top)*H/r.height;if(Math.hypot(x-G.boss.x,y-G.boss.y)<38){BatchB.painted=G.boss;addPopup(G.boss.x,G.boss.y+35,"DRONES: CORE LOCK","#ffcf60");}});
+       window.addEventListener("keydown",function(e){if(e.repeat||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;if(e.code==="KeyU")fireUltimate();if(e.code==="KeyF")cycleFormation();});
+-      function cycleFormation(){BatchB.formation=BatchB.formation==="v"?"wall":BatchB.formation==="wall"?"orbit":"v";formationButton.textContent={v:"V-SCREEN",wall:"SHIELD WALL",orbit:"ORBIT"}[BatchB.formation];}
++      function cycleFormation(){BatchB.formation=BatchB.formation==="v"?"wall":BatchB.formation==="wall"?"orbit":"v";formationButton.textContent={v:"V-SCREEN",wall:"SHIELD WALL",orbit:"ORBIT"}[BatchB.formation];formationButton.dataset.short={v:"V",wall:"WALL",orbit:"ORBIT"}[BatchB.formation];}
+       function batchButton(text,parent,fn){var b=document.createElement("button");b.className="btn ghost";b.textContent=text;b.type="button";b.addEventListener("click",fn);parent.appendChild(b);return b;}
+       var batchPanel=document.createElement("div");batchPanel.className="set-panel sec-block";batchPanel.dataset.sec="hangar";batchPanel.id="ship-systems";
+       batchPanel.innerHTML='<p>SHIP SYSTEMS · U: ultimate (30s cooldown) · F: formation. Tap a boss core to focus drones. Drone plating: Mk II at 10 min, Mk III at 30 min flown per type.</p><p id="batch-inspect" aria-live="polite">Tap the cockpit, wings or engines for a stat callout. Pinch or wheel to inspect.</p>';
+@@ -10014,9 +10194,9 @@
+       for(var skin in BATCH_LIVERIES)(function(id){batchButton(({stock:"FACTORY",black:"STEALTH BLACK",gold:"GOLD TRIM",rift:"RIFT-CAPTURED PURPLE"}[id])+" · "+BATCH_LIVERIES[id].stars+" STARS",batchPanel,function(){el("batch-inspect").textContent=setLivery(id)?"LIVERY: "+id.toUpperCase():"LOCKED — EARN "+BATCH_LIVERIES[id].stars+" CAREER STARS";});})(skin);
+       var shipDetails=document.createElement("details"),shipSummary=document.createElement("summary");shipDetails.id="ship-system-details";shipSummary.textContent="SHIP SYSTEMS & LIVERIES";
+       while(batchPanel.firstChild)shipDetails.appendChild(batchPanel.firstChild);shipDetails.insertBefore(shipSummary,shipDetails.firstChild);batchPanel.appendChild(shipDetails);
+-      flightControls=document.createElement("div");flightControls.style.cssText="position:absolute;right:8px;bottom:76px;z-index:25;display:none;flex-direction:column;gap:6px;width:128px;pointer-events:auto";el("stage").appendChild(flightControls);
+-      ultimateButton=batchButton("ULTIMATE · U",flightControls,function(e){fireUltimate();});
+-      formationButton=batchButton("V-SCREEN",flightControls,cycleFormation);
++      flightControls=document.createElement("div");flightControls.id="combat-actions";flightControls.style.cssText="position:absolute;right:8px;bottom:76px;z-index:25;display:none;flex-direction:column;gap:6px;width:128px;pointer-events:auto";el("stage").appendChild(flightControls);
++      ultimateButton=batchButton("ULTIMATE · U",flightControls,function(e){fireUltimate();});ultimateButton.id="btn-ultimate";ultimateButton.dataset.remaining="ULT";
++      formationButton=batchButton("V-SCREEN",flightControls,cycleFormation);formationButton.id="btn-formation";formationButton.dataset.short="V";
+       flightControls.addEventListener("pointerdown",function(e){e.stopPropagation();});
+       var oldHud=syncHud;syncHud=function(){oldHud();flightControls.style.display=G.mode==="playing"?"flex":"none";};flightControls.style.display="none";
+       el("inspector-viewport").addEventListener("click",function(e){var r=this.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height,sh=SHIPS[LOADOUT.ship];el("batch-inspect").textContent=y>.65?"ENGINES · MOVE ×"+sh.move:x<.3||x>.7?"WINGS · FIRE INTERVAL ×"+sh.rate:"COCKPIT · HULL "+sh.hp+" · "+BATCH_ULT_NAMES[SHIP_ORDER.indexOf(LOADOUT.ship)];});

@@ -293,11 +293,13 @@ def export_mesh(key,parts,lod=False):
    direction=(n+tangent*x+other*y).normalized();hit=tree.ray_cast(origin,direction,radius)
    if hit[0] is not None:occlusion+=max(0,1-hit[3]/radius)
   value=max(.28,1-occlusion/7*.85);occlusion_cache[cache_key]=value;return value
- changed=[]
+ changed=[];decimators=[]
  if lod:
   for obj in parts:
    for mod in obj.modifiers:
     if mod.type=='BEVEL':changed.append((mod,mod.segments));mod.segments=1
+   if not obj['detail']:
+    modifier=obj.modifiers.new('Small-screen silhouette budget','DECIMATE');modifier.ratio=.30;modifier.use_collapse_triangulate=True;decimators.append((obj,modifier))
   bpy.context.view_layer.update();deps=bpy.context.evaluated_depsgraph_get()
  for obj in parts:
   if lod and obj['detail']:continue
@@ -308,6 +310,7 @@ def export_mesh(key,parts,lod=False):
     v=m.vertices[m.loops[li].vertex_index].co;n=m.corner_normals[li].vector
     rows.extend([v.x,v.y,v.z,n.x,n.y,n.z,*rgb,tag,contact_ao(v,n),0])
   evaluated.to_mesh_clear()
+ for obj,modifier in decimators:obj.modifiers.remove(modifier)
  for mod,value in changed:mod.segments=value
  return {'key':key+(':lod' if lod else ''),'family':'rift','creator':'STARFALL','assetId':'starfall-orbital:'+key,'source':'Original Orbital Realism mesh / STARFALL','lod':lod,'pbr':True,'engines':ENGINES,'engineYaw':math.pi if key.startswith('boss:') else 0,'rows':rows}
 

@@ -6,6 +6,8 @@ STARFALL is an original space shooter by Drblack Ventures: five skies, five boss
 
 ## Orbital Realism fleet and flight deck (build 3D-11)
 
+[Actual game screenshots, verification and frame-time results](docs/orbital-realism/verification.md).
+
 The new flight deck places the shared native ship over an orbital Earth scene,
 with four system routes, one mission destination and Play as the final section.
 Combat uses compact corner controls and a bottom tutorial strip. The previous
@@ -30,7 +32,8 @@ with custom Blender geometry, rather than an exact photoreal reconstruction.
 The original six source-detail drones and all player hulls remain in place.
 
 Armor uses baked vertex contact occlusion, separate roughness finishes and the
-existing physical material shader. Ultra retains full models; HD/Smooth use
+existing physical material shader. Adaptive faction materials omit subpixel
+normal-map work, while inspection and Ultra retain the full surface maps. Ultra retains full models; HD/Smooth use
 prewarmed same-design LODs under GPU pressure. Large full-detail bosses use 32-bit
 indices. WebGL1 devices without that extension use the corresponding 16-bit LOD,
 retaining native 3D. Entrances ease through the existing spawn/intro durations;

@@ -18,6 +18,8 @@ module.exports=async function verifyPresentation(browser){
       if(play.getBoundingClientRect().bottom>stage.getBoundingClientRect().bottom+1)throw Error('Play is not reachable at phone size');
       if(Math.abs(stage.getBoundingClientRect().width/stage.getBoundingClientRect().height-420/740)>.002)throw Error('UI content distorted the gameplay aspect ratio');
       if(document.documentElement.scrollWidth>innerWidth)throw Error('Phone horizontal overflow');
+      for(const button of root.querySelectorAll('.ref-shortcuts button,.deck-profile,.ref-upgrade,.ref-mission-copy button,#btn-play')){const r=button.getBoundingClientRect();if(r.width<43||r.height<43)throw Error('Home touch target '+button.textContent.trim());}
+      if(root.querySelector('.ref-shortcuts').getBoundingClientRect().bottom>root.querySelector('.ref-mission').getBoundingClientRect().top+1)throw Error('Mission overlaps system navigation');
     });
   }
   await page.setViewportSize({width:390,height:844});
