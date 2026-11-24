@@ -473,6 +473,7 @@ console.log(
   }
   await require("./webgl.cjs")(b, p, src);
   await require("./factions.cjs")(p);
+  await require("./orbital.cjs")(b, shippingSource);
   await require("./pbr.cjs")(b);
   await require("./exhaust.cjs")(b);
   await require("./presentation.cjs")(b);

@@ -4,6 +4,53 @@ STARFALL is an original space shooter by Drblack Ventures: five skies, five boss
 
 **Play:** https://starfall-xr9e.onrender.com
 
+## Orbital Realism fleet and flight deck (build 3D-11)
+
+The new flight deck places the shared native ship over an orbital Earth scene,
+with four system routes, one mission destination and Play as the final section.
+Combat uses compact corner controls and a bottom tutorial strip. The previous
+floating combo card and duplicate central tutorial prompt no longer cover enemies.
+All original systems, loadouts and actions remain accessible.
+
+Six original Blender-authored Rift enemies replace the earlier faction meshes:
+hooked Diver, ram Charger, articulated Weaver, octagonal Sentinel, twin-rail
+Lancer and fortress Bulwark. Each has recessed machinery, rounded armor edges,
+optical emissions and engine-mounted animated exhaust. Charger aim/rush and elite
+priority cues remain intact. Five separately authored flagships retain their kits:
+
+- Mothership: two open carrier hangars and six engine nozzles.
+- Dreadnought: four separate cannon batteries and rear engine banks.
+- Leviathan: a central hub with three separately rotating mechanized arms.
+- Cryowarden: an octagonal fortress with eight icy emitter pylons.
+- Eclipse: an annular gravity engine, magnetic coils and four orbiting satellites.
+
+The approved pictures guide these original models; they are concept art, not
+screenshots or supplied production meshes. The result is an interpretation built
+with custom Blender geometry, rather than an exact photoreal reconstruction.
+The original six source-detail drones and all player hulls remain in place.
+
+Armor uses baked vertex contact occlusion, separate roughness finishes and the
+existing physical material shader. Ultra retains full models; HD/Smooth use
+prewarmed same-design LODs under GPU pressure. Large full-detail bosses use 32-bit
+indices. WebGL1 devices without that extension use the corresponding 16-bit LOD,
+retaining native 3D. Entrances ease through the existing spawn/intro durations;
+all boss components approach as a group. No gameplay value or frozen function
+changes, including collision sizes, timing, damage, health, scoring and prices.
+
+Five original generated environment plates replace the old foreground planet
+and station. They decode and upload once, crossfade at sector changes and drift
+subtly behind the existing pooled parallax stars. They are layered 2D scenery;
+ships, enemies, bosses and equipment remain real-time 3D. Reduced motion freezes
+the new drift and entrance banking. Runtime remains one embedded HTML file with
+no framework, build step, model fetch or added GPU context.
+
+Offline mesh tools: `tools/author-orbital-fleet.py` (Blender),
+`tools/pack-orbital-fleet.py` (numpy), `tools/embed-orbital-assets.py` (Pillow).
+Exact authored topology, packed-data hashes and authoring revision are locked in
+`tests/orbital-mesh-lock.json`. `tests/orbital.cjs` adds actual AO pixel checks,
+32-bit drawing / 16-bit fallback, five cached plates, smooth grouped entrances,
+phone controls and GPU allocation checks to the existing verification suite.
+
 ## Source-detail PBR graphics (build 3D-10)
 
 The exhaust follow-up replaces hard cone faces with three intersecting, feathered

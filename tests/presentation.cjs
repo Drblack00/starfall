@@ -10,8 +10,9 @@ module.exports=async function verifyPresentation(browser){
     await page.setViewportSize({width,height:width===320?640:844});
     await page.waitForTimeout(150);
     await page.evaluate(()=>{
-      const root=document.querySelector('#scr-start .ck-scroll'),flow=[...root.children].filter(e=>{const style=getComputedStyle(e);return e.getBoundingClientRect().height>0&&!['absolute','fixed'].includes(style.position)&&style.display!=='none';});
-      if(!flow.at(-1).classList.contains('ck-launchwrap'))throw Error('Home does not end at Play');
+      const root=document.querySelector('#scr-start .ck-scroll'),flow=[...root.children].filter(e=>{const style=getComputedStyle(e);return e.getBoundingClientRect().height>0&&style.display!=='none';});
+      if(!flow.at(-1)?.classList.contains('ck-launchwrap'))throw Error('Home does not end at Play');
+      const end=flow.at(-1).getBoundingClientRect().bottom;if(flow.some(e=>e.getBoundingClientRect().bottom>end+1))throw Error('Visible Home section extends below Play');
       if(root.querySelector('.ck-keygrid,.ck-howto,.asset-credit,#pilot-dock'))throw Error('Removed footer modules remain on home');
       const play=document.getElementById('btn-play'),stage=document.getElementById('stage');root.scrollTop=root.scrollHeight;
       if(play.getBoundingClientRect().bottom>stage.getBoundingClientRect().bottom+1)throw Error('Play is not reachable at phone size');

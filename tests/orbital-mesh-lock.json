@@ -1,0 +1,485 @@
+{
+  "authoringSha256": "1b4379b557439a5632c07227e3aa3efc534e24edd097537d9b0c0ed1f3137337",
+  "models": {
+    "enemy:diver": {
+      "sha256": "951fd2ad195eb7d30a4c6f88b57cca6f407754193ecbf47eb32ba8345dc31663",
+      "vertices": 10370,
+      "triangles": 6908,
+      "bounds": [
+        [
+          -19.0,
+          -16.814010620117188,
+          0.0
+        ],
+        [
+          19.0,
+          18.0,
+          10.0
+        ]
+      ],
+      "assetId": "starfall-orbital:enemy:diver",
+      "lod": false,
+      "indexBytes": 2
+    },
+    "enemy:diver:lod": {
+      "sha256": "08ec699730252425ba22b8be88805c98891c2cdda7f394e523ba25a1d44cecd7",
+      "vertices": 2424,
+      "triangles": 2244,
+      "bounds": [
+        [
+          -18.957378387451172,
+          -16.814010620117188,
+          0.0
+        ],
+        [
+          18.957378387451172,
+          17.76219367980957,
+          9.489916801452637
+        ]
+      ],
+      "assetId": "starfall-orbital:enemy:diver",
+      "lod": true,
+      "indexBytes": 2
+    },
+    "enemy:charger": {
+      "sha256": "96fb147c87eaead2c8eca1af7ba7692d419bc5838031738462b9bc800cd8024e",
+      "vertices": 10748,
+      "triangles": 7108,
+      "bounds": [
+        [
+          -15.5,
+          -18.0,
+          0.0
+        ],
+        [
+          15.5,
+          17.60143280029297,
+          14.0
+        ]
+      ],
+      "assetId": "starfall-orbital:enemy:charger",
+      "lod": false,
+      "indexBytes": 2
+    },
+    "enemy:charger:lod": {
+      "sha256": "1280db1fdc3093448d18f13b96743312ce9e077d9d7b964c0f6ac605bb3333fd",
+      "vertices": 2212,
+      "triangles": 2152,
+      "bounds": [
+        [
+          -15.477437019348145,
+          -18.0,
+          0.0
+        ],
+        [
+          15.477437019348145,
+          17.451671600341797,
+          14.0
+        ]
+      ],
+      "assetId": "starfall-orbital:enemy:charger",
+      "lod": true,
+      "indexBytes": 2
+    },
+    "enemy:weaver": {
+      "sha256": "3f877c03b81b0a5eab9b77deb60fb89c4b67a7328bbd31e2c61d36e7cd556817",
+      "vertices": 6018,
+      "triangles": 5184,
+      "bounds": [
+        [
+          -18.0,
+          -15.26257610321045,
+          0.0
+        ],
+        [
+          18.0,
+          17.0,
+          10.0
+        ]
+      ],
+      "assetId": "starfall-orbital:enemy:weaver",
+      "lod": false,
+      "indexBytes": 2
+    },
+    "enemy:weaver:lod": {
+      "sha256": "482a019ec85d702654607ff12dddde21886fa89e240436d3860acd5cf0daaaff",
+      "vertices": 2204,
+      "triangles": 2348,
+      "bounds": [
+        [
+          -18.0,
+          -15.26257610321045,
+          0.0
+        ],
+        [
+          18.0,
+          16.81670379638672,
+          10.0
+        ]
+      ],
+      "assetId": "starfall-orbital:enemy:weaver",
+      "lod": true,
+      "indexBytes": 2
+    },
+    "enemy:sentinel": {
+      "sha256": "3a881edea317742438286bb861a7eccd36c6214cd6ffdd1a840f34fc5916b7b4",
+      "vertices": 7420,
+      "triangles": 5396,
+      "bounds": [
+        [
+          -20.0,
+          -17.0,
+          0.0
+        ],
+        [
+          20.0,
+          16.9952449798584,
+          12.0
+        ]
+      ],
+      "assetId": "starfall-orbital:enemy:sentinel",
+      "lod": false,
+      "indexBytes": 2
+    },
+    "enemy:sentinel:lod": {
+      "sha256": "b05cede1cbae1e8b3bc2e80e4fb0321b94592af504278c916328bd4a45816909",
+      "vertices": 2248,
+      "triangles": 2148,
+      "bounds": [
+        [
+          -19.86090087890625,
+          -17.0,
+          0.0
+        ],
+        [
+          19.86090087890625,
+          16.91216278076172,
+          11.917590141296387
+        ]
+      ],
+      "assetId": "starfall-orbital:enemy:sentinel",
+      "lod": true,
+      "indexBytes": 2
+    },
+    "enemy:lancer": {
+      "sha256": "c3b0f9f8e1d2dd2f9ecff77750b2859da43a8dce3473b1d77962fac4a783e137",
+      "vertices": 10472,
+      "triangles": 6976,
+      "bounds": [
+        [
+          -12.0,
+          -19.572710037231445,
+          0.0
+        ],
+        [
+          12.0,
+          22.0,
+          12.0
+        ]
+      ],
+      "assetId": "starfall-orbital:enemy:lancer",
+      "lod": false,
+      "indexBytes": 2
+    },
+    "enemy:lancer:lod": {
+      "sha256": "dd790c920c15f051b82320185a075a24debdf4f9bca36240fdd71f20f48a6b7a",
+      "vertices": 2456,
+      "triangles": 2276,
+      "bounds": [
+        [
+          -12.0,
+          -19.572710037231445,
+          0.0
+        ],
+        [
+          12.0,
+          21.91986846923828,
+          11.78258228302002
+        ]
+      ],
+      "assetId": "starfall-orbital:enemy:lancer",
+      "lod": true,
+      "indexBytes": 2
+    },
+    "enemy:bulwark": {
+      "sha256": "6942bef1d328d966246986ca5131a8a430d1abd19a0f5886b0e57dc5194208fc",
+      "vertices": 19548,
+      "triangles": 11600,
+      "bounds": [
+        [
+          -26.0,
+          -14.0,
+          0.0
+        ],
+        [
+          26.0,
+          12.525562286376953,
+          15.0
+        ]
+      ],
+      "assetId": "starfall-orbital:enemy:bulwark",
+      "lod": false,
+      "indexBytes": 2
+    },
+    "enemy:bulwark:lod": {
+      "sha256": "5a65f71289b8f490ff8e876a789de1ca6e5aa1fbe6262162842df99247b9a16e",
+      "vertices": 2808,
+      "triangles": 2440,
+      "bounds": [
+        [
+          -26.0,
+          -14.0,
+          0.0
+        ],
+        [
+          26.0,
+          12.525562286376953,
+          15.0
+        ]
+      ],
+      "assetId": "starfall-orbital:enemy:bulwark",
+      "lod": true,
+      "indexBytes": 2
+    },
+    "boss:mothership": {
+      "sha256": "ea144b6980b01b317aa38446b83f3efb59569a19372a05b32d3d2b7d3109fd46",
+      "vertices": 104180,
+      "triangles": 66308,
+      "bounds": [
+        [
+          -109.0,
+          -42.0,
+          0.0
+        ],
+        [
+          109.0,
+          36.978172302246094,
+          40.0
+        ]
+      ],
+      "assetId": "starfall-orbital:boss:mothership",
+      "lod": false,
+      "indexBytes": 4
+    },
+    "boss:mothership:lod": {
+      "sha256": "e5297920c700b0b5fedf6e83e783fca45a907b63c359e39abf358c50e49722cb",
+      "vertices": 8708,
+      "triangles": 11140,
+      "bounds": [
+        [
+          -108.92598724365234,
+          -41.81560516357422,
+          0.0
+        ],
+        [
+          108.92598724365234,
+          36.978172302246094,
+          39.402984619140625
+        ]
+      ],
+      "assetId": "starfall-orbital:boss:mothership",
+      "lod": true,
+      "indexBytes": 2
+    },
+    "boss:dreadnought": {
+      "sha256": "17d07861524a04ef959c8213319b6f05a8edbff957166132e4385028e6bccd68",
+      "vertices": 86684,
+      "triangles": 59980,
+      "bounds": [
+        [
+          -108.0,
+          -48.0,
+          0.0
+        ],
+        [
+          108.0,
+          38.620689392089844,
+          34.0
+        ]
+      ],
+      "assetId": "starfall-orbital:boss:dreadnought",
+      "lod": false,
+      "indexBytes": 4
+    },
+    "boss:dreadnought:lod": {
+      "sha256": "1e4e1492ed7ab43f3c39611e749cb4b0c8b47a324bc9f3e3012869c80f223bed",
+      "vertices": 9676,
+      "triangles": 12824,
+      "bounds": [
+        [
+          -107.89998626708984,
+          -48.0,
+          0.0
+        ],
+        [
+          107.89998626708984,
+          38.620689392089844,
+          33.18318557739258
+        ]
+      ],
+      "assetId": "starfall-orbital:boss:dreadnought",
+      "lod": true,
+      "indexBytes": 2
+    },
+    "boss:leviathan": {
+      "sha256": "79355b53d19f02e1df99118ecae4f83c410a81898520b38ed147b773c384be03",
+      "vertices": 19078,
+      "triangles": 11952,
+      "bounds": [
+        [
+          -39.81070327758789,
+          -38.97435760498047,
+          -0.23130841553211212
+        ],
+        [
+          40.0,
+          40.0,
+          33.0
+        ]
+      ],
+      "assetId": "starfall-orbital:boss:leviathan",
+      "lod": false,
+      "indexBytes": 2
+    },
+    "boss:leviathan:lod": {
+      "sha256": "1ff87b819d8788958cc28779998337d98811c828ba8b637bfec25150c7281de0",
+      "vertices": 1426,
+      "triangles": 2164,
+      "bounds": [
+        [
+          -39.81070327758789,
+          -38.97435760498047,
+          -0.23130841553211212
+        ],
+        [
+          40.0,
+          40.0,
+          32.12616729736328
+        ]
+      ],
+      "assetId": "starfall-orbital:boss:leviathan",
+      "lod": true,
+      "indexBytes": 2
+    },
+    "boss:cryowarden": {
+      "sha256": "c96e263ad1cace86ee0dabdf79fb06ee6a127e234af3b2df2eccb750556fcc5b",
+      "vertices": 105078,
+      "triangles": 56136,
+      "bounds": [
+        [
+          -68.0,
+          -68.0,
+          0.0
+        ],
+        [
+          68.0,
+          68.0,
+          46.0
+        ]
+      ],
+      "assetId": "starfall-orbital:boss:cryowarden",
+      "lod": false,
+      "indexBytes": 4
+    },
+    "boss:cryowarden:lod": {
+      "sha256": "6aeedc0b5ca1b47b8936f83444dabfa3a990c51301f260e32e6d864ac0c1d0ca",
+      "vertices": 3782,
+      "triangles": 3028,
+      "bounds": [
+        [
+          -67.83946228027344,
+          -67.83946228027344,
+          0.0
+        ],
+        [
+          67.83946228027344,
+          67.83946228027344,
+          46.0
+        ]
+      ],
+      "assetId": "starfall-orbital:boss:cryowarden",
+      "lod": true,
+      "indexBytes": 2
+    },
+    "boss:eclipse": {
+      "sha256": "4f7ee2efc534b016e121625c1877cacab99589f3bf4ce16fda65b40891e4e25a",
+      "vertices": 33494,
+      "triangles": 23452,
+      "bounds": [
+        [
+          -59.0,
+          -63.0,
+          1.2410314083099365
+        ],
+        [
+          59.0,
+          63.0,
+          54.0
+        ]
+      ],
+      "assetId": "starfall-orbital:boss:eclipse",
+      "lod": false,
+      "indexBytes": 2
+    },
+    "boss:eclipse:lod": {
+      "sha256": "589da8d073f5e11b3e2215403ccaf7fe15c6822434919dec200cc378785e6dc7",
+      "vertices": 5606,
+      "triangles": 5984,
+      "bounds": [
+        [
+          -59.0,
+          -63.0,
+          1.2410314083099365
+        ],
+        [
+          59.0,
+          63.0,
+          52.97085189819336
+        ]
+      ],
+      "assetId": "starfall-orbital:boss:eclipse",
+      "lod": true,
+      "indexBytes": 2
+    },
+    "arm": {
+      "sha256": "4cb9ec107b28d406c9935f7e9eef660cea330d895cc3fce5c21e71af00c6093f",
+      "vertices": 7118,
+      "triangles": 5120,
+      "bounds": [
+        [
+          -9.0,
+          18.42176055908203,
+          5.135135173797607
+        ],
+        [
+          9.0,
+          76.0,
+          19.0
+        ]
+      ],
+      "assetId": "starfall-orbital:arm",
+      "lod": false,
+      "indexBytes": 2
+    },
+    "arm:lod": {
+      "sha256": "301d2c7eb1247f6c9c3631139018da2090f5942346412b0e8b35bb4d05bef429",
+      "vertices": 1486,
+      "triangles": 1412,
+      "bounds": [
+        [
+          -9.0,
+          18.42176055908203,
+          5.135135173797607
+        ],
+        [
+          9.0,
+          76.0,
+          18.746747970581055
+        ]
+      ],
+      "assetId": "starfall-orbital:arm",
+      "lod": true,
+      "indexBytes": 2
+    }
+  }
+}
