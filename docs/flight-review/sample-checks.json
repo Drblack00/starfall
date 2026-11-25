@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "viewports": [
+    320,
+    390,
+    768,
+    1320
+  ],
+  "animation": "Frames change; reduced-motion frames remain stable",
+  "audio": [
+    {
+      "seconds": 14.54546485260771,
+      "channels": 2
+    },
+    {
+      "seconds": 12.972947845804988,
+      "channels": 2
+    },
+    {
+      "seconds": 16.271133786848072,
+      "channels": 2
+    }
+  ],
+  "errors": []
+}
