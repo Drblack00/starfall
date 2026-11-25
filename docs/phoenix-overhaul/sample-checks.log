@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "nativeWebGL": true,
+  "uniqueBosses": 5,
+  "poolCapacity": 256,
+  "steadyGPUAllocations": {
+    "buffer": 0,
+    "texture": 0,
+    "program": 0
+  },
+  "viewports": [
+    320,
+    390,
+    768,
+    1360
+  ],
+  "audio": {
+    "seconds": 14.54546485260771,
+    "channels": 2
+  },
+  "metrics": {
+    "native3D": true,
+    "frames": 109,
+    "instances": 668,
+    "draws": 7,
+    "meanCPU": 2.195412843872648,
+    "phase": "HYPERSPACE",
+    "poolCapacity": 256
+  },
+  "saveChanges": false,
+  "errors": []
+}
