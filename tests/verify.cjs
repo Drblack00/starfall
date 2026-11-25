@@ -477,6 +477,7 @@ console.log(
   await require("./pbr.cjs")(b);
   await require("./exhaust.cjs")(b);
   await require("./presentation.cjs")(b);
+  await require("./unified-menus.cjs")(b);
   await require("./hd.cjs")(b);
   await require("./inspection.cjs")(b);
   const reduced = await b.newPage({ viewport: { width: 375, height: 812 } });

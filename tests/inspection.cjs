@@ -19,7 +19,7 @@ module.exports=async function verifyInspection(browser){
  await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await page.waitForTimeout(400);
  await page.evaluate(()=>{if(INSPECT.zoom<1.3||Math.abs(INSPECT.panY)<5)throw Error('Two-finger pan/pinch failed')});
  await page.locator('.opt-card[data-group="ship"][data-value="aegis"]').click();await page.waitForTimeout(350);await page.evaluate(()=>{const b=SF3D.preview.batches['ship:aegis'];if(b.source.hull!==SF3D.getGeometry('ship:aegis')||document.getElementById('ship-preview3d')!==window.inspectionSurface)throw Error('Ship selection replaced the shared renderer or actual model')});
- await page.locator('#scr-loadout .section-actions [data-nav="arsenal"]').click();await page.waitForTimeout(350);await page.evaluate(()=>{if(document.getElementById('scr-loadout').dataset.sec!=='arsenal')throw Error('Inspecting a ship blocks equipment selection')});
+ await page.locator('#scr-loadout .menu-head [data-nav="arsenal"]').click();await page.waitForTimeout(350);await page.evaluate(()=>{if(document.getElementById('scr-loadout').dataset.sec!=='arsenal')throw Error('Inspecting a ship blocks equipment selection')});
  await page.keyboard.press('Escape');await page.waitForTimeout(250);await page.evaluate(()=>{if(document.getElementById('scr-loadout').dataset.sec!=='hangar')throw Error('Equipment back route lost ship inspection context')});if(errors.length)throw Error(errors.join('\n'));await page.close();
  console.log('Inspection: real mesh rotation/tilt/pan/zoom, eased reset, keyboard, pinch, ship selection and equipment navigation passed');
 };

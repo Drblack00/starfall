@@ -1,0 +1,15 @@
+{
+  "boss": {
+    "time": 26.949256310651137,
+    "score": 11095,
+    "state": "boss",
+    "boss": "mothership"
+  },
+  "clear": {
+    "time": 51.682589643983064,
+    "score": 16680,
+    "state": "bossdown"
+  },
+  "errors": [],
+  "artifacts": "work/menu-audit/play"
+}
