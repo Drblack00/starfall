@@ -4,6 +4,13 @@ STARFALL is an original space shooter by Drblack Ventures: five skies, five boss
 
 **Play:** https://starfall-xr9e.onrender.com
 
+## Unified Orbital menus
+
+Hangar, Blasters, Drones, Appearance, Engineering, Pilots, Settings, Campaign and
+Contracts now share the flight deck's visual language, sticky navigation and
+responsive cards. Settings are grouped by purpose; existing equipment and controls
+remain available. [Actual screenshots and verification](docs/unified-menus/verification.md).
+
 ## Orbital Realism fleet and flight deck (build 3D-11)
 
 [Actual game screenshots, verification and frame-time results](docs/orbital-realism/verification.md).
